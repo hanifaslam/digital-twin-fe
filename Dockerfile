@@ -44,6 +44,8 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y wget
 
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
 # Copy hasil build (Next.js standalone)
 COPY --from=builder /app/.next/standalone ./
