@@ -1,23 +1,23 @@
 export const hasAccessToMenuItem = (
   userAccess: string[] | undefined,
-  middleware: string[] | undefined,
+  middleware: string[] | undefined
 ): boolean => {
   if (!middleware || middleware.length === 0) {
-    return true;
+    return true
   }
 
   if (!userAccess || userAccess.length === 0) {
-    return false;
+    return false
   }
 
-  return middleware.every((permission) => userAccess.includes(permission));
-};
+  return middleware.every((permission) => userAccess.includes(permission))
+}
 
 export const filterMenuItemsByAccess = <
-  T extends { middleware?: string[]; children?: T[] },
+  T extends { middleware?: string[]; children?: T[] }
 >(
   menuItems: T[],
-  userAccess: string[] | undefined,
+  userAccess: string[] | undefined
 ): T[] => {
   return menuItems
     .filter((item) => hasAccessToMenuItem(userAccess, item.middleware))
@@ -25,12 +25,12 @@ export const filterMenuItemsByAccess = <
       ...item,
       children: item.children
         ? filterMenuItemsByAccess(item.children, userAccess)
-        : undefined,
+        : undefined
     }))
     .filter((item) => {
       if (item.children && item.children.length === 0) {
-        return false;
+        return false
       }
-      return true;
-    });
-};
+      return true
+    })
+}

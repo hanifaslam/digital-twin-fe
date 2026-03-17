@@ -27,4 +27,3 @@ export interface Access {
 export interface VerifTokenResponse {
   valid: boolean
 }
-

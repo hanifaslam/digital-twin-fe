@@ -1,18 +1,18 @@
-import { PanelLeftIcon } from "@/components/icons/panel-left-icon";
-import { Button } from "@/components/ui/button";
-import ImageLoader from "@/components/wrappers/image-loader";
-import { cn } from "@/lib/utils";
-import { useSidebarStore } from "@/store/use-sidebar-store";
-import Link from "next/link";
-import React from "react";
+import { PanelLeftIcon } from '@/components/icons/panel-left-icon'
+import { Button } from '@/components/ui/button'
+import ImageLoader from '@/components/wrappers/image-loader'
+import { cn } from '@/lib/utils'
+import { useSidebarStore } from '@/store/use-sidebar-store'
+import Link from 'next/link'
+import React from 'react'
 
 const SidebarHeader: React.FC = () => {
-  const { isCollapsed, setIsCollapsed } = useSidebarStore();
+  const { isCollapsed, setIsCollapsed } = useSidebarStore()
   return (
     <div
       className={cn(
-        "relative",
-        isCollapsed ? "" : "flex items-center gap-2 pl-4",
+        'relative',
+        isCollapsed ? '' : 'flex items-center gap-2 pl-4'
       )}
     >
       {!isCollapsed && (
@@ -28,24 +28,24 @@ const SidebarHeader: React.FC = () => {
 
       <div
         className={cn(
-          "flex items-center transition-all duration-300 ease-in-out",
+          'flex items-center transition-all duration-300 ease-in-out',
           isCollapsed
-            ? "h-12 px-4 pt-8 pb-2 justify-center"
-            : "h-32 px-0 pt-2 pb-2 justify-start",
+            ? 'h-12 px-4 pt-8 pb-2 justify-center'
+            : 'h-32 px-0 pt-2 pb-2 justify-start'
         )}
       >
         <Link
           href="/dashboard"
           className={cn(
-            "flex items-center transition-all duration-300 ease-in-out",
-            isCollapsed ? "gap-0" : "gap-2",
+            'flex items-center transition-all duration-300 ease-in-out',
+            isCollapsed ? 'gap-0' : 'gap-2'
           )}
           draggable={false}
         >
           <div
             className={cn(
-              "flex items-center justify-center transition-all duration-300 ease-in-out",
-              isCollapsed ? "w-8" : "w-12",
+              'flex items-center justify-center transition-all duration-300 ease-in-out',
+              isCollapsed ? 'w-8' : 'w-12'
             )}
           >
             <div className="dark:hidden w-full">
@@ -74,10 +74,10 @@ const SidebarHeader: React.FC = () => {
 
           <div
             className={cn(
-              "block transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+              'block transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap',
               isCollapsed
-                ? "max-w-0 opacity-0 -translate-x-4"
-                : "max-w-[200px] opacity-100 translate-x-0",
+                ? 'max-w-0 opacity-0 -translate-x-4'
+                : 'max-w-[200px] opacity-100 translate-x-0'
             )}
           >
             <div className="flex flex-col text-start">
@@ -90,7 +90,7 @@ const SidebarHeader: React.FC = () => {
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SidebarHeader;
+export default SidebarHeader

@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input'
 import { formatWithThousandSeparator, onlyDigits } from '@/lib/utils'
 import * as React from 'react'
 
-interface CurrencyInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface CurrencyInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type'
+> {
   label?: string
   prefix?: string
 }

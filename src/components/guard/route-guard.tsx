@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { useAuthGuard } from "@/hooks/use-auth-guards";
-import LoadingAuth from "../loader/loading-auth";
-import { ErrorPage } from "../common/tabs/error-page";
-import { MenuProvider } from "../providers/menu-provider";
+import { useAuthGuard } from '@/hooks/use-auth-guards'
+import { ErrorPage } from '../common/tabs/error-page'
+import LoadingAuth from '../loader/loading-auth'
+import { MenuProvider } from '../providers/menu-provider'
 
 interface RouteGuardProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function RouteGuard({ children }: RouteGuardProps) {
   const { isLoading, isAuthenticated, filteredMenuItems, error } =
-    useAuthGuard();
+    useAuthGuard()
 
   if (error) {
-    return <ErrorPage message={error.message} />;
+    return <ErrorPage message={error.message} />
   }
 
   if (isLoading) {
-    return <LoadingAuth />;
+    return <LoadingAuth />
   }
 
   return isAuthenticated ? (
     <MenuProvider filteredMenuItems={filteredMenuItems}>
       {children}
     </MenuProvider>
-  ) : null;
+  ) : null
 }

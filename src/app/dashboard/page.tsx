@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import useAuthStore from "../../store/auth-store";
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import useAuthStore from '../../store/auth-store'
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuthStore();
+  const router = useRouter()
+  const { isAuthenticated, hasHydrated } = useAuthStore()
 
   useEffect(() => {
     if (hasHydrated) {
       if (isAuthenticated) {
-        router.replace("/dashboard");
+        router.replace('/dashboard')
       } else {
-        router.replace("/login");
+        router.replace('/login')
       }
     }
-  }, [isAuthenticated, hasHydrated, router]);
+  }, [isAuthenticated, hasHydrated, router])
 
-  return null;
+  return null
 }

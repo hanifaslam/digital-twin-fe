@@ -1,66 +1,66 @@
-import { HomeIcon } from "@/components/icons/home-icon";
-import { UserIcon } from "@/components/icons/user-icon";
+import { HomeIcon } from '@/components/icons/home-icon'
+import { UserIcon } from '@/components/icons/user-icon'
 
 export interface MenuItem {
-  id: string;
-  label: string;
-  icon?: React.ReactNode;
-  href?: string;
-  children?: MenuItem[];
-  middleware?: string[];
+  id: string
+  label: string
+  icon?: React.ReactNode
+  href?: string
+  children?: MenuItem[]
+  middleware?: string[]
 }
 
 export function useMenuItems(): MenuItem[] {
   return [
     {
-      id: "dashboard",
-      label: "Dashboard",
+      id: 'dashboard',
+      label: 'Dashboard',
       icon: <HomeIcon className="h-6 w-6" />,
-      href: "/dashboard",
-      middleware: ["dashboard"],
+      href: '/dashboard',
+      middleware: ['dashboard']
     },
     {
-      id: "user-management",
-      label: "User Management",
+      id: 'user-management',
+      label: 'User Management',
       icon: <UserIcon className="h-6 w-6" />,
-      middleware: ["user_management"],
+      middleware: ['user_management'],
       children: [
         {
-          id: "role",
-          label: "Role",
-          href: "/dashboard/user-management/role",
-          middleware: ["role"],
+          id: 'role',
+          label: 'Role',
+          href: '/dashboard/user-management/role',
+          middleware: ['role']
         },
         {
-          id: "user",
-          label: "User",
-          href: "/dashboard/user-management/user",
-          middleware: ["user"],
-        },
-      ],
-    },
-  ];
+          id: 'user',
+          label: 'User',
+          href: '/dashboard/user-management/user',
+          middleware: ['user']
+        }
+      ]
+    }
+  ]
 }
 
 export function extractHrefAndMiddleware(
-  items: MenuItem[],
+  items: MenuItem[]
 ): { href?: string; middleware?: string[] }[] {
-  const result: { href?: string; middleware?: string[] }[] = [];
+  const result: { href?: string; middleware?: string[] }[] = []
 
   const traverse = (menuItems: MenuItem[]) => {
     menuItems.forEach((item) => {
       if (item.href || item.middleware) {
         result.push({
           href: item.href,
-          middleware: item.middleware,
-        });
+          middleware: item.middleware
+        })
       }
       if (item.children && item.children.length > 0) {
-        traverse(item.children);
+        traverse(item.children)
       }
-    });
-  };
+    })
+  }
 
-  traverse(items);
-  return result;
+  traverse(items)
+  return result
 }

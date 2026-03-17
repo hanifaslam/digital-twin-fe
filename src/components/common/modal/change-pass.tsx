@@ -1,89 +1,89 @@
-import PasswordInput from "@/components/common/input/password-input";
-import { XCircleIcon } from "@/components/icons/x-circle-icon";
-import { useConfirm } from "@/components/providers/confirm-dialog-provider";
-import { Button } from "@/components/ui/button";
+import PasswordInput from '@/components/common/input/password-input'
+import { XCircleIcon } from '@/components/icons/x-circle-icon'
+import { useConfirm } from '@/components/providers/confirm-dialog-provider'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  DialogTitle
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useSubmit } from "@/hooks/use-submit";
+  FormMessage
+} from '@/components/ui/form'
+import { useSubmit } from '@/hooks/use-submit'
 import {
   ChangePasswordFormPayload,
-  createChangePasswordSchema,
-} from "@/schema/auth/change-password-schema";
-import { changePassword } from "@/service/auth/change-pass-service";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Resolver, useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod";
+  createChangePasswordSchema
+} from '@/schema/auth/change-password-schema'
+import { changePassword } from '@/service/auth/change-pass-service'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { Resolver, useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
+import z from 'zod'
 
 type Props = {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-};
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
 export default function ChangePasswordDialog({ open, onOpenChange }: Props) {
-  const [internalOpen, setInternalOpen] = useState(false);
-  const isControlled = open !== undefined;
-  const dialogOpen = isControlled ? open : internalOpen;
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = open !== undefined
+  const dialogOpen = isControlled ? open : internalOpen
   const setDialogOpen = (v: boolean, temp?: boolean) => {
     if (!v && !temp) {
-      resetForm();
+      resetForm()
     }
 
     if (isControlled) {
-      onOpenChange?.(v);
+      onOpenChange?.(v)
     } else {
-      setInternalOpen(v);
+      setInternalOpen(v)
     }
-  };
+  }
 
-  const [error, setError] = useState<string | null>(null);
-  const confirm = useConfirm();
+  const [error, setError] = useState<string | null>(null)
+  const confirm = useConfirm()
 
   const form = useForm<ChangePasswordFormPayload>({
     resolver: zodResolver(createChangePasswordSchema()) as Resolver<
       z.infer<ReturnType<typeof createChangePasswordSchema>>
     >,
     defaultValues: {
-      old_password: "",
-      new_password: "",
-      confirm_password: "",
+      old_password: '',
+      new_password: '',
+      confirm_password: ''
     },
-    mode: "onChange",
-  });
+    mode: 'onChange'
+  })
 
   const resetForm = useCallback(() => {
     setTimeout(() => {
-      setError(null);
-      form.reset();
-    }, 100);
-  }, [form]);
+      setError(null)
+      form.reset()
+    }, 100)
+  }, [form])
 
   const newPasswordValue = useWatch({
     control: form.control,
-    name: "new_password",
-  });
+    name: 'new_password'
+  })
   useEffect(() => {
-    const confirmPassword = form.getValues("confirm_password");
+    const confirmPassword = form.getValues('confirm_password')
     if (confirmPassword) {
-      form.trigger("confirm_password");
+      form.trigger('confirm_password')
     }
-  }, [newPasswordValue, form]);
+  }, [newPasswordValue, form])
 
   const { onSubmit, isSubmitting } = useSubmit<
     z.infer<ReturnType<typeof createChangePasswordSchema>>,
@@ -93,16 +93,16 @@ export default function ChangePasswordDialog({ open, onOpenChange }: Props) {
     form: form,
     autoReset: true,
     resetDelay: 100,
-    successMessage: "Password changed successfully",
-    errorMessage: "Failed to change password",
+    successMessage: 'Password changed successfully',
+    errorMessage: 'Failed to change password',
     onSuccess: () => {
-      setDialogOpen(false);
+      setDialogOpen(false)
     },
     notifySuccess: (msg) => toast.success(msg),
     notifyError: (msg) => {
-      toast.error(msg);
-    },
-  });
+      toast.error(msg)
+    }
+  })
 
   return (
     <>
@@ -198,26 +198,27 @@ export default function ChangePasswordDialog({ open, onOpenChange }: Props) {
               <Button
                 type="submit"
                 onClick={async () => {
-                  setDialogOpen(false, true);
+                  setDialogOpen(false, true)
                   const ok = await confirm({
-                    title: "Confirm Change Password",
-                    description: "Are you sure you want to change your password?",
-                    confirmText: "Yes",
-                    cancelText: "No",
-                  });
+                    title: 'Confirm Change Password',
+                    description:
+                      'Are you sure you want to change your password?',
+                    confirmText: 'Yes',
+                    cancelText: 'No'
+                  })
 
                   if (ok) {
-                    onSubmit();
+                    onSubmit()
                   }
 
-                  setDialogOpen(true, true);
+                  setDialogOpen(true, true)
                 }}
                 disabled={!form.formState.isValid || isSubmitting}
               >
                 {isSubmitting ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  "Change Password"
+                  'Change Password'
                 )}
               </Button>
             </div>
@@ -225,5 +226,5 @@ export default function ChangePasswordDialog({ open, onOpenChange }: Props) {
         </DialogContent>
       </Dialog>
     </>
-  );
+  )
 }

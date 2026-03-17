@@ -1,51 +1,51 @@
-import { logout } from "@/service/auth/auth-service";
-import { BreadcrumbItems } from "@/types/layout-types";
-import { ChevronDown, KeyIcon, LogOut, Menu } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { toast } from "sonner";
+import { logout } from '@/service/auth/auth-service'
+import { BreadcrumbItems } from '@/types/layout-types'
+import { ChevronDown, KeyIcon, LogOut, Menu } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { toast } from 'sonner'
 
-import { cn } from "@/lib/utils";
-import { useSidebarStore } from "@/store/use-sidebar-store";
-import useAuthStore from "@/store/auth-store";
-import { Button } from "@/components/ui/button";
+import ChangePasswordDialog from '@/components/common/modal/change-pass'
+import { BellIcon } from '@/components/icons/bell-icon'
+import { PanelLeftIcon } from '@/components/icons/panel-left-icon'
+import { useConfirm } from '@/components/providers/confirm-dialog-provider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useConfirm } from "@/components/providers/confirm-dialog-provider";
-import { PanelLeftIcon } from "@/components/icons/panel-left-icon";
-import { BellIcon } from "@/components/icons/bell-icon";
-import ChangePasswordDialog from "@/components/common/modal/change-pass";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import useAuthStore from '@/store/auth-store'
+import { useSidebarStore } from '@/store/use-sidebar-store'
 
 interface HeaderLayoutProps {
-  breadcrumbs: BreadcrumbItems[];
+  breadcrumbs: BreadcrumbItems[]
 }
 
 export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
-  const { isCollapsed, setIsCollapsed, setIsMobileOpen } = useSidebarStore();
-  const [isChangePassOpen, setIsChangePassOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const confirm = useConfirm();
-  const router = useRouter();
-  const { logout: logoutStore, user } = useAuthStore();
+  const { isCollapsed, setIsCollapsed, setIsMobileOpen } = useSidebarStore()
+  const [isChangePassOpen, setIsChangePassOpen] = useState(false)
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  const confirm = useConfirm()
+  const router = useRouter()
+  const { logout: logoutStore, user } = useAuthStore()
 
   // const {
   //   notifications: allNotifications,
@@ -59,22 +59,22 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
 
   async function handleLogout() {
     try {
-      const res = await logout();
+      const res = await logout()
 
       if (!res.success) {
-        toast.error(res.message || "Failed to logout");
-        router.replace("/login");
-        return;
+        toast.error(res.message || 'Failed to logout')
+        router.replace('/login')
+        return
       }
 
-      logoutStore();
+      logoutStore()
 
-      toast.success("Logout Success");
-      router.replace("/login");
+      toast.success('Logout Success')
+      router.replace('/login')
     } catch {
-      toast.error("Logout Failed");
-      logoutStore();
-      router.replace("/login");
+      toast.error('Logout Failed')
+      logoutStore()
+      router.replace('/login')
     }
   }
 
@@ -105,7 +105,7 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
             )}
 
             {breadcrumbs.length > 0 && (
-              <Breadcrumb className={cn(isCollapsed ? "" : "pl-4")}>
+              <Breadcrumb className={cn(isCollapsed ? '' : 'pl-4')}>
                 <BreadcrumbList>
                   {breadcrumbs.map((breadcrumb, index) => (
                     <React.Fragment key={index}>
@@ -182,18 +182,18 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                     className="flex items-center gap-2 h-auto p-2"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={""} className="object-cover" />
+                      <AvatarImage src={''} className="object-cover" />
                       <AvatarFallback className="bg-primary text-primary-foreground">
                         {user?.username
-                          ?.split(" ")
+                          ?.split(' ')
                           .map((n) => n[0])
-                          .join("")
-                          .toUpperCase() || "US"}
+                          .join('')
+                          .toUpperCase() || 'US'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="hidden sm:block text-left">
                       <p className="text-sm font-medium">
-                        {user?.username ?? "Unknown User"}
+                        {user?.username ?? 'Unknown User'}
                       </p>
                     </div>
                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -213,15 +213,15 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                     className="text-primary cursor-pointer dark:hover:bg-red-500/20 dark:hover:text-red-500"
                     onClick={async () => {
                       const ok = await confirm({
-                        title: "Logout",
-                        description: "Are you sure you want to logout?",
-                        confirmButtonClassName: "bg-red-600 hover:bg-red-500",
-                        confirmText: "Yes, Logout",
-                        destructive: true,
-                      });
+                        title: 'Logout',
+                        description: 'Are you sure you want to logout?',
+                        confirmButtonClassName: 'bg-red-600 hover:bg-red-500',
+                        confirmText: 'Yes, Logout',
+                        destructive: true
+                      })
 
                       if (ok) {
-                        await handleLogout();
+                        await handleLogout()
                       }
                     }}
                   >
@@ -239,5 +239,5 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
         onOpenChange={(v: boolean) => setIsChangePassOpen(v)}
       />
     </>
-  );
+  )
 }

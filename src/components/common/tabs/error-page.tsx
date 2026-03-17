@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { XCircleIcon } from "@/components/icons/x-circle-icon";
+import { XCircleIcon } from '@/components/icons/x-circle-icon'
+import { Button } from '@/components/ui/button'
 
 interface ErrorPageProps {
-  message: string;
+  message: string
 }
 
 export function ErrorPage({ message }: ErrorPageProps) {
   const handleRetry = () => {
-    window.location.reload();
-  };
+    window.location.reload()
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-background via-muted/20 to-background px-4 text-base">
@@ -29,5 +29,5 @@ export function ErrorPage({ message }: ErrorPageProps) {
         <Button onClick={handleRetry}>Try Again</Button>
       </div>
     </div>
-  );
+  )
 }

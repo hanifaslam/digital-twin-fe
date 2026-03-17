@@ -1,58 +1,58 @@
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import { useSidebarStore } from "@/store/use-sidebar-store";
-import { BreadcrumbItems } from "@/types/layout-types";
-import { usePathname } from "next/navigation";
-import React from "react";
-import Headers from "../navigation/header/header";
-import Sidebar from "../navigation/sidebar/sidebar";
+import { cn } from '@/lib/utils'
+import { useSidebarStore } from '@/store/use-sidebar-store'
+import { BreadcrumbItems } from '@/types/layout-types'
+import { usePathname } from 'next/navigation'
+import React from 'react'
+import Headers from '../navigation/header/header'
+import Sidebar from '../navigation/sidebar/sidebar'
 
-import { TooltipProvider } from "../ui/tooltip";
+import { TooltipProvider } from '../ui/tooltip'
 
 interface MainLayoutProps {
-  children: React.ReactNode;
-  breadcrumbs?: BreadcrumbItems[];
+  children: React.ReactNode
+  breadcrumbs?: BreadcrumbItems[]
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({
   children,
-  breadcrumbs = [],
+  breadcrumbs = []
 }) => {
-  const isCollapsed = useSidebarStore((state) => state.isCollapsed);
-  const isMobileOpen = useSidebarStore((state) => state.isMobileOpen);
-  const isHidden = useSidebarStore((state) => state.isHidden);
-  const hasHydrated = useSidebarStore((state) => state.hasHydrated);
-  const setIsMobileOpen = useSidebarStore((state) => state.setIsMobileOpen);
-  const setIsHidden = useSidebarStore((state) => state.setIsHidden);
-  const setIsCollapsed = useSidebarStore((state) => state.setIsCollapsed);
+  const isCollapsed = useSidebarStore((state) => state.isCollapsed)
+  const isMobileOpen = useSidebarStore((state) => state.isMobileOpen)
+  const isHidden = useSidebarStore((state) => state.isHidden)
+  const hasHydrated = useSidebarStore((state) => state.hasHydrated)
+  const setIsMobileOpen = useSidebarStore((state) => state.setIsMobileOpen)
+  const setIsHidden = useSidebarStore((state) => state.setIsHidden)
+  const setIsCollapsed = useSidebarStore((state) => state.setIsCollapsed)
 
-  const pathname = usePathname();
+  const pathname = usePathname()
 
-  const date = new Date().getFullYear();
+  const date = new Date().getFullYear()
 
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   React.useEffect(() => {
     const isCalendarPage = pathname.match(
-      /\/(en|id)\/dashboard\/rates-and-availability\/calendar/,
-    );
-    const isDashboardPage = pathname.match(/^\/(en|id)\/dashboard$/);
+      /\/(en|id)\/dashboard\/rates-and-availability\/calendar/
+    )
+    const isDashboardPage = pathname.match(/^\/(en|id)\/dashboard$/)
 
-    setIsMobileOpen(false);
-    setIsHidden(!!isCalendarPage);
+    setIsMobileOpen(false)
+    setIsHidden(!!isCalendarPage)
 
     if (isDashboardPage) {
-      setIsCollapsed(true);
+      setIsCollapsed(true)
     } else {
-      setIsCollapsed(false);
+      setIsCollapsed(false)
     }
-  }, [pathname, setIsMobileOpen, setIsHidden, setIsCollapsed]);
+  }, [pathname, setIsMobileOpen, setIsHidden, setIsCollapsed])
 
-  const effectiveCollapsed = mounted && hasHydrated ? isCollapsed : false;
+  const effectiveCollapsed = mounted && hasHydrated ? isCollapsed : false
 
   return (
     <TooltipProvider>
@@ -71,20 +71,20 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         {/* Main Content */}
         <div
           className={cn(
-            "flex flex-col h-screen transition-all duration-300 ease-in-out",
+            'flex flex-col h-screen transition-all duration-300 ease-in-out',
             isHidden
-              ? "lg:ml-0 overflow-x-hidden"
+              ? 'lg:ml-0 overflow-x-hidden'
               : effectiveCollapsed
-                ? "lg:ml-16"
-                : "lg:ml-72",
+                ? 'lg:ml-16'
+                : 'lg:ml-72'
           )}
         >
           {!isHidden && <Headers breadcrumbs={breadcrumbs} />}
 
           <main
             className={cn(
-              "flex-1 overflow-y-auto pb-10",
-              isHidden && "pb-0 overflow-x-hidden",
+              'flex-1 overflow-y-auto pb-10',
+              isHidden && 'pb-0 overflow-x-hidden'
             )}
           >
             {children}
@@ -94,13 +94,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         {!isHidden && (
           <footer
             className={cn(
-              "border-border fixed right-0 bottom-0 left-0 z-50 border-t bg-card py-4",
-              effectiveCollapsed ? "lg:left-16" : "lg:left-72",
+              'border-border fixed right-0 bottom-0 left-0 z-50 border-t bg-card py-4',
+              effectiveCollapsed ? 'lg:left-16' : 'lg:left-72'
             )}
           >
             <div className="flex items-center justify-between px-6">
               <span className="text-muted-foreground">
-                <span className="text-foreground">Copyright ©</span> {date}{" "}
+                <span className="text-foreground">Copyright ©</span> {date}{' '}
                 Property Management System
               </span>
               <span className="text-muted-foreground">
@@ -112,5 +112,5 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         )}
       </div>
     </TooltipProvider>
-  );
-};
+  )
+}
