@@ -28,3 +28,7 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ github.repository }}:staging .
           docker push ghcr.io/${{ github.repository }}:staging
+
+      - name: Trigger Coolify Deploy
+        run: |
+          curl -X GET "https://coolify.hanifaslam.dev/webhooks/source/github/events/manual"
