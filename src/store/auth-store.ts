@@ -1,6 +1,5 @@
 import {
   Access,
-  Hotels,
   LoginResponse,
 } from "@/types/response/auth/auth-response";
 import { create } from "zustand";
@@ -10,10 +9,10 @@ interface StoredUser {
   id: string;
   username: string;
   name: string;
+  email: string;
+  role_name: string;
+  role_id: string;
   access: Access[] | null;
-  hotels: Hotels[] | null;
-  picture?: string | null;
-  is_superadmin: boolean;
 }
 
 interface AuthState {
@@ -22,7 +21,7 @@ interface AuthState {
   hasHydrated: boolean;
 
   setUser: (user: StoredUser | null) => void;
-  login: (user: LoginResponse) => void;
+  login: (user: LoginResponse & { access?: Access[] }) => void;
   logout: () => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 }
@@ -40,13 +39,13 @@ const useAuthStore = create<AuthState>()(
 
       login: (user) => {
         const filteredUser: StoredUser = {
-          is_superadmin: user.is_superadmin,
           id: user.id,
           username: user.username,
           name: user.name,
-          access: null,
-          hotels: [],
-          picture: user.picture || null,
+          email: user.email,
+          role_name: user.role_name,
+          role_id: user.role_id,
+          access: user.access || null,
         };
 
         set({

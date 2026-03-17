@@ -74,44 +74,92 @@ axiosInstance.interceptors.request.use(
   }
 )
 
+let isRefreshing = false
+let failedQueue: {
+  resolve: (value?: unknown) => void
+  reject: (reason?: unknown) => void
+}[] = []
+
+const processQueue = (error: AxiosError | null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve()
+    }
+  })
+  failedQueue = []
+}
+
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     BProgress.done()
     return response
   },
-  (error) => {
+  async (error: AxiosError) => {
     BProgress.done()
     const status = error.response?.status
     const data = error.response?.data as { message?: string } | undefined
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean
+      _retry_csrf?: boolean
+    }
 
     if (
       !isCsrfDisabled &&
       ((status === 403 &&
         data?.message?.toLowerCase().includes('invalid csrf token')) ||
         (data?.message?.toLowerCase().includes('token csrf tidak valid') &&
-          error.config))
+          originalRequest))
     ) {
-      const originalConfig = error.config as AxiosRequestConfig & {
-        _retry_csrf?: boolean
-      }
-      if (!originalConfig._retry_csrf) {
-        originalConfig._retry_csrf = true
-        return fetchCsrfToken()
-          .then(() => {
-            return axiosInstance.request(originalConfig)
-          })
-          .catch((e) => Promise.reject(e))
+      if (!originalRequest._retry_csrf) {
+        originalRequest._retry_csrf = true
+        try {
+          await fetchCsrfToken()
+          return axiosInstance.request(originalRequest)
+        } catch (e) {
+          return Promise.reject(e)
+        }
       }
     }
 
-    if (status === 401) {
-      localStorage.removeItem('auth-data')
-      if (
-        typeof window !== 'undefined' &&
-        !window.location.pathname.includes('/login')
-      ) {
-        toast.error('Session has expired. Please log in again.')
-        authEvents.emitUnauthorized()
+    if (status === 401 && !originalRequest._retry) {
+      if (originalRequest.url?.includes('/auth/login') || originalRequest.url?.includes('/auth/refresh')) {
+        return Promise.reject(error)
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        })
+          .then(() => {
+            return axiosInstance(originalRequest)
+          })
+          .catch((err) => {
+            return Promise.reject(err)
+          })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        await axiosInstance.post('/auth/refresh')
+        processQueue(null)
+        return axiosInstance(originalRequest)
+      } catch (refreshError) {
+        processQueue(refreshError as AxiosError)
+        localStorage.removeItem('auth-data')
+        if (
+          typeof window !== 'undefined' &&
+          !window.location.pathname.includes('/login')
+        ) {
+          toast.error('Session has expired. Please log in again.')
+          authEvents.emitUnauthorized()
+        }
+        return Promise.reject(refreshError)
+      } finally {
+        isRefreshing = false
       }
     }
 

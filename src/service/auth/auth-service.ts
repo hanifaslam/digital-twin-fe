@@ -29,3 +29,7 @@ export async function me() {
 export async function forgotPassword(payload: ForgotPasswordFormPayload) {
   return api.post(ApiEndpoint.AUTH.FORGOT_PASSWORD, { ...payload })
 }
+
+export async function refreshToken() {
+  return api.post(ApiEndpoint.AUTH.REFRESH)
+}
