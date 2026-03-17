@@ -101,11 +101,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             <div className="flex items-center justify-between px-6">
               <span className="text-muted-foreground">
                 <span className="text-foreground">Copyright ©</span> {date}{' '}
-                Property Management System
+                Digital Twin
               </span>
               <span className="text-muted-foreground">
                 <span>Powered by </span>
-                <span className="text-primary font-medium">Rapier</span>
+                <span className="text-primary font-medium">Polines</span>
               </span>
             </div>
           </footer>
