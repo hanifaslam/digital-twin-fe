@@ -91,7 +91,7 @@ export default function LoginPage() {
                     <FormItem>
                       <FormLabel className="text-sm font-normal">
                         <span>Username</span>
-                        <span className="text-red-500 ml-0.5">*</span>
+                        <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -114,7 +114,7 @@ export default function LoginPage() {
                     <FormItem>
                       <FormLabel className="text-sm font-normal">
                         <span>Password</span>
-                        <span className="text-red-500 ml-0.5">*</span>
+                        <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <PasswordInput
@@ -140,7 +140,7 @@ export default function LoginPage() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="text-sm font-normal">
-                          Remember me
+                          Remember Me
                         </FormLabel>
                       </div>
                     </FormItem>
@@ -153,7 +153,7 @@ export default function LoginPage() {
                   className="p-0 h-auto text-sm text-primary hover:text-primary/80"
                   href="/forgot-password"
                 >
-                  Forgot password?
+                  Forgot Password
                 </Link>
               </div>
 
