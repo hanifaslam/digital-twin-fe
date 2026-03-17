@@ -48,7 +48,7 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
 # Copy hasil build (Next.js standalone)
-COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
@@ -60,4 +60,4 @@ USER nextjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]
