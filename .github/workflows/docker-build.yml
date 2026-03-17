@@ -26,9 +26,12 @@ jobs:
 
       - name: Build & Push
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:staging .
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+            --build-arg NEXT_PUBLIC_DISABLE_CSRF=${{ vars.NEXT_PUBLIC_DISABLE_CSRF }} \
+            -t ghcr.io/${{ github.repository }}:staging .
           docker push ghcr.io/${{ github.repository }}:staging
 
       - name: Trigger Coolify Deploy
         run: |
-          curl -X GET "https://coolify.hanifaslam.dev/webhooks/source/github/events/manual"
+          curl -X GET "https://coolify.hanifaslam.dev/api/v1/deploy?uuid=xg9tal49ob4ekinanmssa9iq&force=false"
