@@ -48,7 +48,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 # Security (recommended)
-RUN addgroup -S nodejs && adduser -S nextjs -G nodejs \
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs \
  && chown -R nextjs:nodejs /app
 
 USER nextjs
