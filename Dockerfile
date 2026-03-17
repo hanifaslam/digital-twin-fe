@@ -4,8 +4,6 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Fix DNS (opsional, aman dipakai)
-RUN printf "nameserver 8.8.8.8\nnameserver 1.1.1.1\n" > /etc/resolv.conf
 
 COPY package.json package-lock.json* ./
 
