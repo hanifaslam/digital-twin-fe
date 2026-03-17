@@ -43,8 +43,8 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   // Expose a function that opens dialog and resolves a promise
   const confirm = React.useCallback((opts: ConfirmOptions) => {
     setOptions({
-      confirmText: 'Konfirmasi',
-      cancelText: 'Batal',
+      confirmText: 'Confirm',
+      cancelText: 'Cancel',
       ...opts
     })
     setOpen(true)
@@ -83,7 +83,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
           autoFocus={false}
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
-          <AlertDialogHeader className="items-center text-center">
+          <AlertDialogHeader className="items-center text-center sm:place-items-center sm:text-center">
             {options?.icon && (
               <div
                 className={cn(
@@ -96,13 +96,16 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
             )}
 
             <AlertDialogTitle
-              className={cn('text-center text-2xl', !options?.icon && 'mt-2')}
+              className={cn(
+                'w-full text-center text-2xl sm:text-center',
+                !options?.icon && 'mt-2'
+              )}
             >
               {options?.title}
             </AlertDialogTitle>
 
             {!!options?.description && (
-              <AlertDialogDescription className="text-center text-black/80">
+              <AlertDialogDescription className="w-full text-center text-muted-foreground sm:text-center">
                 {options.description}
               </AlertDialogDescription>
             )}
@@ -113,7 +116,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
               onClick={handleCancel}
               className={cn(
                 defaultCancelBtn,
-                'min-h-12 text-base',
+                'min-h-12 !text-base',
                 options?.cancelButtonClassName
               )}
             >
@@ -123,7 +126,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
               onClick={handleConfirm}
               className={cn(
                 defaultConfirmBtn,
-                'min-h-12 text-base',
+                'min-h-12 !text-base',
                 options?.confirmButtonClassName
               )}
             >

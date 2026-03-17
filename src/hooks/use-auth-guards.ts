@@ -3,7 +3,7 @@
 import {
   extractHrefAndMiddleware,
   useMenuItems
-} from '@/components/common/navigation/sidebar/sidebar-menu'
+} from '@/components/navigation/sidebar/sidebar-menu'
 import { filterMenuItemsByAccess } from '@/lib/access-control'
 import { authEvents } from '@/lib/auth-event'
 import { me } from '@/service/auth/auth-service'
@@ -107,10 +107,10 @@ export function useAuthGuard(): UseAuthGuardReturn {
             id: response.data.id,
             username: response.data.username,
             name: response.data.name,
-            hotels: response.data.hotels || null,
-            access: response.data.access || null,
-            picture: response.data.picture || null,
-            is_superadmin: response.data.is_superadmin
+            email: response.data.email,
+            role_id: response.data.role_id,
+            role_name: response.data.role_name,
+            access: response.data.access || null
           })
           setHasAccess(true)
         }

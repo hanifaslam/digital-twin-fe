@@ -11,8 +11,10 @@ import {
 import { cn } from '@/lib/utils'
 import * as React from 'react'
 
-interface SuffixInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface SuffixInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type'
+> {
   label?: string
   suffixes: string[]
   defaultSuffix?: string

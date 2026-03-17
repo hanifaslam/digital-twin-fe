@@ -15,7 +15,9 @@ export const createLoginSchema = () =>
         },
         { message: 'Invalid username or email' }
       )
-      .max(100, { message: 'Username or email is too long (max. 100 characters)' }),
+      .max(100, {
+        message: 'Username or email is too long (max. 100 characters)'
+      }),
     password: z.string().min(1, { message: 'Password is required' }),
     remember_me: z.boolean().optional()
   })
@@ -43,7 +45,4 @@ export const createForgotPasswordSchema = () =>
 
 export const forgotPasswordSchema = createForgotPasswordSchema()
 
-export type ForgotPasswordInput = z.infer<
-  typeof forgotPasswordSchema
->
-
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>

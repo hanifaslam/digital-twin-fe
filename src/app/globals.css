@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -120,7 +120,7 @@
     @apply bg-background text-foreground;
   }
   button:not([disabled]),
-  [role="button"]:not([disabled]) {
+  [role='button']:not([disabled]) {
     cursor: pointer;
   }
 }
@@ -183,35 +183,35 @@
   }
 
   /* Success toast */
-  [data-sonner-toaster] [data-type="success"] {
+  [data-sonner-toaster] [data-type='success'] {
     background-color: rgb(23, 120, 42) !important;
     color: white !important;
     border: 1px solid rgb(23, 120, 42) !important;
   }
 
   /* Error toast */
-  [data-sonner-toaster] [data-type="error"] {
+  [data-sonner-toaster] [data-type='error'] {
     background-color: rgb(175, 35, 19) !important;
     color: white !important;
     border: 1px solid rgb(175, 35, 19) !important;
   }
 
   /* Warning toast */
-  [data-sonner-toaster] [data-type="warning"] {
+  [data-sonner-toaster] [data-type='warning'] {
     background-color: rgb(217 119 6) !important;
     color: white !important;
     border: 1px solid rgb(217 119 6) !important;
   }
 
   /* Info toast */
-  [data-sonner-toaster] [data-type="info"] {
+  [data-sonner-toaster] [data-type='info'] {
     background-color: rgb(37 99 235) !important;
     color: white !important;
     border: 1px solid rgb(37 99 235) !important;
   }
 
   /* Loading toast */
-  [data-sonner-toaster] [data-type="loading"] {
+  [data-sonner-toaster] [data-type='loading'] {
     background-color: rgb(37 99 235) !important;
     color: white !important;
     border: 1px solid rgb(37 99 235) !important;
@@ -269,7 +269,7 @@
   [data-sonner-toaster] button[data-close-button]::before,
   [data-sonner-toast] [data-close-button]::before,
   [data-sonner-toast] button[data-close-button]::before {
-    content: "" !important;
+    content: '' !important;
     display: block !important;
     width: 22px !important;
     height: 22px !important;

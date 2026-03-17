@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { UserIcon } from "../icons/user-icon";
+import { useEffect, useState } from 'react'
+import { UserIcon } from '../icons/user-icon'
 
 export default function LoadingAuth() {
-  const [showHint, setShowHint] = useState(false);
+  const [showHint, setShowHint] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowHint(true), 5000);
-    return () => clearTimeout(timer);
-  }, []);
+    const timer = setTimeout(() => setShowHint(true), 5000)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="flex h-screen items-center justify-center bg-linear-to-br from-background via-muted/20 to-background">
@@ -22,9 +22,7 @@ export default function LoadingAuth() {
           <h3 className="text-lg font-semibold text-foreground">
             Checking Session
           </h3>
-          <p className="text-sm text-muted-foreground">
-            Please wait a moment
-          </p>
+          <p className="text-sm text-muted-foreground">Please wait a moment</p>
           {showHint && (
             <p className="text-xs text-muted-foreground animate-in fade-in-0 duration-500">
               Almost done...
@@ -33,5 +31,5 @@ export default function LoadingAuth() {
         </div>
       </div>
     </div>
-  );
+  )
 }

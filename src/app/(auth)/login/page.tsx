@@ -1,68 +1,68 @@
-"use client";
+'use client'
 
-import PasswordInput from "@/components/common/input/password-input";
-import LoadingAuth from "@/components/loader/loading-auth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import PasswordInput from '@/components/common/input/password-input'
+import LoadingAuth from '@/components/loader/loading-auth'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  FormMessage
+} from '@/components/ui/form'
 
-import { Input } from "@/components/ui/input";
-import { useSubmit } from "@/hooks/use-submit";
-import { LoginInput, createLoginSchema } from "@/schema/auth/login-schema";
-import { login } from "@/service/auth/auth-service";
-import useAuthStore from "@/store/auth-store";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { Input } from '@/components/ui/input'
+import { useSubmit } from '@/hooks/use-submit'
+import { LoginInput, createLoginSchema } from '@/schema/auth/login-schema'
+import { login } from '@/service/auth/auth-service'
+import useAuthStore from '@/store/auth-store'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login: authLogin, isAuthenticated, hasHydrated } = useAuthStore();
-  const isCheckingAuth = !hasHydrated;
+  const router = useRouter()
+  const { login: authLogin, isAuthenticated, hasHydrated } = useAuthStore()
+  const isCheckingAuth = !hasHydrated
 
   useEffect(() => {
     if (hasHydrated && isAuthenticated) {
-      router.push("/dashboard");
+      router.push('/dashboard')
     }
-  }, [isAuthenticated, hasHydrated, router]);
+  }, [isAuthenticated, hasHydrated, router])
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(createLoginSchema()),
     defaultValues: {
-      login: "",
-      password: "",
-      remember_me: false,
-    },
-  });
+      login: '',
+      password: '',
+      remember_me: false
+    }
+  })
 
   const { onSubmit, isSubmitting } = useSubmit({
     mutation: login,
     form,
-    successMessage: "Successfully logged in",
-    errorMessage: "Failed to log in",
+    successMessage: 'Successfully logged in',
+    errorMessage: 'Failed to log in',
     notifySuccess: toast.success,
     notifyError: toast.error,
     onSuccess: (res) => {
       if (res.data) {
-        authLogin(res.data);
+        authLogin(res.data)
       }
-    },
-  });
+    }
+  })
 
   if (isCheckingAuth) {
-    return <LoadingAuth />;
+    return <LoadingAuth />
   }
 
   return (
@@ -168,12 +168,12 @@ export default function LoginPage() {
                 {isSubmitting && (
                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border border-white border-t-transparent"></div>
                 )}
-                {isSubmitting ? "Logging in..." : "Login"}
+                {isSubmitting ? 'Logging in...' : 'Login'}
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

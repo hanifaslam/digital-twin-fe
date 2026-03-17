@@ -1,22 +1,20 @@
 export interface LoginResponse {
   id: string
-  username: string
   name: string
-  is_superadmin: boolean
-  picture?: string | null
+  username: string
+  email: string
+  role_name: string
+  role_id: string
 }
 
 export interface MeResponse {
   id: string
-  email: string
-  hotels: Hotels[]
-  role_id: string
-  role_name: string
-  picture: null
-  username: string
   name: string
+  username: string
+  email: string
+  role_name: string
+  role_id: string
   access: Access[]
-  is_superadmin: boolean
 }
 
 export interface Access {
@@ -28,10 +26,4 @@ export interface Access {
 
 export interface VerifTokenResponse {
   valid: boolean
-}
-
-export interface Hotels {
-  id: string
-  name: string
-  code: string
 }
