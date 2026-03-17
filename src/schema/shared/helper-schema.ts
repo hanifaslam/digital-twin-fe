@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const createImageUrlSchema = (trans: (key: string) => string) =>
+export const createImageUrlSchema = () =>
   z.url().refine(
     (val) => {
       const pathname = (() => {
@@ -12,40 +12,40 @@ export const createImageUrlSchema = (trans: (key: string) => string) =>
       })()
       return /\.(png|jpe?g|webp)$/i.test(pathname)
     },
-    { message: trans('imageUrlInvalidExtension') }
+    { message: 'Invalid image URL' }
   )
 
-export const createImageFileSchema = (trans: (key: string) => string) =>
+export const createImageFileSchema = () =>
   z.union([
     z
-      .instanceof(File, { message: trans('fileMustBeImage') })
+      .instanceof(File, { message: 'File must be an image' })
       .refine(
         (file) =>
           ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(
             file.type
           ),
-        { message: trans('onlyImageFormatsAllowed') }
+        { message: 'Only image formats allowed' }
       )
       .refine((file) => file.size <= 1024 * 1024, {
-        message: trans('fileSizeLimit')
+        message: 'File size limit'
       }),
-    z.url({ message: trans('invalidImageUrl') })
+    z.url({ message: 'Invalid image URL' })
   ])
 
-export const createPdfSchema = (trans: (key: string) => string) =>
+export const createPdfSchema = () =>
   z.union([
     z
-      .instanceof(File, { message: trans('fileMustBePdf') })
+      .instanceof(File, { message: 'File must be a PDF' })
       .refine((file) => file.type === 'application/pdf', {
-        message: trans('onlyPdfFormatAllowed')
+        message: 'Only PDF format allowed'
       }),
-    z.url({ message: trans('invalidPdfUrl') })
+    z.url({ message: 'Invalid PDF URL' })
   ])
 
-export const createDocumentSchema = (trans: (key: string) => string) =>
+export const createDocumentSchema = () =>
   z.union([
     z
-      .instanceof(File, { message: trans('fileMustBeDocument') })
+      .instanceof(File, { message: 'File must be a document' })
       .refine(
         (file) =>
           [
@@ -53,21 +53,20 @@ export const createDocumentSchema = (trans: (key: string) => string) =>
             'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
           ].includes(file.type),
-        { message: trans('onlyDocumentFormatsAllowed') }
+        { message: 'Only document formats allowed' }
       ),
-    z.url({ message: trans('invalidPdfUrl') })
+    z.url({ message: 'Invalid PDF URL' })
   ])
 
-export const createImageAndDocumentSchema = (trans: (key: string) => string) =>
-  z.union([createImageFileSchema(trans), createDocumentSchema(trans)])
+export const createImageAndDocumentSchema = () =>
+  z.union([createImageFileSchema(), createDocumentSchema()])
 
-export const createImageAndPdfSchema = (trans: (key: string) => string) =>
-  z.union([createImageFileSchema(trans), createPdfSchema(trans)])
+export const createImageAndPdfSchema = () =>
+  z.union([createImageFileSchema(), createPdfSchema()])
 
-// Fallback schemas without translation
-export const ImageUrlSchema = createImageUrlSchema((key) => key)
-export const ImageFileSchema = createImageFileSchema((key) => key)
-export const PdfSchema = createPdfSchema((key) => key)
-export const ImageAndPdfSchema = createImageAndPdfSchema((key) => key)
-export const DocumentSchema = createDocumentSchema((key) => key)
-export const ImageAndDocumentSchema = createImageAndDocumentSchema((key) => key)
+export const ImageUrlSchema = createImageUrlSchema()
+export const ImageFileSchema = createImageFileSchema()
+export const PdfSchema = createPdfSchema()
+export const ImageAndPdfSchema = createImageAndPdfSchema()
+export const DocumentSchema = createDocumentSchema()
+export const ImageAndDocumentSchema = createImageAndDocumentSchema()
