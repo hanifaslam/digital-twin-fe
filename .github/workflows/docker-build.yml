@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
 
     permissions:
       contents: read
@@ -27,6 +28,7 @@ jobs:
       - name: Build & Push
         run: |
           docker build \
+            --no-cache \
             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
             --build-arg NEXT_PUBLIC_DISABLE_CSRF=${{ vars.NEXT_PUBLIC_DISABLE_CSRF }} \
             -t ghcr.io/${{ github.repository }}:staging .
@@ -34,4 +36,7 @@ jobs:
 
       - name: Trigger Coolify Deploy
         run: |
-          curl -X GET "https://coolify.hanifaslam.dev/api/v1/deploy?uuid=xg9tal49ob4ekinanmssa9iq&force=false"
+          curl -X POST "https://coolify.hanifaslam.dev/api/v1/deploy" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"uuid":"xg9tal49ob4ekinanmssa9iq","force":true}'
