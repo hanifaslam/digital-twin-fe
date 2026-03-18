@@ -40,7 +40,6 @@ RUN npm run build
 FROM node:20-slim AS runner
 WORKDIR /app
 
-# Install dependencies for health check
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y wget
 
@@ -48,16 +47,17 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
-# Security (recommended)
-RUN groupadd -r nodejs && useradd -r -g nodejs nextjs
-
-# Copy all files from builder stage (required for next start)
+# Copy hasil build (Next.js standalone)
 COPY --from=builder /app ./
-RUN chown -R nextjs:nodejs /app
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Security (recommended)
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs \
+ && chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
 
-# Use standard next start command
 CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]
