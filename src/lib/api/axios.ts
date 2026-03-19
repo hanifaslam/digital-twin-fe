@@ -125,8 +125,8 @@ axiosInstance.interceptors.response.use(
 
     if (status === 401 && !originalRequest._retry) {
       if (
-        originalRequest.url?.includes('/auth/login') ||
-        originalRequest.url?.includes('/auth/refresh')
+        originalRequest.url?.includes('auth/login') ||
+        originalRequest.url?.includes('auth/refresh')
       ) {
         return Promise.reject(error)
       }
