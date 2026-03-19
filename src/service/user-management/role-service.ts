@@ -30,7 +30,7 @@ export const RoleService = {
   },
 
   update: async (id: string, data: CreateRolePayload) => {
-    return api.put(
+    return api.patch(
       ApiEndpoint.USER_MANAGEMENT.ROLE.UPDATE.replace(':id', id),
       data
     )
