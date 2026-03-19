@@ -61,7 +61,7 @@ const SidebarHeader: React.FC = () => {
             </div>
             <div className="hidden dark:block w-full">
               <ImageLoader
-                src="/logo-dark.png"
+                src="/logo.png"
                 alt="Logo"
                 width={128}
                 height={128}
