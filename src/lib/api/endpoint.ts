@@ -15,7 +15,7 @@ export const ApiEndpoint = {
       SHOW: 'roles/:id',
       UPDATE: 'roles/:id',
       TOGGLE_STATUS: 'roles/:id/status',
-      PERMISSION: 'permission'
+      PERMISSION: 'permissions'
     },
     USER: {
       BASE: 'users',
