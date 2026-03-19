@@ -1,7 +1,6 @@
 export interface ListRoleResponse {
   id: string
   code: string
-  type: string
   name: string
   status: boolean
   created_at: string
@@ -12,7 +11,6 @@ export interface ShowRoleResponse {
   id: string
   code: string
   name: string
-  type: string
   status: boolean
   is_active: boolean
   access: ShowAccessResponse[]

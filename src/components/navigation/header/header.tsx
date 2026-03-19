@@ -31,7 +31,6 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
 import useAuthStore from '@/store/auth-store'
 import { useSidebarStore } from '@/store/use-sidebar-store'
 
@@ -93,19 +92,17 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
             </Button>
 
             {/* Desktop Sidebar Collapse Button */}
-            {isCollapsed && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex"
-              >
-                <PanelLeftIcon className="w-6 h-6" />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden lg:flex"
+            >
+              <PanelLeftIcon className="w-6 h-6 text-muted-foreground hover:text-foreground" />
+            </Button>
 
             {breadcrumbs.length > 0 && (
-              <Breadcrumb className={cn(isCollapsed ? '' : 'pl-4')}>
+              <Breadcrumb>
                 <BreadcrumbList>
                   {breadcrumbs.map((breadcrumb, index) => (
                     <React.Fragment key={index}>

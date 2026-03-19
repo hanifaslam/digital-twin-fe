@@ -16,18 +16,16 @@ export const roleSchema = () =>
   z.object({
     name: z.string().min(1, 'Required').max(25, 'Maximum 25 characters'),
     status: z.boolean().default(true),
-    type: z.enum(['web', 'mobile']).default('web'),
     code: z.string().min(1, 'Required'),
     access: z.array(accessSchema).min(1, 'Select at least one access')
   })
 
-export type RolePayload = z.infer<ReturnType<typeof roleSchema>>
+export type CreateRolePayload = z.infer<ReturnType<typeof roleSchema>>
 
 export const updateRoleSchema = () =>
   z.object({
     name: z.string().min(1, 'Required').max(25, 'Maximum 25 characters'),
     status: z.boolean().default(true),
-    type: z.enum(['web', 'mobile']).default('web'),
     code: z.string().min(1, 'Required'),
     access: z.array(accessSchema).min(1, 'Select at least one access')
   })

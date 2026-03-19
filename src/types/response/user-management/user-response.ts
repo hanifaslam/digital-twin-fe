@@ -7,7 +7,6 @@ export interface ListUserResponse {
   status: boolean
   created_at: string
   updated_at: string
-  hotel_names: string[]
 }
 
 export interface ShowUserResponse {
@@ -15,10 +14,9 @@ export interface ShowUserResponse {
   name: string
   username: string
   email: string
+  role_id: string
   role_name: string
-  picture: string
   status: boolean
   created_at: string
   updated_at: string
-  hotel_names: string[]
 }
