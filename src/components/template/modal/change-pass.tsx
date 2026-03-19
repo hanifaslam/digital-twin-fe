@@ -23,7 +23,7 @@ import {
   ChangePasswordFormPayload,
   changePasswordSchema
 } from '@/schema/auth/change-password-schema'
-import { changePassword } from '@/service/auth/change-password-service'
+import { changePassword } from '@/service/auth/change-pass-service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
