@@ -24,8 +24,8 @@ export interface ShowAccessResponse {
   children?: ShowAccessResponse[]
 }
 
-// export interface GetAllRoles {
-//   id: string
-//   name: string
-//   code: string
-// }
+export interface GetAllRoles {
+  id: string
+  name: string
+  code: string
+}

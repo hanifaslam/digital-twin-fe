@@ -3,8 +3,8 @@
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { SearchIcon, X } from 'lucide-react'
-import { useDebounce } from 'use-debounce'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useDebounce } from 'use-debounce'
 
 interface SearchInputProps {
   placeholder?: string
@@ -21,7 +21,7 @@ export default function SearchInput({
   onChange,
   className,
   value,
-  debounceMs = 1000
+  debounceMs = 500
 }: SearchInputProps) {
   const [searchInput, setSearchInput] = useState(value || '')
   const [prevValue, setPrevValue] = useState(value)

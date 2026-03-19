@@ -15,14 +15,15 @@ export const ApiEndpoint = {
       SHOW: 'roles/:id',
       UPDATE: 'roles/:id',
       TOGGLE_STATUS: 'roles/:id/status',
-      PERMISSION: 'permissions'
+      PERMISSION: 'permissions',
+      GET_ALL: 'roles/all'
     },
     USER: {
       BASE: 'users',
       SHOW: 'users/:id',
       UPDATE: 'users/:id',
       TOGGLE_STATUS: 'users/:id/status',
-      CHANGE_PASSWORD: 'users/:id/change-password'
+      RESET_PASSWORD: 'users/:id/reset-password'
     }
   }
 } as const

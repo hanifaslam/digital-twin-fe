@@ -3,6 +3,7 @@ import { ApiEndpoint } from '@/lib/api/endpoint'
 import { CreateRolePayload } from '@/schema/user-management/role-schema'
 import { BaseParams } from '@/types/global'
 import {
+  GetAllRoles,
   ListRoleResponse,
   ShowAccessResponse,
   ShowRoleResponse
@@ -45,6 +46,9 @@ export const RoleService = {
     return api.patch(
       ApiEndpoint.USER_MANAGEMENT.ROLE.TOGGLE_STATUS.replace(':id', id)
     )
+  },
+  getAllRoles: async () => {
+    return api.get<GetAllRoles[]>(ApiEndpoint.USER_MANAGEMENT.ROLE.GET_ALL)
   }
 }
 
@@ -54,5 +58,6 @@ export const {
   create: createRole,
   update: updateRole,
   indexAccess: indexAccess,
-  toggleStatus: updateRoleStatus
+  toggleStatus: updateRoleStatus,
+  getAllRoles: getAllRoles
 } = RoleService

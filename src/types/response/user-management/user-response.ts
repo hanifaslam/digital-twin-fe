@@ -3,6 +3,7 @@ export interface ListUserResponse {
   name: string
   username: string
   email: string
+  role_id: string
   role_name: string
   status: boolean
   created_at: string
@@ -15,6 +16,7 @@ export interface ShowUserResponse {
   name: string
   username: string
   email: string
+  role_id: string
   role_name: string
   picture: string
   status: boolean

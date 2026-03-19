@@ -6,7 +6,7 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
-import { EyeIcon } from '@/components/icons/eye-icon'
+import { KeyIcon } from '@/components/icons/key-icon'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
@@ -15,16 +15,20 @@ import {
   FilterCheckbox,
   FilterGroup
 } from '@/components/template/content/filter-check'
+import { FilterListview } from '@/components/template/content/filter-listview'
+import ChangeUserPasswordDialog from '@/components/template/modal/change-user-pass'
 import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import { useUser } from '@/hooks/api/user-management/use-user'
+import useFetcher from '@/hooks/use-fetcher'
+import { getAllRoles } from '@/service/user-management/role-service'
 import { updateUserStatus } from '@/service/user-management/user-service'
 import { ListUserResponse } from '@/types/response/user-management/user-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function UserPage() {
@@ -32,12 +36,28 @@ export default function UserPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [filters, setFilters] = useState({
-    status: [] as string[]
+    status: [] as string[],
+    role: [] as string[]
   })
   const [tempStatus, setTempStatus] = useState<string[]>([])
+  const [tempRoles, setTempRoles] = useState<string[]>([])
+  const [activeFilterIndex, setActiveFilterIndex] = useState<number | null>(
+    null
+  )
 
   const router = useRouter()
   const confirm = useConfirm()
+
+  const [targetUserId, setTargetUserId] = useState<string | null>(null)
+  const [showChangePass, setShowChangePass] = useState(false)
+
+  const { data: rolesResp, run: runRoles } = useFetcher(getAllRoles, {
+    immediate: false
+  })
+
+  useEffect(() => {
+    runRoles()
+  }, [runRoles])
 
   const filterGroups: FilterGroup[] = [
     {
@@ -48,6 +68,13 @@ export default function UserPage() {
       ],
       selected: tempStatus,
       onChange: setTempStatus
+    },
+    {
+      label: 'Role',
+      options:
+        rolesResp?.map((role) => ({ label: role.name, value: role.id })) || [],
+      selected: tempRoles,
+      onChange: setTempRoles
     }
   ]
 
@@ -56,7 +83,8 @@ export default function UserPage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      status: filters.status.join(',')
+      status: filters.status.join(','),
+      role: filters.role?.join(',')
     }),
     [currentPage, itemsPerPage, search, filters]
   )
@@ -142,8 +170,9 @@ export default function UserPage() {
     router.push(`/dashboard/user-management/user/edit-user/${row.id}`)
   }
 
-  function handleDetails(row: ListUserResponse) {
-    router.push(`/dashboard/user-management/user/detail/${row.id}`)
+  function handleChangePassword(row: ListUserResponse) {
+    setTargetUserId(row.id)
+    setShowChangePass(true)
   }
 
   const tableAction: TableAction<ListUserResponse>[] = [
@@ -154,9 +183,9 @@ export default function UserPage() {
       variant: 'ghost'
     },
     {
-      label: 'Details',
-      onClick: handleDetails,
-      icon: <EyeIcon />,
+      label: 'Change Password',
+      onClick: handleChangePassword,
+      icon: <KeyIcon />,
       variant: 'ghost'
     }
   ]
@@ -179,15 +208,33 @@ export default function UserPage() {
         <div className="flex space-x-4">
           <FilterSheet
             onConfirm={() => {
-              setFilters({ status: tempStatus })
+              setFilters({ status: tempStatus, role: tempRoles })
               setCurrentPage(1)
+              setActiveFilterIndex(null)
             }}
             onCancel={() => {
               setTempStatus([])
-              setFilters({ status: [] })
+              setTempRoles([])
+              setFilters({ status: [], role: [] })
+              setActiveFilterIndex(null)
             }}
           >
-            <FilterCheckbox filterGroups={filterGroups} />
+            {activeFilterIndex !== null ? (
+              <FilterListview
+                type="checkbox"
+                filterGroup={
+                  filterGroups[activeFilterIndex] as React.ComponentProps<
+                    typeof FilterListview
+                  >['filterGroup']
+                }
+                onBack={() => setActiveFilterIndex(null)}
+              />
+            ) : (
+              <FilterCheckbox
+                filterGroups={filterGroups}
+                onShowAll={(_, index) => setActiveFilterIndex(index)}
+              />
+            )}
           </FilterSheet>
           <Link href={'/dashboard/user-management/user/add-user'}>
             <IconButton icon={<PlusIcon />} title="Add" />
@@ -195,22 +242,30 @@ export default function UserPage() {
         </div>
       }
     >
-      <div>
-        <TableContainer<ListUserResponse>
-          data={data?.data || []}
-          columns={columns}
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={data?.metadata?.total_row || 0}
-          totalPages={data?.metadata?.total_page || 0}
-          onPageChange={setCurrentPage}
-          onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
-          actions={tableAction}
-          showCreatedAt={false}
-          showEmptyImage={false}
-        />
-      </div>
+      <TableContainer<ListUserResponse>
+        data={data?.data || []}
+        columns={columns}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={data?.metadata?.total_row || 0}
+        totalPages={data?.metadata?.total_page || 0}
+        onPageChange={setCurrentPage}
+        onItemsPerPageChange={setItemsPerPage}
+        loading={isLoading}
+        actions={tableAction}
+        showCreatedAt={false}
+        showEmptyImage={false}
+      />
+      <ChangeUserPasswordDialog
+        userId={targetUserId!}
+        open={showChangePass}
+        onOpenChange={(v) => {
+          if (!v) {
+            setTargetUserId(null)
+          }
+          setShowChangePass(v)
+        }}
+      />
     </ContentLayout>
   )
 }

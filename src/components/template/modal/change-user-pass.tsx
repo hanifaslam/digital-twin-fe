@@ -65,8 +65,8 @@ export default function ChangeUserPasswordDialog({
       z.infer<typeof changeUserPasswordSchema>
     >,
     defaultValues: {
-      password: '',
-      password_confirm: ''
+      new_password: '',
+      confirm_password: ''
     },
     mode: 'onBlur'
   })
@@ -80,12 +80,12 @@ export default function ChangeUserPasswordDialog({
 
   const newPasswordValue = useWatch({
     control: form.control,
-    name: 'password'
+    name: 'new_password'
   })
   useEffect(() => {
-    const confirmPassword = form.getValues('password_confirm')
+    const confirmPassword = form.getValues('confirm_password')
     if (confirmPassword) {
-      form.trigger('password_confirm')
+      form.trigger('confirm_password')
     }
   }, [newPasswordValue, form])
 
@@ -94,7 +94,7 @@ export default function ChangeUserPasswordDialog({
     null
   >({
     mutation: (payload) =>
-      changeUserPassword(payload as ChangeUserPasswordPayload, userId),
+      changeUserPassword(userId, payload as ChangeUserPasswordPayload),
     form: form,
     autoReset: true,
     resetDelay: 100,
@@ -122,7 +122,7 @@ export default function ChangeUserPasswordDialog({
                 variant="ghost"
                 className="absolute top-4 right-3 hover:bg-transparent"
               >
-                <XCircleIcon className="text-primary" />
+                <XCircleIcon className="hover:text-primary" />
                 <span className="sr-only">Close</span>
               </Button>
             </DialogClose>
@@ -133,7 +133,7 @@ export default function ChangeUserPasswordDialog({
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="password"
+                    name="new_password"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-normal">
@@ -153,7 +153,7 @@ export default function ChangeUserPasswordDialog({
 
                   <FormField
                     control={form.control}
-                    name="password_confirm"
+                    name="confirm_password"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-normal">

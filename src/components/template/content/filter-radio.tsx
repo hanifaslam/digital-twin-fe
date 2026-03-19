@@ -46,7 +46,7 @@ export function FilterRadio({ filterGroups, onShowAll }: FilterRadioProps) {
             <Card className="p-2 mt-2 shadow-none">
               <CardContent className="p-2">
                 {group.scrollable ? (
-                  <ScrollArea viewportClassName="max-h-34">
+                  <ScrollArea className="max-h-34">
                     <RadioGroup
                       value={group.selected}
                       onValueChange={group.onChange}

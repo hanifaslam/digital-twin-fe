@@ -13,6 +13,7 @@ import {
 
 export interface UserListParams extends BaseParams {
   status?: string
+  role?: string
 }
 
 export const UserService = {
@@ -29,25 +30,25 @@ export const UserService = {
   },
 
   create: async (data: CreateUserPayload) => {
-    return api.post(ApiEndpoint.USER_MANAGEMENT.USER.BASE, data)
+    return api.post<null>(ApiEndpoint.USER_MANAGEMENT.USER.BASE, data)
   },
 
   update: async (id: string, data: UpdateUserPayload) => {
-    return api.put(
+    return api.patch<null>(
       ApiEndpoint.USER_MANAGEMENT.USER.UPDATE.replace(':id', id),
       data
     )
   },
 
   toggleStatus: async (id: string) => {
-    return api.patch(
+    return api.patch<null>(
       ApiEndpoint.USER_MANAGEMENT.USER.TOGGLE_STATUS.replace(':id', id)
     )
   },
 
   changePassword: async (id: string, data: ChangeUserPasswordPayload) => {
-    return api.post(
-      ApiEndpoint.USER_MANAGEMENT.USER.CHANGE_PASSWORD.replace(':id', id),
+    return api.patch<null>(
+      ApiEndpoint.USER_MANAGEMENT.USER.RESET_PASSWORD.replace(':id', id),
       data
     )
   }

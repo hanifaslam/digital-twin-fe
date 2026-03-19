@@ -24,10 +24,12 @@ interface FilterCheckboxProps {
   onShowAll?: (type: 'checkbox', index: number) => void
 }
 
+import { useState } from 'react'
 export function FilterCheckbox({
   filterGroups,
   onShowAll
 }: FilterCheckboxProps) {
+  const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>({})
   const handleChange = (
     group: FilterGroup,
     value: string,
@@ -43,8 +45,11 @@ export function FilterCheckbox({
   return (
     <div className="space-y-4">
       {filterGroups.map((group, index) => {
+        const isExpanded = expandedGroups[index] ?? false
         const displayOptions =
-          group.options.length > 5 ? group.options.slice(0, 5) : group.options
+          group.options.length > 5 && !isExpanded
+            ? group.options.slice(0, 5)
+            : group.options
         const hasMore = group.options.length > 5
 
         return (
@@ -55,16 +60,22 @@ export function FilterCheckbox({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => onShowAll?.('checkbox', index)}
+                  onClick={() => {
+                    setExpandedGroups((prev) => ({
+                      ...prev,
+                      [index]: !isExpanded
+                    }))
+                    onShowAll?.('checkbox', index)
+                  }}
                 >
-                  See All
+                  {isExpanded ? 'Show Less' : 'See All'}
                 </Button>
               )}
             </div>
             <Card className="p-2 mt-2 shadow-none">
               <CardContent className="p-2">
                 {group.scrollable ? (
-                  <ScrollArea viewportClassName="max-h-34">
+                  <ScrollArea className="max-h-34">
                     <div className="space-y-2">
                       {displayOptions.map((option) => {
                         const optionId = `filter-${index}-${option.value}`
