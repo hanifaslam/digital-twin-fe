@@ -67,9 +67,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md pt-2">
         <CardHeader className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center">
+          <div className="w-48 h-30 flex items-center justify-center">
             <Image
               src="/logo.png"
               width={512}
@@ -78,7 +78,9 @@ export default function LoginPage() {
               className="w-full h-full object-contain dark:invert"
             />
           </div>
-          <span className="text-xl font-semibold">Digital Twin</span>
+          <span className="text-xl font-semibold">
+            Digital Twin Management System
+          </span>
         </CardHeader>
         <CardContent>
           <Form {...form}>

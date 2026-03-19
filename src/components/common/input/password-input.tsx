@@ -22,6 +22,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             ref={ref}
             type={visible ? 'text' : 'password'}
             className={[className ?? '', 'pr-10'].filter(Boolean).join(' ')}
+            value={inputProps.value ?? ''}
             {...inputProps}
           />
 
