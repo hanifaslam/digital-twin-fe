@@ -8,5 +8,21 @@ export const ApiEndpoint = {
     RESET_PASSWORD: 'auth/reset-password/:token',
     VERIF_TOKEN: 'auth/verify-reset-token',
     REFRESH: 'auth/refresh'
+  },
+  USER_MANAGEMENT: {
+    ROLE: {
+      BASE: 'roles',
+      SHOW: 'roles/:id',
+      UPDATE: 'roles/:id',
+      TOGGLE_STATUS: 'roles/:id/status',
+      PERMISSION: 'permission'
+    },
+    USER: {
+      BASE: 'users',
+      SHOW: 'users/:id',
+      UPDATE: 'users/:id',
+      TOGGLE_STATUS: 'users/:id/status',
+      CHANGE_PASSWORD: 'users/:id/change-password'
+    }
   }
 } as const

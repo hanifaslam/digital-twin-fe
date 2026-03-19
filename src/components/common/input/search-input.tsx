@@ -1,9 +1,9 @@
 'use client'
 
 import { Input } from '@/components/ui/input'
-import useDebounce from '@/hooks/use-debounce'
 import { cn } from '@/lib/utils'
 import { SearchIcon, X } from 'lucide-react'
+import { useDebounce } from 'use-debounce'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 interface SearchInputProps {
@@ -36,7 +36,7 @@ export default function SearchInput({
     setSearchInput(value || '')
   }
 
-  const debouncedSearchTerm = useDebounce(searchInput, debounceMs)
+  const [debouncedSearchTerm] = useDebounce(searchInput, debounceMs)
 
   useEffect(() => {
     onSearchRef.current(debouncedSearchTerm)
