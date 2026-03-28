@@ -5,15 +5,19 @@ import {
   CreateUserPayload,
   UpdateUserPayload
 } from '@/schema/user-management/user-schema'
-import { BaseParams } from '@/types/global'
 import {
   GetAllUsersResponse,
   ListUserResponse,
   ShowUserResponse
 } from '@/types/response/user-management/user-response'
+import { BaseParams } from '@/types/global'
 
 export interface UserListParams extends BaseParams {
   status?: string
+  role?: string
+}
+
+export interface GetAllUsersParams {
   role?: string
 }
 
@@ -54,9 +58,12 @@ export const UserService = {
     )
   },
 
-  getAllUsers: async () => {
+  getAllUsers: async (params?: GetAllUsersParams) => {
     return api.get<GetAllUsersResponse[]>(
-      ApiEndpoint.USER_MANAGEMENT.USER.GET_ALL
+      ApiEndpoint.USER_MANAGEMENT.USER.GET_ALL,
+      {
+        params
+      }
     )
   }
 }
@@ -67,5 +74,6 @@ export const {
   create: createUser,
   update: updateUser,
   toggleStatus: updateUserStatus,
-  changePassword: changeUserPassword
+  changePassword: changeUserPassword,
+  getAllUsers
 } = UserService

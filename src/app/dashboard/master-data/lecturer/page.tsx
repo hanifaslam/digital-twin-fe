@@ -6,7 +6,6 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
-import { EyeIcon } from '@/components/icons/eye-icon'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import IconButton from '@/components/template/button/icon-button'
@@ -20,9 +19,9 @@ import useFetcher from '@/hooks/use-fetcher'
 import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
 import { ListLecturerResponse } from '@/types/response/master/lecturer/lecturer-response'
 import { PlusIcon } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import AddLecturerDialog from './add-lecturer-dialog'
+import EditLecturerDialog from './edit-lecturer-dialog'
 
 export default function LecturerPage() {
   const [search, setSearch] = useState('')
@@ -32,8 +31,11 @@ export default function LecturerPage() {
     study_program: [] as string[]
   })
   const [tempStudyPrograms, setTempStudyPrograms] = useState<string[]>([])
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [editingLecturerId, setEditingLecturerId] = useState<string | null>(
+    null
+  )
 
-  const router = useRouter()
   const { data: studyProgramsResp, run: runStudyPrograms } = useFetcher(
     getAllStudyPrograms,
     {
@@ -68,7 +70,7 @@ export default function LecturerPage() {
     [currentPage, itemsPerPage, search, filters]
   )
 
-  const { data, isLoading } = useLecturer(param)
+  const { data, isLoading, mutate } = useLecturer(param)
 
   const columns: TableColumn<ListLecturerResponse>[] = [
     {
@@ -96,23 +98,21 @@ export default function LecturerPage() {
       )
     },
     {
-      key: 'study_program_name',
+      key: 'study_program',
       label: 'Study Program',
       className: 'min-w-[220px]',
       render: (value) => (
         <p className="truncate text-sm font-medium">
-          {value.study_program_name}
+          {Array.isArray(value.study_program)
+            ? value.study_program.join(', ')
+            : value.study_program || '-'}
         </p>
       )
     }
   ]
 
   function handleEdit(row: ListLecturerResponse) {
-    router.push(`/dashboard/master-data/lecturer/edit-lecturer/${row.id}`)
-  }
-
-  function handleDetails(row: ListLecturerResponse) {
-    router.push(`/dashboard/master-data/lecturer/detail/${row.id}`)
+    setEditingLecturerId(row.id)
   }
 
   const tableAction: TableAction<ListLecturerResponse>[] = [
@@ -120,12 +120,6 @@ export default function LecturerPage() {
       label: 'Edit',
       onClick: handleEdit,
       icon: <PencilIcon />,
-      variant: 'ghost'
-    },
-    {
-      label: 'Details',
-      onClick: handleDetails,
-      icon: <EyeIcon />,
       variant: 'ghost'
     }
   ]
@@ -159,9 +153,11 @@ export default function LecturerPage() {
           >
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
-          <Link href={'/dashboard/master-data/lecturer/add-lecturer'}>
-            <IconButton icon={<PlusIcon />} title="Add" />
-          </Link>
+          <IconButton
+            icon={<PlusIcon />}
+            title="Add"
+            onClick={() => setIsAddDialogOpen(true)}
+          />
         </div>
       }
     >
@@ -181,6 +177,21 @@ export default function LecturerPage() {
           actions={tableAction}
         />
       </div>
+      <AddLecturerDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSuccess={() => mutate()}
+      />
+      <EditLecturerDialog
+        open={Boolean(editingLecturerId)}
+        lecturerId={editingLecturerId}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingLecturerId(null)
+          }
+        }}
+        onSuccess={() => mutate()}
+      />
     </ContentLayout>
   )
 }

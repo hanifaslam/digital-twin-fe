@@ -6,7 +6,7 @@ export const createLecturerSchema = z.object({
     .trim()
     .min(1, 'Required')
     .regex(/^\d+$/, 'NIP must contain numbers only'),
-  study_program_id: z.string().min(1, 'Required'),
+  study_program_ids: z.array(z.string()).min(1, 'Required'),
   user_id: z.string().min(1, 'Required')
 })
 
