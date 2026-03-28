@@ -4,6 +4,7 @@ export interface ListLecturerResponse {
   email: string
   nip: string
   study_program: string[] | string
+  status: boolean
   created_at: string
   updated_at: string
 }

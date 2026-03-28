@@ -1,5 +1,6 @@
 'use client'
 
+import { StatusBadge } from '@/components/common/badge/status-badge'
 import SearchInput from '@/components/common/input/search-input'
 import {
   TableAction,
@@ -108,6 +109,12 @@ export default function LecturerPage() {
             : value.study_program || '-'}
         </p>
       )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      className: 'min-w-[150px]',
+      render: (row) => <StatusBadge status={row.status} />
     }
   ]
 
