@@ -231,7 +231,7 @@ export default function EditLecturerDialog({
                 <Input
                   value={selectedUser?.name || lecturerResp?.name || ''}
                   disabled
-                  placeholder="Name will be filled automatically"
+                  placeholder="Choose user"
                 />
               </div>
 
@@ -240,7 +240,7 @@ export default function EditLecturerDialog({
                 <Input
                   value={selectedUser?.email || ''}
                   disabled
-                  placeholder="Email will be filled automatically"
+                  placeholder="Choose user"
                 />
               </div>
 
