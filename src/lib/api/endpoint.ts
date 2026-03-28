@@ -23,7 +23,21 @@ export const ApiEndpoint = {
       SHOW: 'users/:id',
       UPDATE: 'users/:id',
       TOGGLE_STATUS: 'users/:id/status',
-      RESET_PASSWORD: 'users/:id/reset-password'
+      RESET_PASSWORD: 'users/:id/reset-password',
+      GET_ALL: 'users/all'
+    }
+  },
+  MASTER: {
+    LECTURER: {
+      BASE: 'lecturers',
+      SHOW: 'lecturers/:id',
+      UPDATE: 'lecturers/:id'
+    },
+    STUDY_PROGRAM: {
+      BASE: 'study-programs',
+      SHOW: 'study-programs/:id',
+      UPDATE: 'study-programs/:id',
+      GET_ALL: 'study-programs/all'
     }
   }
 } as const

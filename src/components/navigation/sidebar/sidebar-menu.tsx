@@ -20,6 +20,26 @@ export function useMenuItems(): MenuItem[] {
       middleware: ['dashboard']
     },
     {
+      id: 'master-data',
+      label: 'Master Data',
+      icon: <UserIcon className="h-6 w-6" />,
+      middleware: ['master'],
+      children: [
+        {
+          id: 'Lecturer',
+          label: 'Lecturer',
+          href: '/dashboard/master-data/lecturer',
+          middleware: ['lecturer']
+        },
+        {
+          id: 'Study Program',
+          label: 'Study Program',
+          href: '/dashboard/master-data/study-program',
+          middleware: ['study_program']
+        }
+      ]
+    },
+    {
       id: 'user-management',
       label: 'User Management',
       icon: <UserIcon className="h-6 w-6" />,

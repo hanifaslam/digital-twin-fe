@@ -7,6 +7,7 @@ import {
 } from '@/schema/user-management/user-schema'
 import { BaseParams } from '@/types/global'
 import {
+  GetAllUsersResponse,
   ListUserResponse,
   ShowUserResponse
 } from '@/types/response/user-management/user-response'
@@ -50,6 +51,12 @@ export const UserService = {
     return api.patch<null>(
       ApiEndpoint.USER_MANAGEMENT.USER.RESET_PASSWORD.replace(':id', id),
       data
+    )
+  },
+
+  getAllUsers: async () => {
+    return api.get<GetAllUsersResponse[]>(
+      ApiEndpoint.USER_MANAGEMENT.USER.GET_ALL
     )
   }
 }
