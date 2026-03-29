@@ -2,7 +2,6 @@
 
 import BaseDialog from '@/components/common/dialog/base-dialog'
 import { MultiSelect } from '@/components/template/combobox/multi-selection'
-import { SearchComboBox } from '@/components/template/modal/search-combobox'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,10 +24,9 @@ import {
   updateLecturer
 } from '@/service/master/lecturer/lecturer-service'
 import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
-import { getAllUsers } from '@/service/user-management/user-service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo } from 'react'
-import { Resolver, useForm, useWatch } from 'react-hook-form'
+import { useEffect } from 'react'
+import { Resolver, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 interface EditLecturerDialogProps {
@@ -41,11 +39,6 @@ interface EditLecturerDialogProps {
 function EditLecturerDialogSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-10 w-full" />
-      </div>
-
       <div className="space-y-2">
         <Skeleton className="h-4 w-16" />
         <Skeleton className="h-10 w-full" />
@@ -97,14 +90,6 @@ export default function EditLecturerDialog({
   })
 
   const {
-    data: usersResp,
-    isLoading: isUsersLoading,
-    run: runUsers
-  } = useFetcher(() => getAllUsers({ role: 'DSN' }), {
-    immediate: false
-  })
-
-  const {
     data: studyProgramsResp,
     isLoading: isStudyProgramsLoading,
     run: runStudyPrograms
@@ -115,9 +100,8 @@ export default function EditLecturerDialog({
   useEffect(() => {
     if (!open || !lecturerId) return
     runLecturer()
-    runUsers()
     runStudyPrograms()
-  }, [lecturerId, open, runLecturer, runStudyPrograms, runUsers])
+  }, [lecturerId, open, runLecturer, runStudyPrograms])
 
   useEffect(() => {
     resetLecturer()
@@ -142,16 +126,6 @@ export default function EditLecturerDialog({
       nip: lecturerResp.nip
     })
   }, [form, lecturerResp])
-
-  const selectedUserId = useWatch({
-    control: form.control,
-    name: 'user_id'
-  })
-
-  const selectedUser = useMemo(
-    () => usersResp?.find((user) => user.id === selectedUserId),
-    [usersResp, selectedUserId]
-  )
 
   const { onSubmit, isSubmitting } = useSubmit<UpdateLecturerPayload, null>({
     mutation: (payload) => updateLecturer(lecturerId || '', payload),
@@ -183,8 +157,7 @@ export default function EditLecturerDialog({
     onOpenChange(newOpen)
   }
 
-  const isFormLoading =
-    isLecturerLoading || isUsersLoading || isStudyProgramsLoading
+  const isFormLoading = isLecturerLoading || isStudyProgramsLoading
   const isInitialLoading = isFormLoading && !lecturerResp
 
   return (
@@ -198,38 +171,10 @@ export default function EditLecturerDialog({
         ) : (
           <Form {...form}>
             <form onSubmit={onSubmit} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="user_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      User<span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl className="w-full">
-                      <SearchComboBox
-                        value={field.value}
-                        onChange={(value) => field.onChange(value ?? '')}
-                        options={
-                          usersResp?.map((user) => ({
-                            value: user.id,
-                            label: user.name
-                          })) || []
-                        }
-                        placeholder="Select user"
-                        isLoading={isUsersLoading}
-                        disabled
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="space-y-2">
                 <FormLabel>Name</FormLabel>
                 <Input
-                  value={selectedUser?.name || lecturerResp?.name || ''}
+                  value={lecturerResp?.name || ''}
                   disabled
                   placeholder="Choose user"
                 />
@@ -238,7 +183,7 @@ export default function EditLecturerDialog({
               <div className="space-y-2">
                 <FormLabel>Email</FormLabel>
                 <Input
-                  value={selectedUser?.email || ''}
+                  value={lecturerResp?.email || ''}
                   disabled
                   placeholder="Choose user"
                 />

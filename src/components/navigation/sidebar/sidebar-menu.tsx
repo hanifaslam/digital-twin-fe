@@ -36,6 +36,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Study Program',
           href: '/dashboard/master-data/study-program',
           middleware: ['study_program']
+        },
+        {
+          id: 'Room',
+          label: 'Room',
+          href: '/dashboard/master-data/room',
+          middleware: ['room']
         }
       ]
     },

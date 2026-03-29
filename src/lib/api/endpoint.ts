@@ -38,6 +38,24 @@ export const ApiEndpoint = {
       SHOW: 'study-programs/:id',
       UPDATE: 'study-programs/:id',
       GET_ALL: 'study-programs/all'
+    },
+    ROOM: {
+      BASE: 'rooms',
+      SHOW: 'rooms/:id',
+      UPDATE: 'rooms/:id',
+      TOGGLE_STATUS: 'rooms/:id/status'
+    },
+    FLOOR: {
+      BASE: 'floors',
+      SHOW: 'floors/:id',
+      UPDATE: 'floors/:id',
+      GET_ALL: 'floors/all'
+    },
+    BUILDING: {
+      BASE: 'buildings',
+      SHOW: 'buildings/:id',
+      UPDATE: 'buildings/:id',
+      GET_ALL: 'buildings/all'
     }
   }
 } as const
