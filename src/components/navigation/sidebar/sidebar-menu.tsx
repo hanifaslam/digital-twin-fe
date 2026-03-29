@@ -42,6 +42,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Room',
           href: '/dashboard/master-data/room',
           middleware: ['room']
+        },
+        {
+          id: 'Device',
+          label: 'Device',
+          href: '/dashboard/master-data/device',
+          middleware: ['device']
         }
       ]
     },

@@ -6,6 +6,7 @@ import {
 } from '@/schema/master/room/room-schema'
 import { BaseParams } from '@/types/global'
 import {
+  GetAllRooms,
   ListRoomResponse,
   ShowRoomResponse
 } from '@/types/response/master/room/room-response'
@@ -19,6 +20,10 @@ export const RoomService = {
     return api.get<ListRoomResponse[]>(ApiEndpoint.MASTER.ROOM.BASE, {
       params
     })
+  },
+
+  getAllRooms: async () => {
+    return api.get<GetAllRooms[]>(ApiEndpoint.MASTER.ROOM.GET_ALL)
   },
 
   detail: async (id: string) => {
@@ -39,7 +44,7 @@ export const RoomService = {
   },
 
   delete: async (id: string) => {
-    return api.delete<null>(ApiEndpoint.MASTER.ROOM.SHOW.replace(':id', id))
+    return api.delete<null>(ApiEndpoint.MASTER.ROOM.DELETE.replace(':id', id))
   },
 
   toggleStatus: async (id: string) => {
@@ -51,6 +56,7 @@ export const RoomService = {
 
 export const {
   list: listRoom,
+  getAllRooms,
   detail: showRoom,
   create: createRoom,
   update: updateRoom,

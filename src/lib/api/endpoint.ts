@@ -43,7 +43,9 @@ export const ApiEndpoint = {
       BASE: 'rooms',
       SHOW: 'rooms/:id',
       UPDATE: 'rooms/:id',
-      TOGGLE_STATUS: 'rooms/:id/status'
+      GET_ALL: 'rooms/all',
+      TOGGLE_STATUS: 'rooms/:id/status',
+      DELETE: 'rooms/:id'
     },
     FLOOR: {
       BASE: 'floors',
@@ -56,6 +58,14 @@ export const ApiEndpoint = {
       SHOW: 'buildings/:id',
       UPDATE: 'buildings/:id',
       GET_ALL: 'buildings/all'
+    },
+    DEVICE: {
+      BASE: 'devices',
+      SHOW: 'devices/:id',
+      UPDATE: 'devices/:id',
+      TOGGLE_STATUS: 'devices/:id/status',
+      GET_TYPES: 'devices/types',
+      DELETE: 'devices/:id'
     }
   }
 } as const

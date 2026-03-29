@@ -9,6 +9,11 @@ export interface ListRoomResponse {
   updated_at: string
 }
 
+export interface GetAllRooms {
+  id: string
+  name: string
+}
+
 export interface ShowRoomResponse {
   id: string
   name: string
