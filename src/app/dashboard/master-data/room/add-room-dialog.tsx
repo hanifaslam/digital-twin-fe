@@ -1,6 +1,7 @@
 'use client'
 
 import BaseDialog from '@/components/common/dialog/base-dialog'
+import { SearchComboBox } from '@/components/template/modal/search-combobox'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -21,7 +22,6 @@ import {
 import { getAllBuildings } from '@/service/master/building/building-service'
 import { getAllFloors } from '@/service/master/floor/floor-service'
 import { createRoom } from '@/service/master/room/room-service'
-import { SearchComboBox } from '@/components/template/modal/search-combobox'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { Resolver, useForm } from 'react-hook-form'
@@ -44,7 +44,7 @@ export default function AddRoomDialog({
     defaultValues: {
       name: '',
       building_id: '',
-      floor: '',
+      floor_id: '',
       status: true
     }
   })
@@ -150,7 +150,7 @@ export default function AddRoomDialog({
 
             <FormField
               control={form.control}
-              name="floor"
+              name="floor_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>

@@ -70,7 +70,7 @@ export default function EditRoomDialog({
     defaultValues: {
       name: '',
       building_id: '',
-      floor: '',
+      floor_id: '',
       status: true
     }
   })
@@ -114,7 +114,7 @@ export default function EditRoomDialog({
     form.reset({
       name: '',
       building_id: '',
-      floor: '',
+      floor_id: '',
       status: true
     })
   }, [form, open, resetRoom, roomId])
@@ -125,7 +125,7 @@ export default function EditRoomDialog({
     form.reset({
       name: roomResp.name,
       building_id: roomResp.building_id,
-      floor: roomResp.floor_id,
+      floor_id: roomResp.floor_id,
       status: roomResp.status
     })
   }, [form, roomResp])
@@ -218,7 +218,7 @@ export default function EditRoomDialog({
 
               <FormField
                 control={form.control}
-                name="floor"
+                name="floor_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
