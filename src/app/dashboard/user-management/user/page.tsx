@@ -207,6 +207,7 @@ export default function UserPage() {
       trailing={
         <div className="flex space-x-4">
           <FilterSheet
+            badgeCount={filters.status.length + filters.role.length}
             onConfirm={() => {
               setFilters({ status: tempStatus, role: tempRoles })
               setCurrentPage(1)

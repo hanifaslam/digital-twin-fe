@@ -163,6 +163,7 @@ export default function RolePage() {
       trailing={
         <div className="flex space-x-4">
           <FilterSheet
+            badgeCount={filters.status.length}
             onConfirm={() => {
               setFilters({ status: tempStatus })
               setCurrentPage(1)
