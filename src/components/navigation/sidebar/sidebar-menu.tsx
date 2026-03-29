@@ -20,6 +20,38 @@ export function useMenuItems(): MenuItem[] {
       middleware: ['dashboard']
     },
     {
+      id: 'master-data',
+      label: 'Master Data',
+      icon: <UserIcon className="h-6 w-6" />,
+      middleware: ['master'],
+      children: [
+        {
+          id: 'Lecturer',
+          label: 'Lecturer',
+          href: '/dashboard/master-data/lecturer',
+          middleware: ['lecturer']
+        },
+        {
+          id: 'Study Program',
+          label: 'Study Program',
+          href: '/dashboard/master-data/study-program',
+          middleware: ['study_program']
+        },
+        {
+          id: 'Room',
+          label: 'Room',
+          href: '/dashboard/master-data/room',
+          middleware: ['room']
+        },
+        {
+          id: 'Device',
+          label: 'Device',
+          href: '/dashboard/master-data/device',
+          middleware: ['device']
+        }
+      ]
+    },
+    {
       id: 'user-management',
       label: 'User Management',
       icon: <UserIcon className="h-6 w-6" />,

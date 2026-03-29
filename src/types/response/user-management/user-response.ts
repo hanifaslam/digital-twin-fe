@@ -20,3 +20,9 @@ export interface ShowUserResponse {
   created_at: string
   updated_at: string
 }
+
+export interface GetAllUsersResponse {
+  id: string
+  name: string
+  email: string
+}
