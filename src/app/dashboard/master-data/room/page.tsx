@@ -196,7 +196,7 @@ export default function RoomPage() {
       title="Room"
       leading={
         <SearchInput
-          placeholder="Search"
+          placeholder="Search..."
           className="max-w-lg"
           value={search}
           onSearch={(value) => {

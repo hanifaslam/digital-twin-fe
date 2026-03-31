@@ -7,16 +7,19 @@ import {
   ShowStudyProgramResponse
 } from '@/types/response/master/study-program/study-program-response'
 
-export type StudyProgramListParams = BaseParams
+export interface StudyProgramListParams extends BaseParams {
+  building_id?: string
+}
 
 export const StudyProgramService = {
   list: async (params: StudyProgramListParams) => {
-    return api.get<ListStudyProgramResponse[]>(
-      ApiEndpoint.MASTER.STUDY_PROGRAM.BASE,
-      {
-        params
-      }
-    )
+    return api.get<ListStudyProgramResponse[]>(ApiEndpoint.MASTER.STUDY_PROGRAM.BASE, {
+      params
+    })
+  },
+
+  getAllStudyPrograms: async () => {
+    return api.get<GetAllStudyPrograms[]>(ApiEndpoint.MASTER.STUDY_PROGRAM.GET_ALL)
   },
 
   detail: async (id: string) => {
@@ -25,15 +28,29 @@ export const StudyProgramService = {
     )
   },
 
-  getAllStudyPrograms: async () => {
-    return api.get<GetAllStudyPrograms[]>(
-      ApiEndpoint.MASTER.STUDY_PROGRAM.GET_ALL
+ create: async (data: any) => {
+    return api.post<null>(ApiEndpoint.MASTER.STUDY_PROGRAM.BASE, data)
+  },
+
+  update: async (id: string, data: any) => {
+    return api.patch<null>(
+      ApiEndpoint.MASTER.STUDY_PROGRAM.UPDATE.replace(':id', id),
+      data
+    )
+  },
+
+  toggleStatus: async (id: string) => {
+    return api.patch<null>(
+      ApiEndpoint.MASTER.STUDY_PROGRAM.TOGGLE_STATUS.replace(':id', id)
     )
   }
 }
 
 export const {
   list: listStudyProgram,
+  getAllStudyPrograms,
   detail: showStudyProgram,
-  getAllStudyPrograms: getAllStudyPrograms
+  create: createStudyProgram,
+  update: updateStudyProgram,
+  toggleStatus: toggleStudyProgramStatus
 } = StudyProgramService

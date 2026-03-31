@@ -37,7 +37,8 @@ export const ApiEndpoint = {
       BASE: 'study-programs',
       SHOW: 'study-programs/:id',
       UPDATE: 'study-programs/:id',
-      GET_ALL: 'study-programs/all'
+      GET_ALL: 'study-programs/all',
+      TOGGLE_STATUS: 'study-programs/:id/status',
     },
     ROOM: {
       BASE: 'rooms',
