@@ -54,6 +54,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Helper',
           href: '/dashboard/master-data/helper',
           middleware: ['helper']
+        },
+        {
+          id: 'Course',
+          label: 'Course',
+          href: '/dashboard/master-data/course',
+          middleware: ['course']
         }
       ]
     },

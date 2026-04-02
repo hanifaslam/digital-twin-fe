@@ -72,6 +72,15 @@ export const ApiEndpoint = {
       SHOW: 'helpers/:id',
       UPDATE: 'helpers/:id',
       GET_ALL: 'helpers/all'
+    },
+    COURSE: {
+      BASE: 'courses',
+      SHOW: 'courses/:id',
+      UPDATE: 'courses/:id',
+      GET_ALL: 'courses/all',
+      GET_ALL_SEMESTER: 'courses/semesters',
+      TOGGLE_STATUS: 'courses/:id/status',
+      DELETE: 'courses/:id'
     }
   }
 } as const
