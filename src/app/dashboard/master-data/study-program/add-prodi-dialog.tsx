@@ -79,7 +79,7 @@ export default function AddStudyProgramDialog({
       content={
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-4">
-            {/* NAME */}
+           
             <FormField
               control={form.control}
               name="name"
@@ -100,7 +100,6 @@ export default function AddStudyProgramDialog({
               )}
             />
 
-            {/* CODE */}
             <FormField
               control={form.control}
               name="code"
@@ -124,7 +123,6 @@ export default function AddStudyProgramDialog({
               )}
             />
 
-            {/* STATUS (FIXED) */}
             <FormField
               control={form.control}
               name="status"
@@ -132,7 +130,7 @@ export default function AddStudyProgramDialog({
                 <FormItem>
                   <FormLabel>Status</FormLabel>
                   <FormControl>
-                    <div className="flex flex-col gap-2 mt-2">
+                    <div className="flex items-center space-x-2">
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
@@ -146,7 +144,6 @@ export default function AddStudyProgramDialog({
               )}
             />
 
-            {/* SUBMIT BUTTON DI DALAM FORM (PENTING) */}
             <div className="flex justify-end gap-2 pt-2">
               <Button
                 variant="outline"
@@ -157,8 +154,10 @@ export default function AddStudyProgramDialog({
               </Button>
 
               <Button
-                type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
+              onClick={onSubmit}
+              disabled={isSubmitting || !form.formState.isValid}
+              type="submit"
+                
               >
                 {isSubmitting ? 'Adding...' : 'Submit'}
               </Button>

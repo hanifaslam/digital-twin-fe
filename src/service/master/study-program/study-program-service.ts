@@ -39,6 +39,10 @@ export const StudyProgramService = {
     )
   },
 
+  delete: async (id: string) => {
+    return api.delete<null>(ApiEndpoint.MASTER.STUDY_PROGRAM.DELETE.replace(':id', id))
+  },
+
   toggleStatus: async (id: string) => {
     return api.patch<null>(
       ApiEndpoint.MASTER.STUDY_PROGRAM.TOGGLE_STATUS.replace(':id', id)
@@ -52,5 +56,6 @@ export const {
   detail: showStudyProgram,
   create: createStudyProgram,
   update: updateStudyProgram,
+  delete: deleteStudyProgram,
   toggleStatus: toggleStudyProgramStatus
 } = StudyProgramService

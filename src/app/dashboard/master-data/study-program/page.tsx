@@ -7,6 +7,7 @@ import {
   TableContainer
 } from '@/components/common/table/table-container'
 import { PencilIcon } from '@/components/icons/pencil-icon'
+import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import IconButton from '@/components/template/button/icon-button'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
@@ -18,6 +19,7 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import useFetcher from '@/hooks/use-fetcher'
 import {
+  deleteStudyProgram,
   getAllStudyPrograms,
   toggleStudyProgramStatus
 } from '@/service/master/study-program/study-program-service'
@@ -30,6 +32,7 @@ import { toast } from 'sonner'
 import AddStudyProgramDialog from './add-prodi-dialog'
 import EditStudyProgramDialog from './edit-prodi-dialog'
 import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
+import { deleteRoom } from '@/service/master/room/room-service'
 
 export default function StudyProgramPage() {
   const [search, setSearch] = useState('')
@@ -113,13 +116,17 @@ export default function StudyProgramPage() {
       key: 'name',
       label: 'Study Program',
       className: 'min-w-[220px]',
-      render: (row) => <p className="text-sm font-medium">{row.name}</p>
+        render: (value) => (
+        <p className="truncate text-sm font-medium">{value.name}</p>
+      )
     },
     {
       key: 'code',
       label: 'Code',
       className: 'min-w-[180px]',
-      render: (row) => <p className="text-sm">{row.code}</p>
+        render: (value) => (
+        <p className="truncate text-sm font-medium">{value.name}</p>
+      )
     },
     {
       key: 'status',
@@ -140,14 +147,39 @@ export default function StudyProgramPage() {
   function handleEdit(row: ListStudyProgramResponse) {
     setEditingId(row.id)
   }
+const handleDelete = async (row: ListStudyProgramResponse) => {
+    const confirmed = await confirm({
+      title: 'Delete Study Program',
+      description: `Are you sure you want to delete this study program?`,
+      confirmText: 'Yes, Delete',
+      cancelText: 'Cancel',
+      confirmButtonClassName: 'bg-red-600 hover:bg-red-700'
+    })
 
+    if (!confirmed) return
+
+    try {
+      await deleteStudyProgram(row.id)
+      void mutate()
+      toast.success('Study Program deleted successfully')
+    } catch (error) {
+      toast.error((error as AxiosError)?.message || 'Failed to delete study program')
+    }
+  }
   const tableAction: TableAction<ListStudyProgramResponse>[] = [
     {
       label: 'Edit',
       onClick: handleEdit,
       icon: <PencilIcon />,
       variant: 'ghost'
-    }
+    },
+   {
+      label: 'Delete',
+      onClick: handleDelete,
+      icon: <TrashIcon className="size-4" />,
+      variant: 'ghost',
+      className: 'text-red-600 hover:text-red-700'
+}
   ]
 
   return (
@@ -155,7 +187,7 @@ export default function StudyProgramPage() {
       title="Study Program"
       leading={
         <SearchInput
-          placeholder="Search..."
+          placeholder="Search"
           className="max-w-lg"
           value={search}
           onSearch={(value) => {

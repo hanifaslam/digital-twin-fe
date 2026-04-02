@@ -154,6 +154,30 @@ export function TableContainer<T extends object = object>({
   const columnResolver: TableColumn<T>[] = React.useMemo(() => {
     const baseColumns = [...columns]
 
+    if (showCreatedAt) {
+      const hasCreatedAtColumn = baseColumns.some(
+        (col) => col.key === 'created_at'
+      )
+
+      if (!hasCreatedAtColumn) {
+        baseColumns.push({
+          key: 'created_at',
+          label: 'Created At',
+          render: (row) => {
+            const createdAt = (row as Record<string, unknown>).created_at
+            if (!createdAt) {
+              return null
+            }
+            return (
+              <span className="text-sm text-gray-600">
+                {formatDateTime(createdAt as string | Date)}
+              </span>
+            )
+          }
+        })
+      }
+    }
+
     return baseColumns
   }, [columns, showCreatedAt])
 

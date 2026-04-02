@@ -87,7 +87,7 @@ export default function LecturerPage() {
       label: 'Name',
       className: 'min-w-[180px]',
       render: (value) => (
-        <p className="whitespace-normal text-sm font-medium">{value.name}</p>
+        <p className="truncate text-sm font-medium">{value.name}</p>
       )
     },
     {
@@ -103,7 +103,7 @@ export default function LecturerPage() {
       label: 'Study Program',
       className: 'min-w-[220px]',
       render: (value) => (
-        <p className="whitespace-normal text-sm font-medium">
+        <p className="truncate text-sm font-medium">
           {Array.isArray(value.study_program)
             ? value.study_program.join(', ')
             : value.study_program || '-'}
@@ -136,7 +136,7 @@ export default function LecturerPage() {
       title="Lecturer"
       leading={
         <SearchInput
-          placeholder="Search..."
+          placeholder="Search"
           className="max-w-lg"
           value={search}
           onSearch={(value) => {

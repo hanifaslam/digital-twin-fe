@@ -151,7 +151,7 @@ export default function RolePage() {
       title="Role"
       leading={
         <SearchInput
-          placeholder="Search..."
+          placeholder="Search"
           className="max-w-lg"
           value={search}
           onSearch={(value) => {
