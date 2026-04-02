@@ -66,6 +66,12 @@ export const ApiEndpoint = {
       TOGGLE_STATUS: 'devices/:id/status',
       GET_TYPES: 'devices/types',
       DELETE: 'devices/:id'
+    },
+    HELPER: {
+      BASE: 'helpers',
+      SHOW: 'helpers/:id',
+      UPDATE: 'helpers/:id',
+      GET_ALL: 'helpers/all'
     }
   }
 } as const

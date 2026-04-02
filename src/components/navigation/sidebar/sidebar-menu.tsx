@@ -48,6 +48,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Device',
           href: '/dashboard/master-data/device',
           middleware: ['device']
+        },
+        {
+          id: 'Helper',
+          label: 'Helper',
+          href: '/dashboard/master-data/helper',
+          middleware: ['helper']
         }
       ]
     },
