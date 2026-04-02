@@ -81,6 +81,13 @@ export const ApiEndpoint = {
       GET_ALL_SEMESTER: 'courses/semesters',
       TOGGLE_STATUS: 'courses/:id/status',
       DELETE: 'courses/:id'
+    },
+    TIME_SLOT: {
+      BASE: 'time-slots',
+      SHOW: 'time-slots/:id',
+      UPDATE: 'time-slots/:id',
+      GET_ALL: 'time-slots/all',
+      DELETE: 'time-slots/:id'
     }
   }
 } as const
