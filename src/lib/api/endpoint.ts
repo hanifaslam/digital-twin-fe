@@ -88,6 +88,14 @@ export const ApiEndpoint = {
       UPDATE: 'time-slots/:id',
       GET_ALL: 'time-slots/all',
       DELETE: 'time-slots/:id'
+    },
+    CLASS: {
+      BASE: 'classes',
+      SHOW: 'classes/:id',
+      UPDATE: 'classes/:id',
+      GET_ALL: 'classes/all',
+      TOGGLE_STATUS: 'classes/:id/status',
+      DELETE: 'classes/:id'
     }
   }
 } as const

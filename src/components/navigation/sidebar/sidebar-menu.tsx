@@ -66,6 +66,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Time Slot',
           href: '/dashboard/master-data/time-slot',
           middleware: ['time_slot']
+        },
+        {
+          id: 'Class',
+          label: 'Class',
+          href: '/dashboard/master-data/class',
+          middleware: ['class']
         }
       ]
     },
