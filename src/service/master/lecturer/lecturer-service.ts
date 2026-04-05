@@ -6,12 +6,14 @@ import {
 } from '@/schema/master/lecturer/lecturer-schema'
 import { BaseParams } from '@/types/global'
 import {
+  GetAllLecturerResponse,
   ListLecturerResponse,
   ShowLecturerResponse
 } from '@/types/response/master/lecturer/lecturer-response'
 
 export interface LecturerListParams extends BaseParams {
   study_program?: string
+  study_program_id?: string
 }
 
 export const LecturerService = {
@@ -19,6 +21,15 @@ export const LecturerService = {
     return api.get<ListLecturerResponse[]>(ApiEndpoint.MASTER.LECTURER.BASE, {
       params
     })
+  },
+
+  getAllLecturers: async (params?: { study_program_id?: string }) => {
+    return api.get<GetAllLecturerResponse[]>(
+      ApiEndpoint.MASTER.LECTURER.GET_ALL,
+      {
+        params
+      }
+    )
   },
 
   detail: async (id: string) => {
@@ -41,6 +52,7 @@ export const LecturerService = {
 
 export const {
   list: listLecturer,
+  getAllLecturers,
   detail: showLecturer,
   create: createLecturer,
   update: updateLecturer
