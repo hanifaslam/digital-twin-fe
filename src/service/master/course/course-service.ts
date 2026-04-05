@@ -25,8 +25,10 @@ export const CourseService = {
     })
   },
 
-  getAllCourses: async () => {
-    return api.get<GetAllCourseResponse[]>(ApiEndpoint.MASTER.COURSE.GET_ALL)
+  getAllCourses: async (params?: { study_program_id?: string }) => {
+    return api.get<GetAllCourseResponse[]>(ApiEndpoint.MASTER.COURSE.GET_ALL, {
+      params
+    })
   },
 
   getAllSemesters: async () => {

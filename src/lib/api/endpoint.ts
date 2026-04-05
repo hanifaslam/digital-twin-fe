@@ -31,7 +31,8 @@ export const ApiEndpoint = {
     LECTURER: {
       BASE: 'lecturers',
       SHOW: 'lecturers/:id',
-      UPDATE: 'lecturers/:id'
+      UPDATE: 'lecturers/:id',
+      GET_ALL: 'lecturers/all'
     },
     STUDY_PROGRAM: {
       BASE: 'study-programs',
@@ -96,6 +97,15 @@ export const ApiEndpoint = {
       GET_ALL: 'classes/all',
       TOGGLE_STATUS: 'classes/:id/status',
       DELETE: 'classes/:id'
+    },
+    SCHEDULE: {
+      BASE: 'schedules',
+      LIST: 'schedules/grouped',
+      SHOW: 'schedules/:id',
+      UPDATE: 'schedules/:id',
+      TOGGLE_STATUS: 'schedules/:id/status',
+      DELETE: 'schedules/:id',
+      GET_ALL_DAYS: 'schedules/days'
     }
   }
 } as const

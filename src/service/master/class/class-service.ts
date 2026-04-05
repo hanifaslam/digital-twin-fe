@@ -23,8 +23,10 @@ export const ClassService = {
     })
   },
 
-  getAllClasses: async () => {
-    return api.get<GetAllClassResponse[]>(ApiEndpoint.MASTER.CLASS.GET_ALL)
+  getAllClasses: async (params?: { study_program_id?: string }) => {
+    return api.get<GetAllClassResponse[]>(ApiEndpoint.MASTER.CLASS.GET_ALL, {
+      params
+    })
   },
 
   detail: async (id: string) => {

@@ -5,6 +5,17 @@ export interface LoginResponse {
   email: string
   role_name: string
   role_id: string
+  role_code?: string
+}
+
+export interface MeStudyProgramResponse {
+  id: string
+  name: string
+}
+
+export interface MeBuildingResponse {
+  id: string
+  name: string
 }
 
 export interface MeResponse {
@@ -14,6 +25,9 @@ export interface MeResponse {
   email: string
   role_name: string
   role_id: string
+  role_code?: string
+  study_programs?: MeStudyProgramResponse[]
+  buildings?: MeBuildingResponse[]
   access: Access[]
 }
 

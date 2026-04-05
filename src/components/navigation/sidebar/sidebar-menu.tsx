@@ -72,6 +72,12 @@ export function useMenuItems(): MenuItem[] {
           label: 'Class',
           href: '/dashboard/master-data/class',
           middleware: ['class']
+        },
+        {
+          id: 'Schedule',
+          label: 'Schedule',
+          href: '/dashboard/master-data/schedule',
+          middleware: ['schedule']
         }
       ]
     },
