@@ -79,7 +79,7 @@ export default function LecturerPage() {
       label: 'NIP',
       className: 'min-w-[160px]',
       render: (value) => (
-        <p className="truncate text-sm font-medium">{value.nip}</p>
+        <p className="text-sm font-medium">{value.nip}</p>
       )
     },
     {
@@ -95,7 +95,7 @@ export default function LecturerPage() {
       label: 'Email',
       className: 'min-w-[220px]',
       render: (value) => (
-        <p className="truncate text-sm font-medium">{value.email}</p>
+        <p className="text-sm font-medium">{value.email}</p>
       )
     },
     {
