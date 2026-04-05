@@ -9,6 +9,11 @@ export interface ListLecturerResponse {
   updated_at: string
 }
 
+export interface GetAllLecturerResponse {
+  id: string
+  name: string
+}
+
 export interface LecturerStudyProgramResponse {
   id: string
   name: string
