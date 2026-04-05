@@ -48,6 +48,36 @@ export function useMenuItems(): MenuItem[] {
           label: 'Device',
           href: '/dashboard/master-data/device',
           middleware: ['device']
+        },
+        {
+          id: 'Helper',
+          label: 'Helper',
+          href: '/dashboard/master-data/helper',
+          middleware: ['helper']
+        },
+        {
+          id: 'Course',
+          label: 'Course',
+          href: '/dashboard/master-data/course',
+          middleware: ['course']
+        },
+        {
+          id: 'Time Slot',
+          label: 'Time Slot',
+          href: '/dashboard/master-data/time-slot',
+          middleware: ['time_slot']
+        },
+        {
+          id: 'Class',
+          label: 'Class',
+          href: '/dashboard/master-data/class',
+          middleware: ['class']
+        },
+        {
+          id: 'Schedule',
+          label: 'Schedule',
+          href: '/dashboard/master-data/schedule',
+          middleware: ['schedule']
         }
       ]
     },
