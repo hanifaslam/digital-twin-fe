@@ -44,6 +44,18 @@ export function useMenuItems(): MenuItem[] {
           middleware: ['room']
         },
         {
+          id: 'Floor',
+          label: 'Floor',
+          href: '/dashboard/master-data/floor',
+          middleware: ['floor']
+        },
+        {
+          id: 'Building',
+          label: 'Building',
+          href: '/dashboard/master-data/building',
+          middleware: ['building']
+        },
+        {
           id: 'Device',
           label: 'Device',
           href: '/dashboard/master-data/device',
