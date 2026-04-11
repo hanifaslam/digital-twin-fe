@@ -32,7 +32,8 @@ export const ApiEndpoint = {
       BASE: 'lecturers',
       SHOW: 'lecturers/:id',
       UPDATE: 'lecturers/:id',
-      GET_ALL: 'lecturers/all'
+      GET_ALL: 'lecturers/all',
+      OVERRIDE_STATUS: 'lecturers/status/override'
     },
     STUDY_PROGRAM: {
       BASE: 'study-programs',
@@ -109,5 +110,10 @@ export const ApiEndpoint = {
       DELETE: 'schedules/:id',
       GET_ALL_DAYS: 'schedules/days'
     }
+  },
+  FACE_RECOGNITION: {
+    REGISTER: 'face-recognition/register',
+    VERIFY: 'face-recognition/verify',
+    CHECK_STATUS: 'face-recognition/status'
   }
 } as const

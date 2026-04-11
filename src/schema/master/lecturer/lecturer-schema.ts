@@ -15,3 +15,11 @@ export type CreateLecturerPayload = z.infer<typeof createLecturerSchema>
 export const updateLecturerSchema = createLecturerSchema.partial()
 
 export type UpdateLecturerPayload = z.infer<typeof updateLecturerSchema>
+
+export const overrideLecturerStatusSchema = z.object({
+  status: z.enum(['BUSY', 'OFFLINE'])
+})
+
+export type OverrideLecturerStatusPayload = z.infer<
+  typeof overrideLecturerStatusSchema
+>

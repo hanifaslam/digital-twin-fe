@@ -9,3 +9,7 @@ export function useLecturer(params: Partial<LecturerListParams>) {
     LecturerService.list(params as LecturerListParams)
   )
 }
+
+export function useLecturerStatus(id: string) {
+  return useSWR(['lecturer-status', id], () => LecturerService.overrideStatus)
+}
