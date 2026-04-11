@@ -11,6 +11,7 @@ interface StoredUser {
   role_id: string
   role_code?: string
   nip?: string
+  lecturer_id?: string
   study_programs?: MeStudyProgramResponse[]
   buildings?: MeBuildingResponse[]
   access: Access[] | null
@@ -48,6 +49,7 @@ const useAuthStore = create<AuthState>()(
           role_id: user.role_id,
           role_code: user.role_code,
           nip: user.nip,
+          lecturer_id: user.lecturer_id,
           access: user.access || null
         }
 

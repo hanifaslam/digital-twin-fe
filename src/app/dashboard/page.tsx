@@ -1,18 +1,18 @@
 'use client'
 
-import AttendFaceDialog from './_components/attend-face-dialog'
-import RegisterFaceDialog from './_components/register-face-dialog'
 import ContentLayout from '@/components/layout/content-layout'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
 import { useFaceRecog } from '@/hooks/api/face-recog/use-face-recog'
+import { useLecturerDashboardSocket } from '@/hooks/api/socket/use-lecturer-status'
 import { handleApiError } from '@/lib/utils'
 import { LecturerService } from '@/service/master/lecturer/lecturer-service'
 import useAuthStore from '@/store/auth-store'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import AttendFaceDialog from './_components/attend-face-dialog'
+import RegisterFaceDialog from './_components/register-face-dialog'
 
-// Components
 import { AttendanceCard } from './_components/attendance-card'
 import { AttendanceTable } from './_components/attendance-table'
 import { RegistrationBanner } from './_components/registration-banner'
@@ -20,6 +20,8 @@ import { RegistrationBanner } from './_components/registration-banner'
 export default function DashboardPage() {
   const { user } = useAuthStore()
   const { data: faceStatus, isLoading: statusLoading, refetch } = useFaceRecog()
+
+  useLecturerDashboardSocket(user?.lecturer_id)
 
   const confirm = useConfirm()
   const [registerOpen, setRegisterOpen] = useState(false)

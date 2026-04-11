@@ -38,9 +38,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
   React.useEffect(() => {
     const isCalendarPage = pathname.match(
-      /\/(en|id)\/dashboard\/rates-and-availability\/calendar/
+      /(?:\/(en|id))?\/dashboard\/rates-and-availability\/calendar/
     )
-    const isDashboardPage = pathname.match(/^\/(en|id)\/dashboard$/)
+    const isDashboardPage = pathname.match(/^(?:\/(en|id))?\/dashboard$/)
 
     setIsMobileOpen(false)
     setIsHidden(!!isCalendarPage)
