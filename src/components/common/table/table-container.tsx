@@ -107,6 +107,7 @@ export interface TableContainerProps<T extends object = object> {
   renderMultiSelectActions?: (selectedRows: T[]) => React.ReactNode
   actionColumnLabel?: string
   showMultiSelectFloatingCard?: boolean
+  loadingRowsCount?: number
 }
 
 export function TableContainer<T extends object = object>({
@@ -149,7 +150,8 @@ export function TableContainer<T extends object = object>({
   multiSelectText = 'Item',
   renderMultiSelectActions,
   actionColumnLabel = 'Action',
-  showMultiSelectFloatingCard = true
+  showMultiSelectFloatingCard = true,
+  loadingRowsCount = 5
 }: TableContainerProps<T>) {
   const columnResolver: TableColumn<T>[] = React.useMemo(() => {
     const baseColumns = [...columns]
@@ -270,6 +272,7 @@ export function TableContainer<T extends object = object>({
         onSelectionChange={onSelectionChange}
         getRowId={getRowId}
         actionColumnLabel={actionColumnLabel}
+        loadingRowsCount={loadingRowsCount}
       />
 
       {/* Bottom pagination */}
