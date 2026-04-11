@@ -63,6 +63,7 @@ export interface MainTableProps<T extends object = object> {
   onSelectionChange?: (selectedRows: T[]) => void
   getRowId?: (row: T) => string | number
   actionColumnLabel?: string
+  loadingRowsCount?: number
 }
 
 export function MainTable<T extends object = object>({
@@ -90,7 +91,8 @@ export function MainTable<T extends object = object>({
   selectedRows = [],
   onSelectionChange,
   getRowId = (row) => (row as { id?: string | number }).id || '',
-  actionColumnLabel = 'Action'
+  actionColumnLabel = 'Action',
+  loadingRowsCount = 5
 }: MainTableProps<T>) {
   const isRowSelected = (row: T) => {
     const rowId = getRowId(row)
@@ -237,7 +239,7 @@ export function MainTable<T extends object = object>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {Array.from({ length: loadingRowsCount }).map((_, index) => (
               <TableRow
                 key={index}
                 className={cn(
