@@ -2,6 +2,7 @@ import { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
 import {
   CreateLecturerPayload,
+  OverrideLecturerStatusPayload,
   UpdateLecturerPayload
 } from '@/schema/master/lecturer/lecturer-schema'
 import { BaseParams } from '@/types/global'
@@ -47,6 +48,10 @@ export const LecturerService = {
       ApiEndpoint.MASTER.LECTURER.UPDATE.replace(':id', id),
       data
     )
+  },
+
+  overrideStatus: async (data: OverrideLecturerStatusPayload) => {
+    return api.patch<null>(ApiEndpoint.MASTER.LECTURER.OVERRIDE_STATUS, data)
   }
 }
 
