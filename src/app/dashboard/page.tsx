@@ -19,7 +19,14 @@ import { RegistrationBanner } from './_components/registration-banner'
 
 export default function DashboardPage() {
   const { user } = useAuthStore()
-  const { data: faceStatus, isLoading: statusLoading, refetch } = useFaceRecog()
+  const isLecturer = user?.role_code === 'DSN'
+  const {
+    data: faceStatus,
+    isLoading: statusLoading,
+    refetch
+  } = useFaceRecog({
+    enabled: !!isLecturer
+  })
 
   useLecturerDashboardSocket(user?.lecturer_id)
 
@@ -67,36 +74,58 @@ export default function DashboardPage() {
 
   return (
     <ContentLayout title="Dashboard">
-      <div className="flex flex-col gap-5">
-        <RegistrationBanner
-          isRegistered={isRegistered}
-          onRegisterClick={() => setRegisterOpen(true)}
-        />
+      {isLecturer ? (
+        <div className="flex flex-col gap-5">
+          <RegistrationBanner
+            isRegistered={isRegistered}
+            onRegisterClick={() => setRegisterOpen(true)}
+          />
 
-        <AttendanceCard
-          name={user?.name ?? '-'}
-          nip={user?.nip}
-          status={faceStatus}
-          isLoading={statusLoading}
-          onClockIn={() => setClockInOpen(true)}
-          onClockOut={handleNotAvailable}
-          currentTime={currentTime}
-          showColon={showColon}
-        />
+          <AttendanceCard
+            name={user?.name ?? '-'}
+            nip={user?.nip}
+            status={faceStatus}
+            isLoading={statusLoading}
+            onClockIn={() => setClockInOpen(true)}
+            onClockOut={handleNotAvailable}
+            currentTime={currentTime}
+            showColon={showColon}
+          />
 
-        <AttendanceTable status={status} isLoading={statusLoading} />
-      </div>
+          <AttendanceTable status={status} isLoading={statusLoading} />
+        </div>
+      ) : (
+        <div>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga labore
+            dolorum aut illum nisi facere laborum, itaque voluptatem obcaecati
+            repellat iste quos vel possimus quis tempore modi. Vero inventore,
+            et ratione pariatur ut, assumenda vel id debitis eos dignissimos
+            neque consectetur qui aliquid? Voluptates, maxime sapiente debitis
+            iusto quaerat laboriosam nisi blanditiis esse ut dicta non similique
+            ad explicabo cumque ipsam sint beatae excepturi culpa nam
+            accusantium nemo? Neque, totam commodi laboriosam delectus molestias
+            inventore enim? Tenetur minus eius explicabo. Esse ipsa nihil ipsam
+            iste error pariatur, quibusdam et hic repellendus quis veritatis
+            provident rem laboriosam voluptas! Rerum, minus voluptate.
+          </p>
+        </div>
+      )}
 
-      <RegisterFaceDialog
-        open={registerOpen}
-        onOpenChange={setRegisterOpen}
-        onSuccess={handleSuccess}
-      />
-      <AttendFaceDialog
-        open={clockInOpen}
-        onOpenChange={setClockInOpen}
-        onSuccess={handleSuccess}
-      />
+      {isLecturer && (
+        <>
+          <RegisterFaceDialog
+            open={registerOpen}
+            onOpenChange={setRegisterOpen}
+            onSuccess={handleSuccess}
+          />
+          <AttendFaceDialog
+            open={clockInOpen}
+            onOpenChange={setClockInOpen}
+            onSuccess={handleSuccess}
+          />
+        </>
+      )}
     </ContentLayout>
   )
 }
