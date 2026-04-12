@@ -13,6 +13,7 @@ import {
 
 export interface DeviceListParams extends BaseParams {
   room_id?: string
+  building_id?: string
   type?: string
 }
 
@@ -54,6 +55,12 @@ export const DeviceService = {
     return api.patch<null>(
       ApiEndpoint.MASTER.DEVICE.TOGGLE_STATUS.replace(':id', id)
     )
+  },
+
+  control: async (id: string, command: string) => {
+    return api.post<null>(ApiEndpoint.MASTER.DEVICE.CONTROL.replace(':id', id), {
+      command
+    })
   }
 }
 
@@ -64,5 +71,6 @@ export const {
   create: createDevice,
   update: updateDevice,
   delete: deleteDevice,
-  toggleStatus: toggleDeviceStatus
+  toggleStatus: toggleDeviceStatus,
+  control: controlDevice
 } = DeviceService

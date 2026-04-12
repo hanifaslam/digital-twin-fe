@@ -106,7 +106,7 @@ export default function DevicePage() {
     [currentPage, itemsPerPage, search, filters]
   )
 
-  const { data, isLoading, mutate } = useDevice(param)
+  const { data, isLoading, refetch } = useDevice(param)
 
   const handleToggleStatus = async (row: ListDeviceResponse) => {
     const confirmed = await confirm({
@@ -121,7 +121,7 @@ export default function DevicePage() {
 
     try {
       await toggleDeviceStatus(row.id)
-      void mutate()
+      void refetch()
       toast.success(
         `Device ${row.status ? 'deactivated' : 'activated'} successfully`
       )
@@ -145,7 +145,7 @@ export default function DevicePage() {
 
     try {
       await deleteDevice(row.id)
-      void mutate()
+      void refetch()
       toast.success('Device deleted successfully')
     } catch (error) {
       toast.error((error as AxiosError)?.message || 'Failed to delete device')
@@ -279,7 +279,7 @@ export default function DevicePage() {
       <AddDeviceDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
       <EditDeviceDialog
         open={Boolean(editingDeviceId)}
@@ -289,7 +289,7 @@ export default function DevicePage() {
             setEditingDeviceId(null)
           }
         }}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
     </ContentLayout>
   )

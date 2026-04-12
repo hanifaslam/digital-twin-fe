@@ -68,6 +68,7 @@ export const ApiEndpoint = {
       SHOW: 'devices/:id',
       UPDATE: 'devices/:id',
       TOGGLE_STATUS: 'devices/:id/status',
+      CONTROL: 'devices/:id/control',
       GET_TYPES: 'devices/types',
       DELETE: 'devices/:id'
     },
