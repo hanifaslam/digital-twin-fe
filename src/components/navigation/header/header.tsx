@@ -190,7 +190,7 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                     </Avatar>
                     <div className="hidden sm:block text-left">
                       <p className="text-sm font-medium">
-                        {user?.username ?? 'Unknown User'}
+                        {user?.name ?? 'Unknown User'}
                       </p>
                     </div>
                     <ChevronDown className="w-4 h-4 text-muted-foreground" />

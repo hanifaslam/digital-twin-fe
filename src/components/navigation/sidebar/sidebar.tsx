@@ -168,7 +168,12 @@ const SidebarItem: React.FC<{
         hasChildren ? (
           <HoverCard openDelay={50} closeDelay={50}>
             <HoverCardTrigger asChild>{buttonElement}</HoverCardTrigger>
-            <HoverCardContent side="right" align="start" sideOffset={12} className="w-auto p-2">
+            <HoverCardContent
+              side="right"
+              align="start"
+              sideOffset={12}
+              className="w-auto p-2"
+            >
               <div className="flex min-w-48 flex-col gap-1">
                 {item.children?.map((child) => {
                   const childIsActive = Boolean(

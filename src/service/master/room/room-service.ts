@@ -15,6 +15,10 @@ export interface RoomListParams extends BaseParams {
   building_id?: string
 }
 
+export interface RoomGetAllParams extends Partial<BaseParams> {
+  building_id?: string
+}
+
 export const RoomService = {
   list: async (params: RoomListParams) => {
     return api.get<ListRoomResponse[]>(ApiEndpoint.MASTER.ROOM.BASE, {
@@ -22,8 +26,10 @@ export const RoomService = {
     })
   },
 
-  getAllRooms: async () => {
-    return api.get<GetAllRooms[]>(ApiEndpoint.MASTER.ROOM.GET_ALL)
+  getAllRooms: async (params?: RoomGetAllParams) => {
+    return api.get<GetAllRooms[]>(ApiEndpoint.MASTER.ROOM.GET_ALL, {
+      params
+    })
   },
 
   detail: async (id: string) => {
