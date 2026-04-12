@@ -1,4 +1,6 @@
+import { FolderIcon } from '@/components/icons/folder-icon'
 import { HomeIcon } from '@/components/icons/home-icon'
+import { RoomIcon } from '@/components/icons/room-icon'
 import { UserIcon } from '@/components/icons/user-icon'
 
 export interface MenuItem {
@@ -20,23 +22,56 @@ export function useMenuItems(): MenuItem[] {
       middleware: ['dashboard']
     },
     {
-      id: 'master-data',
-      label: 'Master Data',
-      icon: <UserIcon className="h-6 w-6" />,
-      middleware: ['master'],
+      id: 'device-control',
+      label: 'Device Control',
+      icon: <HomeIcon className="h-6 w-6" />,
+      href: '/dashboard/device-control',
+      middleware: ['device_control']
+    },
+    {
+      id: 'management',
+      label: 'Management',
+      icon: <RoomIcon className="h-6 w-6" />,
+      middleware: ['management'],
       children: [
+        {
+          id: 'Schedule',
+          label: 'Schedule',
+          href: '/dashboard/management/schedule',
+          middleware: ['schedule']
+        },
+        {
+          id: 'Class',
+          label: 'Class',
+          href: '/dashboard/management/class',
+          middleware: ['class']
+        },
         {
           id: 'Lecturer',
           label: 'Lecturer',
-          href: '/dashboard/master-data/lecturer',
+          href: '/dashboard/management/lecturer',
           middleware: ['lecturer']
         },
         {
-          id: 'Study Program',
-          label: 'Study Program',
-          href: '/dashboard/master-data/study-program',
-          middleware: ['study_program']
+          id: 'Device',
+          label: 'Device',
+          href: '/dashboard/management/device',
+          middleware: ['device']
         },
+        {
+          id: 'Helper',
+          label: 'Helper',
+          href: '/dashboard/management/helper',
+          middleware: ['helper']
+        }
+      ]
+    },
+    {
+      id: 'master-data',
+      label: 'Master Data',
+      icon: <FolderIcon className="h-6 w-6" />,
+      middleware: ['master'],
+      children: [
         {
           id: 'Room',
           label: 'Room',
@@ -44,16 +79,10 @@ export function useMenuItems(): MenuItem[] {
           middleware: ['room']
         },
         {
-          id: 'Device',
-          label: 'Device',
-          href: '/dashboard/master-data/device',
-          middleware: ['device']
-        },
-        {
-          id: 'Helper',
-          label: 'Helper',
-          href: '/dashboard/master-data/helper',
-          middleware: ['helper']
+          id: 'Study Program',
+          label: 'Study Program',
+          href: '/dashboard/master-data/study-program',
+          middleware: ['study_program']
         },
         {
           id: 'Course',
@@ -66,18 +95,6 @@ export function useMenuItems(): MenuItem[] {
           label: 'Time Slot',
           href: '/dashboard/master-data/time-slot',
           middleware: ['time_slot']
-        },
-        {
-          id: 'Class',
-          label: 'Class',
-          href: '/dashboard/master-data/class',
-          middleware: ['class']
-        },
-        {
-          id: 'Schedule',
-          label: 'Schedule',
-          href: '/dashboard/master-data/schedule',
-          middleware: ['schedule']
         }
       ]
     },

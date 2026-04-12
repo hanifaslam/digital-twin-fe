@@ -4,6 +4,8 @@ export interface ListDeviceResponse {
   type: string
   room_name: string
   status: boolean
+  is_on: boolean
+  power?: string | number
   created_at: string
   updated_at: string
 }
