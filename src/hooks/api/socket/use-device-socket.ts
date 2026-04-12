@@ -12,17 +12,12 @@ export const useDeviceSocket = () => {
       socket.connect()
     }
 
-    const handleDeviceStatus = () => {
-      void queryClient.invalidateQueries({ queryKey: ['device-list'] })
-    }
-
-    const handleSensorData = (payload: {
+    const handleDeviceStatus = (payload: {
       device_id: string
-      power?: number
-      voltage?: number
+      is_on: boolean
     }) => {
       queryClient.setQueriesData<BaseResponse<ListDeviceResponse[]>>(
-        { queryKey: ['device-list'] },
+        { queryKey: ['device-list'], exact: false },
         (oldData) => {
           if (!oldData) return oldData
 
@@ -32,7 +27,33 @@ export const useDeviceSocket = () => {
               if (device.id === payload.device_id) {
                 return {
                   ...device,
-                  power: payload.power ?? device.power
+                  is_on: payload.is_on
+                }
+              }
+              return device
+            })
+          }
+        }
+      )
+    }
+
+    const handleSensorData = (payload: {
+      room_id: string
+      power?: number | string | null
+      voltage?: number | string | null
+    }) => {
+      queryClient.setQueriesData<BaseResponse<ListDeviceResponse[]>>(
+        { queryKey: ['device-list'], exact: false },
+        (oldData) => {
+          if (!oldData) return oldData
+
+          return {
+            ...oldData,
+            data: oldData.data.map((device) => {
+              if (device.room_id === payload.room_id) {
+                return {
+                  ...device,
+                  power: (payload.power as string | number) ?? device.power
                 }
               }
               return device
@@ -48,7 +69,6 @@ export const useDeviceSocket = () => {
     return () => {
       socket.off('device-status', handleDeviceStatus)
       socket.off('sensor-data', handleSensorData)
-      socket.disconnect()
     }
   }, [queryClient])
 }
