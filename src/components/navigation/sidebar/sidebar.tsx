@@ -168,8 +168,13 @@ const SidebarItem: React.FC<{
         hasChildren ? (
           <HoverCard openDelay={50} closeDelay={50}>
             <HoverCardTrigger asChild>{buttonElement}</HoverCardTrigger>
-            <HoverCardContent side="right" align="start" className="w-auto p-2">
-              <div className="flex min-w-48 flex-col">
+            <HoverCardContent
+              side="right"
+              align="start"
+              sideOffset={12}
+              className="w-auto p-2"
+            >
+              <div className="flex min-w-48 flex-col gap-1">
                 {item.children?.map((child) => {
                   const childIsActive = Boolean(
                     child.href && isHrefActive(child.href)
@@ -179,10 +184,10 @@ const SidebarItem: React.FC<{
                       key={child.id}
                       href={child.href}
                       className={cn(
-                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-white',
+                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium',
                         childIsActive
-                          ? 'text-white hover:bg-primary-foreground/30'
-                          : 'hover:bg-primary-foreground/30 hover:text-white'
+                          ? 'text-primary bg-primary/10'
+                          : 'text-gray-700 dark:text-white hover:text-primary hover:bg-primary/10'
                       )}
                     >
                       <span>{child.label}</span>
@@ -191,7 +196,7 @@ const SidebarItem: React.FC<{
                     <button
                       key={child.id}
                       className={cn(
-                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-primary-foreground/30 hover:text-white'
+                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-white hover:text-primary hover:bg-primary/10'
                       )}
                     >
                       <span>{child.label}</span>

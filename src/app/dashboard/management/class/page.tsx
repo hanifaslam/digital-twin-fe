@@ -17,81 +17,65 @@ import {
 } from '@/components/template/content/filter-check'
 import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
-import { useDevice } from '@/hooks/api/master/device/use-device'
+import { useClass } from '@/hooks/api/master/class/use-class'
 import useFetcher from '@/hooks/use-fetcher'
 import {
-  deleteDevice,
-  getTypes,
-  toggleDeviceStatus
-} from '@/service/master/device/device-service'
-import { getAllRooms } from '@/service/master/room/room-service'
-import {
-  DeviceTypeResponse,
-  ListDeviceResponse
-} from '@/types/response/master/device/device-response'
+  deleteClass,
+  updateClassStatus
+} from '@/service/master/class/class-service'
+import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
+import { ListClassResponse } from '@/types/response/master/class/class-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import AddDeviceDialog from './add-device-dialog'
-import EditDeviceDialog from './edit-device-dialog'
+import AddClassDialog from './add-class-dialog'
+import EditClassDialog from './edit-class-dialog'
 
-export default function DevicePage() {
+export default function ClassPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [filters, setFilters] = useState({
-    room_id: [] as string[],
-    type: [] as string[]
+    study_program_id: [] as string[],
+    status: [] as string[]
   })
-  const [tempRoomIds, setTempRoomIds] = useState<string[]>([])
-  const [tempTypes, setTempTypes] = useState<string[]>([])
+  const [tempStudyProgramIds, setTempStudyProgramIds] = useState<string[]>([])
+  const [tempStatuses, setTempStatuses] = useState<string[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
+  const [editingClassId, setEditingClassId] = useState<string | null>(null)
   const confirm = useConfirm()
 
-  const { data: roomsResp, run: runRooms } = useFetcher(getAllRooms, {
-    immediate: false
-  })
-  const { data: deviceTypesResp, run: runDeviceTypes } = useFetcher(getTypes, {
-    immediate: false
-  })
+  const { data: studyProgramsResp, run: runStudyPrograms } = useFetcher(
+    getAllStudyPrograms,
+    {
+      immediate: false
+    }
+  )
 
   useEffect(() => {
-    runRooms()
-    runDeviceTypes()
-  }, [runRooms, runDeviceTypes])
+    runStudyPrograms()
+  }, [runStudyPrograms])
 
   const filterGroups: FilterGroup[] = [
     {
-      label: 'Room',
+      label: 'Study Program',
       options:
-        roomsResp?.map((room) => ({
-          label: room.name,
-          value: room.id
+        studyProgramsResp?.map((studyProgram) => ({
+          label: studyProgram.name,
+          value: studyProgram.id
         })) || [],
-      selected: tempRoomIds,
-      onChange: setTempRoomIds
+      selected: tempStudyProgramIds,
+      onChange: setTempStudyProgramIds
     },
     {
-      label: 'Types',
-      options:
-        deviceTypesResp?.map((type) => {
-          if (typeof type === 'string') {
-            return {
-              label: type,
-              value: type
-            }
-          }
-
-          const typedType = type as DeviceTypeResponse
-          return {
-            label: typedType.label || typedType.value,
-            value: typedType.value
-          }
-        }) || [],
-      selected: tempTypes,
-      onChange: setTempTypes
+      label: 'Status',
+      options: [
+        { label: 'Active', value: 'true' },
+        { label: 'Inactive', value: 'false' }
+      ],
+      selected: tempStatuses,
+      onChange: setTempStatuses
     }
   ]
 
@@ -100,18 +84,18 @@ export default function DevicePage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      room_id: filters.room_id.join(','),
-      type: filters.type.join(',')
+      study_program_id: filters.study_program_id.join(','),
+      status: filters.status.join(',')
     }),
     [currentPage, itemsPerPage, search, filters]
   )
 
-  const { data, isLoading, mutate } = useDevice(param)
+  const { data, isLoading, refetch } = useClass(param)
 
-  const handleToggleStatus = async (row: ListDeviceResponse) => {
+  const handleToggleStatus = async (row: ListClassResponse) => {
     const confirmed = await confirm({
-      title: `${row.status ? 'Deactivate' : 'Activate'} Device`,
-      description: `Are you sure you want to ${row.status ? 'deactivate' : 'activate'} this device?`,
+      title: `${row.status ? 'Deactivate' : 'Activate'} Class`,
+      description: `Are you sure you want to ${row.status ? 'deactivate' : 'activate'} this class?`,
       confirmText: `${row.status ? 'Yes, Deactivate' : 'Yes, Activate'}`,
       cancelText: 'Cancel',
       confirmButtonClassName: row.status ? 'bg-red-600 hover:bg-red-700' : ''
@@ -120,22 +104,22 @@ export default function DevicePage() {
     if (!confirmed) return
 
     try {
-      await toggleDeviceStatus(row.id)
-      void mutate()
+      await updateClassStatus(row.id)
+      void refetch()
       toast.success(
-        `Device ${row.status ? 'deactivated' : 'activated'} successfully`
+        `Class ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
       toast.error(
-        (error as AxiosError)?.message || 'Failed to update device status'
+        (error as AxiosError)?.message || 'Failed to update class status'
       )
     }
   }
 
-  const handleDelete = async (row: ListDeviceResponse) => {
+  const handleDelete = async (row: ListClassResponse) => {
     const confirmed = await confirm({
-      title: 'Delete Device',
-      description: 'Are you sure you want to delete this device?',
+      title: 'Delete Class',
+      description: 'Are you sure you want to delete this class?',
       confirmText: 'Yes, Delete',
       cancelText: 'Cancel',
       confirmButtonClassName: 'bg-red-600 hover:bg-red-700'
@@ -144,41 +128,35 @@ export default function DevicePage() {
     if (!confirmed) return
 
     try {
-      await deleteDevice(row.id)
-      void mutate()
-      toast.success('Device deleted successfully')
+      await deleteClass(row.id)
+      void refetch()
+      toast.success('Class deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete device')
+      toast.error((error as AxiosError)?.message || 'Failed to delete class')
     }
   }
 
-  function handleEdit(row: ListDeviceResponse) {
-    setEditingDeviceId(row.id)
+  function handleEdit(row: ListClassResponse) {
+    setEditingClassId(row.id)
   }
 
-  const columns: TableColumn<ListDeviceResponse>[] = [
+  const columns: TableColumn<ListClassResponse>[] = [
     {
       key: 'name',
-      label: 'Device Name',
+      label: 'Name',
       className: 'min-w-[180px]',
       render: (value) => (
         <p className="truncate text-sm font-medium">{value.name}</p>
       )
     },
     {
-      key: 'room_name',
-      label: 'Room',
-      className: 'min-w-[180px]',
+      key: 'study_program_name',
+      label: 'Study Program',
+      className: 'min-w-[220px]',
       render: (value) => (
-        <p className="truncate text-sm font-medium">{value.room_name || '-'}</p>
-      )
-    },
-    {
-      key: 'type',
-      label: 'Type',
-      className: 'min-w-[180px]',
-      render: (value) => (
-        <p className="truncate text-sm font-medium">{value.type || '-'}</p>
+        <p className="truncate text-sm font-medium">
+          {value.study_program_name || '-'}
+        </p>
       )
     },
     {
@@ -199,7 +177,7 @@ export default function DevicePage() {
     }
   ]
 
-  const tableAction: TableAction<ListDeviceResponse>[] = [
+  const tableAction: TableAction<ListClassResponse>[] = [
     {
       label: 'Edit',
       onClick: handleEdit,
@@ -217,7 +195,7 @@ export default function DevicePage() {
 
   return (
     <ContentLayout
-      title="Device"
+      title="Class"
       leading={
         <SearchInput
           placeholder="Search"
@@ -234,21 +212,21 @@ export default function DevicePage() {
           <FilterSheet
             onConfirm={() => {
               setFilters({
-                room_id: tempRoomIds,
-                type: tempTypes
+                study_program_id: tempStudyProgramIds,
+                status: tempStatuses
               })
               setCurrentPage(1)
             }}
             onCancel={() => {
-              setTempRoomIds([])
-              setTempTypes([])
+              setTempStudyProgramIds([])
+              setTempStatuses([])
               setFilters({
-                room_id: [],
-                type: []
+                study_program_id: [],
+                status: []
               })
               setCurrentPage(1)
             }}
-            badgeCount={filters.room_id.length + filters.type.length}
+            badgeCount={filters.study_program_id.length + filters.status.length}
           >
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
@@ -261,7 +239,7 @@ export default function DevicePage() {
       }
     >
       <div>
-        <TableContainer<ListDeviceResponse>
+        <TableContainer<ListClassResponse>
           data={data?.data || []}
           columns={columns}
           actions={tableAction}
@@ -276,20 +254,20 @@ export default function DevicePage() {
           showCreatedAt={false}
         />
       </div>
-      <AddDeviceDialog
+      <AddClassDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
-      <EditDeviceDialog
-        open={Boolean(editingDeviceId)}
-        deviceId={editingDeviceId}
+      <EditClassDialog
+        open={Boolean(editingClassId)}
+        classId={editingClassId}
         onOpenChange={(open) => {
           if (!open) {
-            setEditingDeviceId(null)
+            setEditingClassId(null)
           }
         }}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
     </ContentLayout>
   )

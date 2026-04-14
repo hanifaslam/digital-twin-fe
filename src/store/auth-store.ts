@@ -1,4 +1,4 @@
-import { Access, LoginResponse } from '@/types/response/auth/auth-response'
+import { Access, LoginResponse, MeBuildingResponse, MeStudyProgramResponse } from '@/types/response/auth/auth-response'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -9,6 +9,11 @@ interface StoredUser {
   email: string
   role_name: string
   role_id: string
+  role_code?: string
+  nip?: string
+  lecturer_id?: string
+  study_programs?: MeStudyProgramResponse[]
+  buildings?: MeBuildingResponse[]
   access: Access[] | null
 }
 
@@ -42,6 +47,9 @@ const useAuthStore = create<AuthState>()(
           email: user.email,
           role_name: user.role_name,
           role_id: user.role_id,
+          role_code: user.role_code,
+          nip: user.nip,
+          lecturer_id: user.lecturer_id,
           access: user.access || null
         }
 
