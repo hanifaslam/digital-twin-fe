@@ -14,7 +14,8 @@ export const useDeviceSocket = () => {
 
     const handleDeviceStatus = (payload: {
       device_id: string
-      is_on: boolean
+      is_on?: boolean
+      is_online?: boolean
     }) => {
       queryClient.setQueriesData<BaseResponse<ListDeviceResponse[]>>(
         { queryKey: ['device-list'], exact: false },
@@ -27,7 +28,8 @@ export const useDeviceSocket = () => {
               if (device.id === payload.device_id) {
                 return {
                   ...device,
-                  is_on: payload.is_on
+                  is_on: payload.is_on ?? device.is_on ?? false,
+                  is_online: payload.is_online ?? device.is_online ?? false
                 }
               }
               return device
