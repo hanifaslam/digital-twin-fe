@@ -9,6 +9,7 @@ export interface ListDeviceResponse {
   power?: string | number
   created_at: string
   updated_at: string
+  is_online: boolean
 }
 
 export interface DeviceTypeResponse {
