@@ -151,7 +151,11 @@ export default function DeviceControlPage() {
       label: 'Status',
       className: 'min-w-[120px]',
       render: (value) => (
-        <StatusBadge status={value.is_on} trueText="On" falseText="Off" />
+        <StatusBadge
+          status={value.is_on ?? false}
+          trueText="On"
+          falseText="Off"
+        />
       )
     },
     {
@@ -169,11 +173,12 @@ export default function DeviceControlPage() {
       render: (value) => (
         <div className="flex items-center gap-2">
           <Switch
-            checked={value.is_on}
+            checked={value.is_on ?? false}
             onCheckedChange={() => handleToggleControl(value)}
+            disabled={!(value.is_online ?? false)}
           />
           <span className="text-sm font-medium">
-            {value.is_on ? 'On' : 'Off'}
+            {(value.is_on ?? false) ? 'On' : 'Off'}
           </span>
         </div>
       )
