@@ -55,13 +55,17 @@ export const ApiEndpoint = {
       BASE: 'floors',
       SHOW: 'floors/:id',
       UPDATE: 'floors/:id',
-      GET_ALL: 'floors/all'
+      GET_ALL: 'floors/all',
+      TOGGLE_STATUS: 'floors/:id/status',
+      DELETE: 'floors/:id'
     },
     BUILDING: {
       BASE: 'buildings',
       SHOW: 'buildings/:id',
       UPDATE: 'buildings/:id',
-      GET_ALL: 'buildings/all'
+      GET_ALL: 'buildings/all',
+      TOGGLE_STATUS: 'buildings/:id/status',
+      DELETE: 'buildings/:id'
     },
     DEVICE: {
       BASE: 'devices',

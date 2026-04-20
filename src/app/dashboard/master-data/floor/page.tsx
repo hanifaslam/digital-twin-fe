@@ -19,22 +19,21 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import useFetcher from '@/hooks/use-fetcher'
 import {
-  deleteStudyProgram,
-  getAllStudyPrograms,
-  toggleStudyProgramStatus
-} from '@/service/master/study-program/study-program-service'
-import { ListStudyProgramResponse } from '@/types/response/master/study-program/study-program-response'
+  deleteFloor,
+  getAllFloors,
+  toggleFloorStatus
+} from '@/service/master/floor/floor-service'
+import { ListFloorResponse } from '@/types/response/master/floor/floor-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
-import AddStudyProgramDialog from './add-prodi-dialog'
-import EditStudyProgramDialog from './edit-prodi-dialog'
-import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
-import { deleteRoom } from '@/service/master/room/room-service'
+import AddFloorDialog from './add-floor-dialog'
+import EditFloorDialog from './edit-floor-dialog'
+import { useFloor } from '@/hooks/api/master/floor/use-floor'
 
-export default function StudyProgramPage() {
+export default function FloorPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -50,13 +49,13 @@ export default function StudyProgramPage() {
 
   const confirm = useConfirm()
 
-  const { run: runStudyPrograms } = useFetcher(getAllStudyPrograms, {
+  const { run: runFloors } = useFetcher(getAllFloors, {
     immediate: false
   })
 
   useEffect(() => {
-    runStudyPrograms()
-  }, [runStudyPrograms])
+    runFloors()
+  }, [runFloors])
 
   const filterGroups: FilterGroup[] = [
     {
@@ -80,14 +79,14 @@ export default function StudyProgramPage() {
     [currentPage, itemsPerPage, search, filters]
   )
 
-  const { data, isLoading, mutate } = useStudyProgram(param)
+  const { data, isLoading, mutate } = useFloor(param)
 
-  const handleToggleStatus = async (row: ListStudyProgramResponse) => {
+  const handleToggleStatus = async (row: ListFloorResponse) => {
     const confirmed = await confirm({
-      title: `${row.status ? 'Deactivate' : 'Activate'} Study Program`,
+      title: `${row.status ? 'Deactivate' : 'Activate'} Floor`,
       description: `Are you sure you want to ${
         row.status ? 'deactivate' : 'activate'
-      } this study program?`,
+      } this floor?`,
       confirmText: `${row.status ? 'Yes, Deactivate' : 'Yes, Activate'}`,
       cancelText: 'Cancel',
       confirmButtonClassName: row.status ? 'bg-red-600 hover:bg-red-700' : ''
@@ -96,34 +95,26 @@ export default function StudyProgramPage() {
     if (!confirmed) return
 
     try {
-      await toggleStudyProgramStatus(row.id)
+      await toggleFloorStatus(row.id)
       await mutate()
       toast.success(
-        `Study Program ${
+        `Floor ${
           row.status ? 'deactivated' : 'activated'
         } successfully`
       )
     } catch (error) {
       toast.error(
         (error as AxiosError)?.message ||
-          'Failed to update study program status'
+          'Failed to update floor status'
       )
     }
   }
 
-  const columns: TableColumn<ListStudyProgramResponse>[] = [
+  const columns: TableColumn<ListFloorResponse>[] = [
     {
       key: 'name',
-      label: 'Study Program',
+      label: 'Floor Name',
       className: 'min-w-[220px]',
-        render: (value) => (
-        <p className="truncate text-sm font-medium">{value.name}</p>
-      )
-    },
-    {
-      key: 'code',
-      label: 'Code',
-      className: 'min-w-[180px]',
         render: (value) => (
         <p className="truncate text-sm font-medium">{value.name}</p>
       )
@@ -144,13 +135,13 @@ export default function StudyProgramPage() {
     },
   ]
 
-  function handleEdit(row: ListStudyProgramResponse) {
+  function handleEdit(row: ListFloorResponse) {
     setEditingId(row.id)
   }
-const handleDelete = async (row: ListStudyProgramResponse) => {
+const handleDelete = async (row: ListFloorResponse) => {
     const confirmed = await confirm({
-      title: 'Delete Study Program',
-      description: `Are you sure you want to delete this study program?`,
+      title: 'Delete Floor',
+      description: `Are you sure you want to delete this floor?`,
       confirmText: 'Yes, Delete',
       cancelText: 'Cancel',
       confirmButtonClassName: 'bg-red-600 hover:bg-red-700'
@@ -159,14 +150,14 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
     if (!confirmed) return
 
     try {
-      await deleteStudyProgram(row.id)
+      await deleteFloor(row.id)
       void mutate()
-      toast.success('Study Program deleted successfully')
+      toast.success('Floor deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete study program')
+      toast.error((error as AxiosError)?.message || 'Failed to delete floor')
     }
   }
-  const tableAction: TableAction<ListStudyProgramResponse>[] = [
+  const tableAction: TableAction<ListFloorResponse>[] = [
     {
       label: 'Edit',
       onClick: handleEdit,
@@ -184,7 +175,7 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
 
   return (
     <ContentLayout
-      title="Study Program"
+      title="Floor"
       leading={
         <SearchInput
           placeholder="Search"
@@ -219,7 +210,7 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
         </div>
       }
     >
-      <TableContainer<ListStudyProgramResponse>
+      <TableContainer<ListFloorResponse>
         data={data?.data || []}
         columns={columns}
         currentPage={currentPage}
@@ -234,15 +225,15 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
         actions={tableAction}
       />
 
-      <AddStudyProgramDialog
+      <AddFloorDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => mutate()}
       />
 
-      <EditStudyProgramDialog
+      <EditFloorDialog
         open={Boolean(editingId)}
-        studyProgramId={editingId}
+        floorId={editingId}
         onOpenChange={(open) => {
           if (!open) setEditingId(null)
         }}
