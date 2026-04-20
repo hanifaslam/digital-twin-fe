@@ -31,7 +31,7 @@ export function AttendanceCard({
   const canOverride = faceStatus?.can_override ?? false
 
   return (
-    <div className="rounded-2xl bg-blue-600 p-5 text-white shadow-lg">
+    <div className="rounded-2xl bg-blue-600 p-4 sm:p-5 text-white shadow-lg">
       <div className="mb-4 flex items-center gap-3">
         {isLoading ? (
           <>
@@ -57,13 +57,13 @@ export function AttendanceCard({
         )}
       </div>
 
-      <div className="rounded-xl bg-white p-4 text-foreground">
+      <div className="rounded-xl bg-white p-3 sm:p-4 text-foreground">
         <p className="mb-4 text-sm font-semibold capitalize text-muted-foreground">
           {formatToday()}
         </p>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {[1, 2].map((i) => (
               <div
                 key={i}
@@ -78,8 +78,8 @@ export function AttendanceCard({
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border bg-gray-50/60 p-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="rounded-lg border bg-gray-50/60 p-2 sm:p-3">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-base text-muted-foreground">
                   Clock In
@@ -119,7 +119,7 @@ export function AttendanceCard({
               </Button>
             </div>
 
-            <div className="rounded-lg border border bg-gray-50/60 p-3">
+            <div className="rounded-lg border bg-gray-50/60 p-2 sm:p-3">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm font-base text-muted-foreground">
                   {hasAttended ? 'Clock Out' : 'Not Available'}
