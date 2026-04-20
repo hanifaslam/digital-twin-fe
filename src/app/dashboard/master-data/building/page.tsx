@@ -19,22 +19,21 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import useFetcher from '@/hooks/use-fetcher'
 import {
-  deleteStudyProgram,
-  getAllStudyPrograms,
-  toggleStudyProgramStatus
-} from '@/service/master/study-program/study-program-service'
-import { ListStudyProgramResponse } from '@/types/response/master/study-program/study-program-response'
+  deleteBuilding,
+  getAllBuildings,
+  updateBuildingStatus
+} from '@/service/master/building/building-service'
+import { ListBuildingResponse as ListBuilding } from '@/types/response/master/building/building-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
-import AddStudyProgramDialog from './add-prodi-dialog'
-import EditStudyProgramDialog from './edit-prodi-dialog'
-import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
-import { deleteRoom } from '@/service/master/room/room-service'
+import AddBuildingDialog from './add-building-dialog'
+import EditBuildingDialog from './edit-building-dialog'
+import { useBuilding } from '@/hooks/api/master/building/use-building'
 
-export default function StudyProgramPage() {
+export default function BuildingPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -50,13 +49,13 @@ export default function StudyProgramPage() {
 
   const confirm = useConfirm()
 
-  const { run: runStudyPrograms } = useFetcher(getAllStudyPrograms, {
+  const { run: runBuildings } = useFetcher(getAllBuildings, {
     immediate: false
   })
 
   useEffect(() => {
-    runStudyPrograms()
-  }, [runStudyPrograms])
+    runBuildings()
+  }, [runBuildings])
 
   const filterGroups: FilterGroup[] = [
     {
@@ -75,19 +74,22 @@ export default function StudyProgramPage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      status: filters.status.join(',')
+      status:
+        filters.status.length === 1
+          ? filters.status[0] === 'true'
+          : undefined
     }),
     [currentPage, itemsPerPage, search, filters]
   )
 
-  const { data, isLoading, mutate } = useStudyProgram(param)
+  const { data, isLoading, mutate } = useBuilding(param)
 
-  const handleToggleStatus = async (row: ListStudyProgramResponse) => {
+  const handleToggleStatus = async (row: ListBuilding) => {
     const confirmed = await confirm({
-      title: `${row.status ? 'Deactivate' : 'Activate'} Study Program`,
+      title: `${row.status ? 'Deactivate' : 'Activate'} Building`,
       description: `Are you sure you want to ${
         row.status ? 'deactivate' : 'activate'
-      } this study program?`,
+      } this building?`,
       confirmText: `${row.status ? 'Yes, Deactivate' : 'Yes, Activate'}`,
       cancelText: 'Cancel',
       confirmButtonClassName: row.status ? 'bg-red-600 hover:bg-red-700' : ''
@@ -96,27 +98,27 @@ export default function StudyProgramPage() {
     if (!confirmed) return
 
     try {
-      await toggleStudyProgramStatus(row.id)
+      await updateBuildingStatus(row.id)
       await mutate()
       toast.success(
-        `Study Program ${
+        `Building ${
           row.status ? 'deactivated' : 'activated'
         } successfully`
       )
     } catch (error) {
       toast.error(
         (error as AxiosError)?.message ||
-          'Failed to update study program status'
+          'Failed to update building status'
       )
     }
   }
 
-  const columns: TableColumn<ListStudyProgramResponse>[] = [
+  const columns: TableColumn<ListBuilding>[] = [
     {
       key: 'name',
-      label: 'Study Program',
+      label: 'Building Name',
       className: 'min-w-[220px]',
-        render: (value) => (
+      render: (value) => (
         <p className="truncate text-sm font-medium">{value.name}</p>
       )
     },
@@ -124,8 +126,8 @@ export default function StudyProgramPage() {
       key: 'code',
       label: 'Code',
       className: 'min-w-[180px]',
-        render: (value) => (
-        <p className="truncate text-sm font-medium">{value.name}</p>
+      render: (value) => (
+        <p className="truncate text-sm font-medium">{value.code}</p>
       )
     },
     {
@@ -141,16 +143,17 @@ export default function StudyProgramPage() {
           <span>{row.status ? 'Active' : 'Inactive'}</span>
         </div>
       )
-    },
+    }
   ]
 
-  function handleEdit(row: ListStudyProgramResponse) {
+  function handleEdit(row: ListBuilding) {
     setEditingId(row.id)
   }
-const handleDelete = async (row: ListStudyProgramResponse) => {
+
+  const handleDelete = async (row: ListBuilding) => {
     const confirmed = await confirm({
-      title: 'Delete Study Program',
-      description: `Are you sure you want to delete this study program?`,
+      title: 'Delete Building',
+      description: `Are you sure you want to delete this building?`,
       confirmText: 'Yes, Delete',
       cancelText: 'Cancel',
       confirmButtonClassName: 'bg-red-600 hover:bg-red-700'
@@ -159,32 +162,36 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
     if (!confirmed) return
 
     try {
-      await deleteStudyProgram(row.id)
+      await deleteBuilding(row.id)
       void mutate()
-      toast.success('Study Program deleted successfully')
+      toast.success('Building deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete study program')
+      toast.error(
+        (error as AxiosError)?.message ||
+          'Failed to delete building'
+      )
     }
   }
-  const tableAction: TableAction<ListStudyProgramResponse>[] = [
+
+  const tableAction: TableAction<ListBuilding>[] = [
     {
       label: 'Edit',
       onClick: handleEdit,
       icon: <PencilIcon />,
       variant: 'ghost'
     },
-   {
+    {
       label: 'Delete',
       onClick: handleDelete,
       icon: <TrashIcon className="size-4" />,
       variant: 'ghost',
       className: 'text-red-600 hover:text-red-700'
-}
+    }
   ]
 
   return (
     <ContentLayout
-      title="Study Program"
+      title="Building"
       leading={
         <SearchInput
           placeholder="Search"
@@ -219,7 +226,7 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
         </div>
       }
     >
-      <TableContainer<ListStudyProgramResponse>
+      <TableContainer<ListBuilding>
         data={data?.data || []}
         columns={columns}
         currentPage={currentPage}
@@ -234,15 +241,15 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
         actions={tableAction}
       />
 
-      <AddStudyProgramDialog
+      <AddBuildingDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => mutate()}
       />
 
-      <EditStudyProgramDialog
+      <EditBuildingDialog
         open={Boolean(editingId)}
-        studyProgramId={editingId}
+        buildingId={editingId}
         onOpenChange={(open) => {
           if (!open) setEditingId(null)
         }}
