@@ -31,7 +31,7 @@ export default function ContentLayout({
   return (
     <div>
       {(title || leading || trailing) && (
-        <header className="mt-8 px-8">
+        <header className="mt-4 px-4 sm:mt-8 sm:px-8">
           {title &&
             (titleTrailing ? (
               <div className="flex items-center justify-between">
@@ -57,15 +57,15 @@ export default function ContentLayout({
             ))}
           {afterTitle && <div className="mt-4">{afterTitle}</div>}
           {(leading || trailing) && (
-            <div className="mt-4 flex items-center justify-between pt-1">
-              {leading}
-              {trailing}
+            <div className="mt-4 flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+              <div className="w-full sm:w-auto">{leading}</div>
+              <div>{trailing}</div>
             </div>
           )}
         </header>
       )}
 
-      <main className="px-8 pt-8">
+      <main className="px-4 pt-6 sm:px-8 sm:pt-8">
         {enableCard ? (
           <div className={cardClass}>{children}</div>
         ) : (

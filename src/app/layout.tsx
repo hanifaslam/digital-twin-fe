@@ -1,7 +1,8 @@
 import NProgressProvider from '@/components/providers/progress-provider'
+import { PwaProvider } from '@/components/providers/pwa-provider'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from '@/components/ui/sonner'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
@@ -17,7 +18,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Digital Twin',
-  description: 'Digital Twin'
+  description: 'Digital Twin - Smart Building Management System',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Digital Twin'
+  }
+}
+
+export const viewport: Viewport = {
+  themeColor: '#2563eb',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false
 }
 
 export default function RootLayout({
@@ -31,6 +46,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NProgressProvider>
+          <PwaProvider />
           <QueryProvider>{children}</QueryProvider>
           <Toaster
             position="top-center"
