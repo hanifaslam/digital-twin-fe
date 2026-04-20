@@ -37,12 +37,12 @@ export const BuildingService = {
     },
   
     delete: async (id: string) => {
-      return api.delete<null>(ApiEndpoint.MASTER.ROOM.DELETE.replace(':id', id))
+      return api.delete<null>(ApiEndpoint.MASTER.BUILDING.DELETE.replace(':id', id))
     },
   
     toggleStatus: async (id: string) => {
       return api.patch<null>(
-        ApiEndpoint.MASTER.ROOM.TOGGLE_STATUS.replace(':id', id)
+        ApiEndpoint.MASTER.BUILDING.TOGGLE_STATUS.replace(':id', id)
       )
     }
 }
