@@ -102,7 +102,7 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
             </Button>
 
             {breadcrumbs.length > 0 && (
-              <Breadcrumb>
+              <Breadcrumb className="sm:text-xs md:text-sm">
                 <BreadcrumbList>
                   {breadcrumbs.map((breadcrumb, index) => (
                     <React.Fragment key={index}>
