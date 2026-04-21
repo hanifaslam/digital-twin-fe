@@ -8,6 +8,14 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle
+} from '@/components/ui/drawer'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn, handleApiError } from '@/lib/utils'
 import { FaceService } from '@/service/face-recog/face-recog-service'
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
@@ -57,6 +65,7 @@ export default function RegisterFaceDialog({
   onOpenChange,
   onSuccess
 }: RegisterFaceDialogProps) {
+  const isMobile = useIsMobile()
   const [step, setStep] = useState<Step>('scan')
   const [cameraActive, setCameraActive] = useState(false)
   const [faceDetected, setFaceDetected] = useState(false)
@@ -255,15 +264,26 @@ export default function RegisterFaceDialog({
     onOpenChange(false)
   }
 
+  const ModalRoot = isMobile ? Drawer : Dialog
+  const ModalContent = isMobile ? DrawerContent : DialogContent
+  const ModalHeader = isMobile ? DrawerHeader : DialogHeader
+  const ModalTitle = isMobile ? DrawerTitle : DialogTitle
+  const ModalDescription = isMobile ? DrawerDescription : DialogDescription
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="[&>button]:hidden p-0 gap-0 !max-w-2xl">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <DialogTitle>Registration Face</DialogTitle>
-          <DialogDescription className="sr-only">
+    <ModalRoot open={open} onOpenChange={onOpenChange}>
+      <ModalContent
+        className={cn(
+          '[&>button]:hidden p-0 gap-0',
+          isMobile ? 'max-h-[96vh]' : '!max-w-2xl'
+        )}
+      >
+        <ModalHeader className="px-6 pt-6 pb-4 border-b">
+          <ModalTitle>Registration Face</ModalTitle>
+          <ModalDescription className="sr-only">
             Register your face to enable face recognition attendance.
-          </DialogDescription>
-        </DialogHeader>
+          </ModalDescription>
+        </ModalHeader>
 
         {/* Stepper */}
         <div className="px-6 pt-5 pb-2 flex items-center gap-2">
@@ -306,7 +326,7 @@ export default function RegisterFaceDialog({
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div
                       className={cn(
-                        'h-74 w-74 rounded-full border-4 transition-colors duration-300',
+                        'h-[85%] aspect-square rounded-full border-4 transition-colors duration-300',
                         faceDetected ? 'border-[#4a7c59]' : 'border-white/50'
                       )}
                     />
@@ -375,8 +395,10 @@ export default function RegisterFaceDialog({
                 {/* Activate camera placeholder */}
                 {!cameraActive && modelLoaded && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                    <CameraIcon className="h-22 w-22 text-white/40" />
-                    <p className="text-lg text-white/50">Camera not active</p>
+                    <CameraIcon className="h-16 w-16 sm:h-22 sm:w-22 text-white/40" />
+                    <p className="text-sm sm:text-lg text-white/50">
+                      Camera not active
+                    </p>
                   </div>
                 )}
               </div>
@@ -453,7 +475,7 @@ export default function RegisterFaceDialog({
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </ModalContent>
+    </ModalRoot>
   )
 }

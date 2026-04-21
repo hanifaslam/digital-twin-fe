@@ -18,11 +18,7 @@ export const AttendanceBadge: React.FC<AttendanceBadgeProps> = ({
     (!isManual && (status === null || status === undefined)) ||
     children === '-'
   ) {
-    return (
-      <p className="w-fit truncate rounded px-2 py-1 text-sm font-medium text-muted-foreground">
-        -
-      </p>
-    )
+    return <p className="w-fit truncate rounded text-sm font-medium">-</p>
   }
 
   const badgeClass = status

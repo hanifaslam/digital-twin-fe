@@ -4,6 +4,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useFaceRecog } from '@/hooks/api/face-recog/use-face-recog'
 import { cn, formatToday, getInitials } from '@/lib/utils'
 
+import React, { useState, useEffect } from 'react'
+import { format } from 'date-fns'
+
 interface AttendanceCardProps {
   name: string
   nip?: string
@@ -11,20 +14,47 @@ interface AttendanceCardProps {
   isLoading: boolean
   onClockIn: () => void
   onClockOut: () => void
-  currentTime: string
-  showColon?: boolean
 }
 
-export function AttendanceCard({
-  name,
-  nip,
-  status,
-  isLoading,
-  onClockIn,
-  onClockOut,
-  currentTime,
-  showColon = true
-}: AttendanceCardProps) {
+const TickingClock = () => {
+  const [currentTime, setCurrentTime] = useState(format(new Date(), 'HH:mm'))
+  const [showColon, setShowColon] = useState(true)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date()
+      setCurrentTime(format(now, 'HH:mm'))
+      setShowColon(now.getSeconds() % 2 === 0)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  return (
+    <span className="text-base inline-flex items-center font-medium tabular-nums text-gray-700">
+      <span>{currentTime.split(':')[0]}</span>
+      <span
+        className={cn(
+          'inline-flex justify-center transition-opacity duration-100',
+          showColon ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ width: '0.6em' }}
+      >
+        :
+      </span>
+      <span>{currentTime.split(':')[1]}</span>
+    </span>
+  )
+}
+
+export const AttendanceCard = React.memo(
+  ({
+    name,
+    nip,
+    status,
+    isLoading,
+    onClockIn,
+    onClockOut
+  }: AttendanceCardProps) => {
   const faceStatus = status?.data
   const hasAttended = Boolean(faceStatus?.attended_at)
   const canVerify = faceStatus?.can_verify ?? false
@@ -89,20 +119,7 @@ export function AttendanceCard({
                     {faceStatus?.attended_at}
                   </span>
                 )}
-                {!hasAttended && (
-                  <span className="text-md font-medium text-gray-700 tabular-nums inline-flex items-center">
-                    <span>{currentTime.split(':')[0]}</span>
-                    <span
-                      className={cn(
-                        'transition-opacity duration-100 mx-0.5 translate-y-[-1px]',
-                        showColon ? 'opacity-100' : 'opacity-0'
-                      )}
-                    >
-                      :
-                    </span>
-                    <span>{currentTime.split(':')[1]}</span>
-                  </span>
-                )}
+                {!hasAttended && <TickingClock />}
               </div>
               <Button
                 size="sm"
@@ -120,7 +137,7 @@ export function AttendanceCard({
             </div>
 
             <div className="rounded-lg border bg-gray-50/60 p-2 sm:p-3">
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-base text-muted-foreground">
                   {hasAttended ? 'Clock Out' : 'Not Available'}
                 </span>
@@ -129,16 +146,15 @@ export function AttendanceCard({
                 size="sm"
                 className={cn(
                   'w-full text-sm font-semibold transition-all h-11',
-                  hasAttended && faceStatus?.status !== 'AVAILABLE'
-                    ? 'bg-red-500 text-white hover:bg-red-500 cursor-default pointer-events-none'
-                    : canOverride
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-blue-200 text-blue-400 cursor-default pointer-events-none'
+                  faceStatus?.status === 'BUSY' && canOverride
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : hasAttended && faceStatus?.status !== 'AVAILABLE'
+                      ? 'bg-red-500 text-white hover:bg-red-500 cursor-default pointer-events-none'
+                      : canOverride
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-blue-200 text-blue-400 cursor-default pointer-events-none'
                 )}
-                disabled={
-                  !canOverride ||
-                  (hasAttended && faceStatus?.status !== 'AVAILABLE')
-                }
+                disabled={!canOverride}
                 onClick={onClockOut}
               >
                 Not Available
@@ -154,4 +170,7 @@ export function AttendanceCard({
       </div>
     </div>
   )
-}
+  }
+)
+
+AttendanceCard.displayName = 'AttendanceCard'

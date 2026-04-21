@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import * as React from 'react'
@@ -64,6 +65,7 @@ export interface MainTableProps<T extends object = object> {
   getRowId?: (row: T) => string | number
   actionColumnLabel?: string
   loadingRowsCount?: number
+  renderMobileItem?: (row: T) => React.ReactNode
 }
 
 export function MainTable<T extends object = object>({
@@ -92,8 +94,10 @@ export function MainTable<T extends object = object>({
   onSelectionChange,
   getRowId = (row) => (row as { id?: string | number }).id || '',
   actionColumnLabel = 'Action',
-  loadingRowsCount = 5
+  loadingRowsCount = 5,
+  renderMobileItem
 }: MainTableProps<T>) {
+  const isMobile = useIsMobile()
   const isRowSelected = (row: T) => {
     const rowId = getRowId(row)
     return selectedRows.some((selectedRow) => getRowId(selectedRow) === rowId)
@@ -299,6 +303,43 @@ export function MainTable<T extends object = object>({
   }
 
   if (!data.length) {
+    const emptyState = (
+      <div
+        className="flex flex-col items-center justify-center gap-4"
+        style={{
+          height: emptyContainerHeight,
+          minHeight: emptyContainerMinHeight
+        }}
+      >
+        {showEmptyImage && (
+          <Image
+            src={emptyImageSrc}
+            alt={emptyImageAlt}
+            width={200}
+            height={200}
+          />
+        )}
+        {showEmptyMessage && (
+          <span className="text-xl font-semibold text-black text-center">
+            {emptyMessage}
+          </span>
+        )}
+        {showEmptyDescription && (
+          <span className="text-muted-foreground text-sm text-center px-4">
+            {emptyDescription}
+          </span>
+        )}
+      </div>
+    )
+
+    if (isMobile) {
+      return (
+        <div className="w-full bg-white p-8 rounded-lg border border-gray-200">
+          {emptyState}
+        </div>
+      )
+    }
+
     return (
       <div className="w-full">
         <Table className={className}>
@@ -341,36 +382,23 @@ export function MainTable<T extends object = object>({
                 }
                 className="py-8 text-center text-gray-500"
               >
-                <div
-                  className="flex flex-col items-center justify-center gap-4"
-                  style={{
-                    height: emptyContainerHeight,
-                    minHeight: emptyContainerMinHeight
-                  }}
-                >
-                  {showEmptyImage && (
-                    <Image
-                      src={emptyImageSrc}
-                      alt={emptyImageAlt}
-                      width={200}
-                      height={200}
-                    />
-                  )}
-                  {showEmptyMessage && (
-                    <span className="text-xl font-semibold text-black">
-                      {emptyMessage}
-                    </span>
-                  )}
-                  {showEmptyDescription && (
-                    <span className="text-muted-foreground text-sm whitespace-nowrap">
-                      {emptyDescription}
-                    </span>
-                  )}
-                </div>
+                {emptyState}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
+      </div>
+    )
+  }
+
+  if (isMobile && renderMobileItem) {
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        {data.map((row, index) => (
+          <React.Fragment key={getRowId(row) || index}>
+            {renderMobileItem(row)}
+          </React.Fragment>
+        ))}
       </div>
     )
   }
