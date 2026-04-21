@@ -15,6 +15,14 @@ import {
   FilterGroup
 } from '@/components/template/content/filter-check'
 import { FilterSheet } from '@/components/template/modal/filter-sheet'
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { useDevice } from '@/hooks/api/master/device/use-device'
 import { useDeviceSocket } from '@/hooks/api/socket/use-device-socket'
@@ -185,6 +193,51 @@ export default function DeviceControlPage() {
     }
   ]
 
+  const renderMobileItem = (row: ListDeviceResponse) => (
+    <Card className="gap-0 border-none shadow-md ring-1 ring-gray-200 py-0">
+      <CardHeader className="px-4 py-4 border-b">
+        <CardTitle className="text-base font-semibold">{row.name}</CardTitle>
+        <CardDescription className="flex items-center gap-2 font-medium">
+          <span className="text-xs font-medium text-muted-foreground">
+            Room:
+          </span>
+          <span className="text-xs font-semibold text-primary">
+            {row.room_name}
+          </span>
+        </CardDescription>
+        <CardAction>
+          <StatusBadge
+            status={row.is_on ?? false}
+            trueText="On"
+            falseText="Off"
+          />
+        </CardAction>
+      </CardHeader>
+      <CardFooter className="flex items-center justify-between px-4 py-4">
+        <div className="flex flex-col">
+          <span className="text-xs font-semibold text-muted-foreground">
+            Power Usage
+          </span>
+          <span className="text-lg font-semibold">
+            {row.power ?? '0'}{' '}
+            <small className="text-xs font-normal text-muted-foreground">W</small>
+          </span>
+        </div>
+        <div className="flex items-center gap-3 bg-muted px-3 py-2 rounded-full">
+          <span className="text-xs font-semibold text-gray-600">
+            {(row.is_on ?? false) ? 'On' : 'Off'}
+          </span>
+          <Switch
+            checked={row.is_on ?? false}
+            onCheckedChange={() => handleToggleControl(row)}
+            disabled={!(row.is_online ?? false)}
+            className="scale-90"
+          />
+        </div>
+      </CardFooter>
+    </Card>
+  )
+
   return (
     <ContentLayout
       title="Device Control"
@@ -209,8 +262,8 @@ export default function DeviceControlPage() {
       }
       leading={
         <SearchInput
-          placeholder="Search..."
-          className="max-w-md"
+          placeholder="Search devices..."
+          className="w-full max-w-full sm:max-w-md"
           value={search}
           onSearch={(val) => {
             setSearch(val)
@@ -249,6 +302,7 @@ export default function DeviceControlPage() {
         loading={isLoading || isMeLoading}
         showCreatedAt={false}
         showEmptyImage={false}
+        renderMobileItem={renderMobileItem}
       />
     </ContentLayout>
   )
