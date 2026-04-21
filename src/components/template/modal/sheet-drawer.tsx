@@ -8,6 +8,14 @@ import {
   SheetTitle
 } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/hooks/use-mobile'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle
+} from '@/components/ui/drawer'
 
 interface SheetDrawerProps {
   open: boolean
@@ -36,6 +44,8 @@ export function SheetDrawer({
   onCancel,
   confirmDisabled
 }: SheetDrawerProps) {
+  const isMobile = useIsMobile()
+
   function onCancelHandle() {
     onOpenChange(false)
     if (onCancel) {
@@ -43,15 +53,65 @@ export function SheetDrawer({
     }
   }
 
-  function handleSheetOpenChange(nextOpen: boolean) {
+  function handleOpenChange(nextOpen: boolean) {
     onOpenChange(nextOpen)
     if (!nextOpen && onCancel) {
       onCancel()
     }
   }
 
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={handleOpenChange}>
+        <DrawerContent className={cn('p-0', className)}>
+          <DrawerHeader className="border-b px-6 py-4">
+            <div className="flex items-center justify-between">
+              <DrawerTitle className="text-xl font-bold">{title}</DrawerTitle>
+              <Button
+                variant="ghost"
+                onClick={onCancelHandle}
+                size="icon"
+                className="rounded-full"
+              >
+                <XCircleIcon className="size-5" />
+              </Button>
+            </div>
+          </DrawerHeader>
+          <div
+            className={cn(
+              'max-h-[60vh] overflow-y-auto px-6 py-4',
+              childClassName
+            )}
+          >
+            {children}
+          </div>
+          <DrawerFooter className="border-t px-6 py-4">
+            <div className="flex w-full gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={onCancelHandle}
+                size="lg"
+              >
+                {cancelButtonText || 'Cancel'}
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={onConfirm}
+                disabled={confirmDisabled}
+                size="lg"
+              >
+                {confirmButtonText || 'Save'}
+              </Button>
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
   return (
-    <Sheet open={open} onOpenChange={handleSheetOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         className={cn('min-w-xl [&>button:last-child]:hidden', className)}
         onInteractOutside={(event) => {

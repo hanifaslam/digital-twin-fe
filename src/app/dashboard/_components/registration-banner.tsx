@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { ArrowRightIcon, CheckIcon, User } from 'lucide-react'
 
+import React from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface RegistrationBannerProps {
@@ -8,10 +9,8 @@ interface RegistrationBannerProps {
   onRegisterClick: () => void
 }
 
-export function RegistrationBanner({
-  isRegistered,
-  onRegisterClick
-}: RegistrationBannerProps) {
+export const RegistrationBanner = React.memo(
+  ({ isRegistered, onRegisterClick }: RegistrationBannerProps) => {
   if (isRegistered === undefined) {
     return (
       <div className="flex w-full items-center gap-5 rounded-lg border bg-gray-50/50 p-4">
@@ -68,4 +67,7 @@ export function RegistrationBanner({
       </div>
     </Alert>
   )
-}
+  }
+)
+
+RegistrationBanner.displayName = 'RegistrationBanner'

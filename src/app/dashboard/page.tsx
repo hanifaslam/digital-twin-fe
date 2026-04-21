@@ -7,8 +7,7 @@ import { useLecturerDashboardSocket } from '@/hooks/api/socket/use-lecturer-stat
 import { handleApiError } from '@/lib/utils'
 import { LecturerService } from '@/service/master/lecturer/lecturer-service'
 import useAuthStore from '@/store/auth-store'
-import { format } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import AttendFaceDialog from './_components/attend-face-dialog'
 import RegisterFaceDialog from './_components/register-face-dialog'
@@ -33,17 +32,6 @@ export default function DashboardPage() {
   const confirm = useConfirm()
   const [registerOpen, setRegisterOpen] = useState(false)
   const [clockInOpen, setClockInOpen] = useState(false)
-  const [currentTime, setCurrentTime] = useState(format(new Date(), 'HH:mm'))
-  const [showColon, setShowColon] = useState(true)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date()
-      setCurrentTime(format(now, 'HH:mm'))
-      setShowColon(now.getSeconds() % 2 === 0)
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
 
   const status = faceStatus?.data
   const isRegistered = statusLoading ? undefined : (status?.registered ?? false)
@@ -53,18 +41,27 @@ export default function DashboardPage() {
   }
 
   const handleNotAvailable = async () => {
+    const isBusy = status?.status === 'BUSY'
+    const targetStatus = isBusy ? 'AVAILABLE' : 'BUSY'
+
     const ok = await confirm({
-      title: 'Confirm Not Available',
-      description: 'Are you sure you won’t be available for today?',
+      title: isBusy ? 'Confirm Available' : 'Confirm Not Available',
+      description: isBusy
+        ? 'Are you sure you want to set your status as available?'
+        : 'Are you sure you won’t be available for today?',
       confirmText: 'Yes',
       cancelText: 'Cancel',
-      confirmButtonClassName: 'bg-red-600 hover:bg-red-700 text-white'
+      confirmButtonClassName: isBusy
+        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+        : 'bg-red-600 hover:bg-red-700 text-white'
     })
 
     if (ok) {
       try {
-        await LecturerService.overrideStatus({ status: 'BUSY' })
-        toast.success('Status updated to Not Available')
+        await LecturerService.overrideStatus({ status: targetStatus })
+        toast.success(
+          `Status updated to ${targetStatus === 'BUSY' ? 'Not Available' : 'Available'}`
+        )
         handleSuccess()
       } catch (err: unknown) {
         toast.error(handleApiError(err, 'Failed to update status'))
@@ -88,8 +85,6 @@ export default function DashboardPage() {
             isLoading={statusLoading}
             onClockIn={() => setClockInOpen(true)}
             onClockOut={handleNotAvailable}
-            currentTime={currentTime}
-            showColon={showColon}
           />
 
           <AttendanceTable status={status} isLoading={statusLoading} />
