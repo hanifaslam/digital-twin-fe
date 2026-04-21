@@ -1,4 +1,4 @@
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface ScrollableTabsProps {
@@ -34,6 +34,7 @@ export function ScrollableTabs({
             </div>
           ))}
         </TabsList>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
       {children}
     </Tabs>

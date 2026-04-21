@@ -8,6 +8,14 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle
+} from '@/components/ui/drawer'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn, handleApiError } from '@/lib/utils'
 import { FaceService } from '@/service/face-recog/face-recog-service'
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
@@ -28,6 +36,7 @@ export default function AttendFaceDialog({
   onOpenChange,
   onSuccess
 }: AttendFaceDialogProps) {
+  const isMobile = useIsMobile()
   const [cameraActive, setCameraActive] = useState(false)
   const [faceDetected, setFaceDetected] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -227,15 +236,26 @@ export default function AttendFaceDialog({
 
   const title = 'Clock In - Face Recognition'
 
+  const ModalRoot = isMobile ? Drawer : Dialog
+  const ModalContent = isMobile ? DrawerContent : DialogContent
+  const ModalHeader = isMobile ? DrawerHeader : DialogHeader
+  const ModalTitle = isMobile ? DrawerTitle : DialogTitle
+  const ModalDescription = isMobile ? DrawerDescription : DialogDescription
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="[&>button]:hidden p-0 gap-0 !max-w-2xl">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="sr-only">
+    <ModalRoot open={open} onOpenChange={onOpenChange}>
+      <ModalContent
+        className={cn(
+          '[&>button]:hidden p-0 gap-0',
+          isMobile ? 'max-h-[96vh]' : '!max-w-2xl'
+        )}
+      >
+        <ModalHeader className="px-6 pt-6 pb-4 border-b">
+          <ModalTitle>{title}</ModalTitle>
+          <ModalDescription className="sr-only">
             Attend using face recognition
-          </DialogDescription>
-        </DialogHeader>
+          </ModalDescription>
+        </ModalHeader>
 
         <div className="px-6 py-5 space-y-4">
           {/* Camera view */}
@@ -254,7 +274,7 @@ export default function AttendFaceDialog({
                 <div className="absolute inset-0 bg-black/30" />
                 <div
                   className={cn(
-                    'relative z-10 h-74 w-74 rounded-full border-4 transition-colors duration-300',
+                    'relative z-10 h-[85%] aspect-square rounded-full border-4 transition-colors duration-300',
                     faceDetected ? 'border-white' : 'border-white/40'
                   )}
                 />
@@ -322,8 +342,10 @@ export default function AttendFaceDialog({
             {/* Activate camera placeholder */}
             {!cameraActive && modelLoaded && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <CameraIcon className="h-22 w-22 text-white/40" />
-                <p className="text-lg text-white/50">Camera not active</p>
+                <CameraIcon className="h-16 w-16 sm:h-22 sm:w-22 text-white/40" />
+                <p className="text-sm sm:text-lg text-white/50">
+                  Camera not active
+                </p>
               </div>
             )}
           </div>
@@ -377,7 +399,7 @@ export default function AttendFaceDialog({
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </ModalContent>
+    </ModalRoot>
   )
 }
