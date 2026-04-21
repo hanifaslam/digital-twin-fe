@@ -56,7 +56,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
+      <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden text-sm sm:text-base">
         {/* Sidebar */}
         {!isHidden && <Sidebar />}
 
@@ -83,7 +83,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
           <main
             className={cn(
-              'flex-1 overflow-y-auto pb-10',
+              'flex-1 overflow-y-auto pb-24 sm:pb-10',
               isHidden && 'pb-0 overflow-x-hidden'
             )}
           >
@@ -94,16 +94,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         {!isHidden && (
           <footer
             className={cn(
-              'border-border fixed right-0 bottom-0 left-0 z-50 border-t bg-card py-4',
+              'border-border fixed right-0 bottom-0 left-0 z-50 border-t bg-card py-2 sm:py-4',
               effectiveCollapsed ? 'lg:left-16' : 'lg:left-72'
             )}
           >
-            <div className="flex items-center justify-between px-6">
-              <span className="text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-between px-6 gap-1 sm:gap-0">
+              <span className="text-muted-foreground sm:text-xs md:text-base text-center sm:text-start">
                 <span className="text-foreground">Copyright ©</span> {date}{' '}
                 Digital Twin
               </span>
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground sm:text-xs md:text-base text-center sm:text-start">
                 <span>Powered by </span>
                 <span className="text-primary font-medium">Polines</span>
               </span>

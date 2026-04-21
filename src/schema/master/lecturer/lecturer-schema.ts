@@ -17,7 +17,7 @@ export const updateLecturerSchema = createLecturerSchema.partial()
 export type UpdateLecturerPayload = z.infer<typeof updateLecturerSchema>
 
 export const overrideLecturerStatusSchema = z.object({
-  status: z.enum(['BUSY', 'OFFLINE'])
+  status: z.enum(['BUSY', 'OFFLINE', 'AVAILABLE'])
 })
 
 export type OverrideLecturerStatusPayload = z.infer<
