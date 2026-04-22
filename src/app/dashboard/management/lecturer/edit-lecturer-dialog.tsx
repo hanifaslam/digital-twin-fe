@@ -76,7 +76,8 @@ export default function EditLecturerDialog({
     defaultValues: {
       user_id: '',
       study_program_ids: [],
-      nip: ''
+      nip: '',
+      phone_number: ''
     }
   })
 
@@ -110,7 +111,8 @@ export default function EditLecturerDialog({
     form.reset({
       user_id: '',
       study_program_ids: [],
-      nip: ''
+      nip: '',
+      phone_number: ''
     })
   }, [form, lecturerId, open, resetLecturer])
 
@@ -123,7 +125,8 @@ export default function EditLecturerDialog({
         lecturerResp.study_program_ids ??
         lecturerResp.study_program?.map((studyProgram) => studyProgram.id) ??
         (lecturerResp.study_program_id ? [lecturerResp.study_program_id] : []),
-      nip: lecturerResp.nip
+      nip: lecturerResp.nip,
+      phone_number: lecturerResp.phone_number
     })
   }, [form, lecturerResp])
 
@@ -203,6 +206,31 @@ export default function EditLecturerDialog({
                         {...field}
                         autoComplete="off"
                         disabled={isFormLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Phone Number<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Phone Number"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          field.onChange(value)
+                        }}
+                        inputMode="numeric"
+                        autoComplete="off"
                       />
                     </FormControl>
                     <FormMessage />

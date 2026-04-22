@@ -22,9 +22,7 @@ import {
   createBuildingSchema
 } from '@/schema/master/building/building-schema'
 
-import {
-  createBuilding
-} from '@/service/master/building/building-service'
+import { createBuilding } from '@/service/master/building/building-service'
 
 interface AddBuildingDialogProps {
   open: boolean
@@ -43,14 +41,14 @@ export default function AddBuildingDialog({
     defaultValues: {
       name: '',
       code: '',
+      longitude: '',
+      latitude: '',
+      radius: '',
       status: true
     }
   })
 
-  const { onSubmit, isSubmitting } = useSubmit<
-    CreateBuildingPayload,
-    null
-  >({
+  const { onSubmit, isSubmitting } = useSubmit<CreateBuildingPayload, null>({
     mutation: createBuilding,
     form,
     autoReset: true,
@@ -79,7 +77,6 @@ export default function AddBuildingDialog({
       content={
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-4">
-           
             <FormField
               control={form.control}
               name="name"
@@ -90,9 +87,34 @@ export default function AddBuildingDialog({
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
+                    <Input placeholder="Enter building name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="longitude"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Longitude<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
                     <Input
-                      placeholder="Enter building name"
+                      placeholder="Enter Longitude"
                       {...field}
+                      onChange={(e) => {
+                        const value = e.target.value
+                          .replace(/[^0-9.-]/g, '')
+                          .replace(/(\..*?)\..*/g, '$1')
+                          .replace(/(?!^)-/g, '')
+                        field.onChange(value)
+                      }}
+                      inputMode="decimal"
+                      autoComplete="off"
                     />
                   </FormControl>
                   <FormMessage />
@@ -116,6 +138,59 @@ export default function AddBuildingDialog({
                       onChange={(e) =>
                         field.onChange(e.target.value.toUpperCase())
                       }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="latitude"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Latitude<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Latitude"
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value
+                          .replace(/[^0-9.-]/g, '')
+                          .replace(/(\..*?)\..*/g, '$1')
+                          .replace(/(?!^)-/g, '')
+                        field.onChange(value)
+                      }}
+                      inputMode="decimal"
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="radius"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Radius<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Radius"
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        field.onChange(value)
+                      }}
+                      inputMode="numeric"
+                      autoComplete="off"
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,10 +229,9 @@ export default function AddBuildingDialog({
               </Button>
 
               <Button
-              onClick={onSubmit}
-              disabled={isSubmitting || !form.formState.isValid}
-              type="submit"
-                
+                onClick={onSubmit}
+                disabled={isSubmitting || !form.formState.isValid}
+                type="submit"
               >
                 {isSubmitting ? 'Adding...' : 'Submit'}
               </Button>

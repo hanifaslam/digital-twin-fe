@@ -1,5 +1,9 @@
 import { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
+import {
+  CreateStudyProgramPayload,
+  UpdateStudyProgramPayload
+} from '@/schema/master/study-program/study-program-schema'
 import { BaseParams } from '@/types/global'
 import {
   GetAllStudyPrograms,
@@ -28,11 +32,11 @@ export const StudyProgramService = {
     )
   },
 
- create: async (data: any) => {
+  create: async (data: CreateStudyProgramPayload) => {
     return api.post<null>(ApiEndpoint.MASTER.STUDY_PROGRAM.BASE, data)
   },
 
-  update: async (id: string, data: any) => {
+  update: async (id: string, data: UpdateStudyProgramPayload) => {
     return api.patch<null>(
       ApiEndpoint.MASTER.STUDY_PROGRAM.UPDATE.replace(':id', id),
       data

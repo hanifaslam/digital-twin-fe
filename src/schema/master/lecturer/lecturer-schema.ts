@@ -7,7 +7,11 @@ export const createLecturerSchema = z.object({
     .min(1, 'Required')
     .regex(/^\d+$/, 'NIP must contain numbers only'),
   study_program_ids: z.array(z.string()).min(1, 'Required'),
-  user_id: z.string().min(1, 'Required')
+  user_id: z.string().min(1, 'Required'),
+  phone_number: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^\d+$/, 'Phone number must contain numbers only')
 })
 
 export type CreateLecturerPayload = z.infer<typeof createLecturerSchema>
