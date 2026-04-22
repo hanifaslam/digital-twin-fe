@@ -46,7 +46,8 @@ export default function AddLecturerDialog({
     defaultValues: {
       user_id: '',
       study_program_ids: [],
-      nip: ''
+      nip: '',
+      phone_number: ''
     }
   })
 
@@ -175,6 +176,36 @@ export default function AddLecturerDialog({
                     <Input
                       placeholder="Enter NIP"
                       {...field}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '')
+                        field.onChange(value)
+                      }}
+                      inputMode="numeric"
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Phone Number<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Phone Number"
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '')
+                        field.onChange(value)
+                      }}
+                      inputMode="numeric"
                       autoComplete="off"
                     />
                   </FormControl>

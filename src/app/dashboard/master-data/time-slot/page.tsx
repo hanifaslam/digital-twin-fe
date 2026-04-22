@@ -9,148 +9,43 @@ import {
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
-import IconButton from '@/components/template/button/icon-button'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
-import {
-  FilterCheckbox,
-  FilterGroup
-} from '@/components/template/content/filter-check'
-import { FilterSheet } from '@/components/template/modal/filter-sheet'
-import { Switch } from '@/components/ui/switch'
-import useFetcher from '@/hooks/use-fetcher'
-import {
-  deleteStudyProgram,
-  getAllStudyPrograms,
-  toggleStudyProgramStatus
-} from '@/service/master/study-program/study-program-service'
-import { ListStudyProgramResponse } from '@/types/response/master/study-program/study-program-response'
+import IconButton from '@/components/template/button/icon-button'
+import { useTimeSlot } from '@/hooks/api/master/time-slot/use-time-slot'
+import { deleteTimeSlot } from '@/service/master/time-slot/time-slot-service'
+import { ListTimeSlotResponse } from '@/types/response/master/time-slot/time-slot-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import AddTimeSlotDialog from './add-time-slot-dialog'
+import EditTimeSlotDialog from './edit-time-slot-dialog'
 
-import AddStudyProgramDialog from './add-prodi-dialog'
-import EditStudyProgramDialog from './edit-prodi-dialog'
-import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
-import { deleteRoom } from '@/service/master/room/room-service'
-
-export default function StudyProgramPage() {
+export default function TimeSlotPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-
-  const [filters, setFilters] = useState({
-    status: [] as string[]
-  })
-
-  const [tempStatus, setTempStatus] = useState<string[]>([])
-
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
-
+  const [editingTimeSlotId, setEditingTimeSlotId] = useState<string | null>(
+    null
+  )
   const confirm = useConfirm()
-
-  const { run: runStudyPrograms } = useFetcher(getAllStudyPrograms, {
-    immediate: false
-  })
-
-  useEffect(() => {
-    runStudyPrograms()
-  }, [runStudyPrograms])
-
-  const filterGroups: FilterGroup[] = [
-    {
-      label: 'Status',
-      options: [
-        { label: 'Active', value: 'true' },
-        { label: 'Inactive', value: 'false' }
-      ],
-      selected: tempStatus,
-      onChange: setTempStatus
-    }
-  ]
 
   const param = useMemo(
     () => ({
       page: currentPage,
       per_page: itemsPerPage,
-      q: search,
-      status: filters.status.join(',')
+      q: search
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [currentPage, itemsPerPage, search]
   )
 
-  const { data, isLoading, mutate } = useStudyProgram(param)
+  const { data, isLoading, refetch } = useTimeSlot(param)
 
-  const handleToggleStatus = async (row: ListStudyProgramResponse) => {
+  const handleDelete = async (row: ListTimeSlotResponse) => {
     const confirmed = await confirm({
-      title: `${row.status ? 'Deactivate' : 'Activate'} Study Program`,
-      description: `Are you sure you want to ${
-        row.status ? 'deactivate' : 'activate'
-      } this study program?`,
-      confirmText: `${row.status ? 'Yes, Deactivate' : 'Yes, Activate'}`,
-      cancelText: 'Cancel',
-      confirmButtonClassName: row.status ? 'bg-red-600 hover:bg-red-700' : ''
-    })
-
-    if (!confirmed) return
-
-    try {
-      await toggleStudyProgramStatus(row.id)
-      await mutate()
-      toast.success(
-        `Study Program ${
-          row.status ? 'deactivated' : 'activated'
-        } successfully`
-      )
-    } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message ||
-          'Failed to update study program status'
-      )
-    }
-  }
-
-  const columns: TableColumn<ListStudyProgramResponse>[] = [
-    {
-      key: 'name',
-      label: 'Study Program',
-      className: 'min-w-[220px]',
-        render: (value) => (
-        <p className="truncate text-sm font-medium">{value.name}</p>
-      )
-    },
-    {
-      key: 'code',
-      label: 'Code',
-      className: 'min-w-[180px]',
-        render: (value) => (
-        <p className="truncate text-sm font-medium">{value.name}</p>
-      )
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      className: 'min-w-[120px]',
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={row.status}
-            onCheckedChange={() => handleToggleStatus(row)}
-          />
-          <span>{row.status ? 'Active' : 'Inactive'}</span>
-        </div>
-      )
-    },
-  ]
-
-  function handleEdit(row: ListStudyProgramResponse) {
-    setEditingId(row.id)
-  }
-const handleDelete = async (row: ListStudyProgramResponse) => {
-    const confirmed = await confirm({
-      title: 'Delete Study Program',
-      description: `Are you sure you want to delete this study program?`,
+      title: 'Delete Time Slot',
+      description: 'Are you sure you want to delete this time slot?',
       confirmText: 'Yes, Delete',
       cancelText: 'Cancel',
       confirmButtonClassName: 'bg-red-600 hover:bg-red-700'
@@ -159,32 +54,58 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
     if (!confirmed) return
 
     try {
-      await deleteStudyProgram(row.id)
-      void mutate()
-      toast.success('Study Program deleted successfully')
+      await deleteTimeSlot(row.id)
+      void refetch()
+      toast.success('Time slot deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete study program')
+      toast.error(
+        (error as AxiosError)?.message || 'Failed to delete time slot'
+      )
     }
   }
-  const tableAction: TableAction<ListStudyProgramResponse>[] = [
+
+  function handleEdit(row: ListTimeSlotResponse) {
+    setEditingTimeSlotId(row.id)
+  }
+
+  const columns: TableColumn<ListTimeSlotResponse>[] = [
+    {
+      key: 'name',
+      label: 'Name',
+      className: 'min-w-[180px]',
+      render: (value) => (
+        <p className="truncate text-sm font-medium">{value.name}</p>
+      )
+    },
+    {
+      key: 'display_time',
+      label: 'Display Time',
+      className: 'min-w-[180px]',
+      render: (value) => (
+        <p className="truncate text-sm font-medium">{value.display_time}</p>
+      )
+    }
+  ]
+
+  const tableAction: TableAction<ListTimeSlotResponse>[] = [
     {
       label: 'Edit',
       onClick: handleEdit,
       icon: <PencilIcon />,
       variant: 'ghost'
     },
-   {
+    {
       label: 'Delete',
       onClick: handleDelete,
       icon: <TrashIcon className="size-4" />,
       variant: 'ghost',
       className: 'text-red-600 hover:text-red-700'
-}
+    }
   ]
 
   return (
     <ContentLayout
-      title="Study Program"
+      title="Time Slot"
       leading={
         <SearchInput
           placeholder="Search"
@@ -197,56 +118,43 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
         />
       }
       trailing={
-        <div className="flex space-x-4">
-          <FilterSheet
-            onConfirm={() => {
-              setFilters({ status: tempStatus })
-              setCurrentPage(1)
-            }}
-            onCancel={() => {
-              setTempStatus([])
-              setFilters({ status: [] })
-            }}
-            badgeCount={filters.status.length}
-          >
-            <FilterCheckbox filterGroups={filterGroups} />
-          </FilterSheet>
-          <IconButton
-            icon={<PlusIcon />}
-            title="Add"
-            onClick={() => setIsAddDialogOpen(true)}
-          />
-        </div>
+        <IconButton
+          icon={<PlusIcon />}
+          title="Add"
+          onClick={() => setIsAddDialogOpen(true)}
+        />
       }
     >
-      <TableContainer<ListStudyProgramResponse>
-        data={data?.data || []}
-        columns={columns}
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        totalItems={data?.metadata?.total_row || 0}
-        totalPages={data?.metadata?.total_page || 0}
-        onPageChange={setCurrentPage}
-        onItemsPerPageChange={setItemsPerPage}
-        loading={isLoading}
-        showEmptyImage={false}
-        showCreatedAt={false}
-        actions={tableAction}
-      />
-
-      <AddStudyProgramDialog
+      <div>
+        <TableContainer<ListTimeSlotResponse>
+          data={data?.data || []}
+          columns={columns}
+          actions={tableAction}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={data?.metadata?.total_row || 0}
+          totalPages={data?.metadata?.total_page || 0}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
+          loading={isLoading}
+          showEmptyImage={false}
+          showCreatedAt={false}
+        />
+      </div>
+      <AddTimeSlotDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
-
-      <EditStudyProgramDialog
-        open={Boolean(editingId)}
-        studyProgramId={editingId}
+      <EditTimeSlotDialog
+        open={Boolean(editingTimeSlotId)}
+        timeSlotId={editingTimeSlotId}
         onOpenChange={(open) => {
-          if (!open) setEditingId(null)
+          if (!open) {
+            setEditingTimeSlotId(null)
+          }
         }}
-        onSuccess={() => mutate()}
+        onSuccess={() => void refetch()}
       />
     </ContentLayout>
   )
