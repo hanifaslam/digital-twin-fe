@@ -3,6 +3,7 @@ export interface ListLecturerResponse {
   name: string
   email: string
   nip: string
+  phone_number: string
   study_program: string[] | string
   status: boolean
   created_at: string
@@ -28,6 +29,7 @@ export interface ShowLecturerResponse {
   user_id: string
   name: string
   email?: string
+  phone_number: string
   created_at: string
   updated_at: string
 }
