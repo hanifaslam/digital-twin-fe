@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const createStudyProgramSchema = z.object({
   name: z.string().min(1),
   code: z.string().min(1),
+  home_room_id: z.string().min(1, 'Room is required'),
   status: z.boolean()
 })
 

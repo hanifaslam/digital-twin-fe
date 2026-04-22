@@ -9,8 +9,8 @@ import {
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
-import IconButton from '@/components/template/button/icon-button'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
+import IconButton from '@/components/template/button/icon-button'
 import {
   FilterCheckbox,
   FilterGroup
@@ -29,10 +29,9 @@ import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
+import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
 import AddStudyProgramDialog from './add-prodi-dialog'
 import EditStudyProgramDialog from './edit-prodi-dialog'
-import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
-import { deleteRoom } from '@/service/master/room/room-service'
 
 export default function StudyProgramPage() {
   const [search, setSearch] = useState('')
@@ -99,9 +98,7 @@ export default function StudyProgramPage() {
       await toggleStudyProgramStatus(row.id)
       await mutate()
       toast.success(
-        `Study Program ${
-          row.status ? 'deactivated' : 'activated'
-        } successfully`
+        `Study Program ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
       toast.error(
@@ -116,16 +113,16 @@ export default function StudyProgramPage() {
       key: 'name',
       label: 'Study Program',
       className: 'min-w-[220px]',
-        render: (value) => (
+      render: (value) => (
         <p className="truncate text-sm font-medium">{value.name}</p>
       )
     },
     {
       key: 'code',
       label: 'Code',
-      className: 'min-w-[180px]',
-        render: (value) => (
-        <p className="truncate text-sm font-medium">{value.name}</p>
+      className: 'min-w-[150px]',
+      render: (value) => (
+        <p className="truncate text-sm font-medium">{value.code}</p>
       )
     },
     {
@@ -141,13 +138,13 @@ export default function StudyProgramPage() {
           <span>{row.status ? 'Active' : 'Inactive'}</span>
         </div>
       )
-    },
+    }
   ]
 
   function handleEdit(row: ListStudyProgramResponse) {
     setEditingId(row.id)
   }
-const handleDelete = async (row: ListStudyProgramResponse) => {
+  const handleDelete = async (row: ListStudyProgramResponse) => {
     const confirmed = await confirm({
       title: 'Delete Study Program',
       description: `Are you sure you want to delete this study program?`,
@@ -163,7 +160,9 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
       void mutate()
       toast.success('Study Program deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete study program')
+      toast.error(
+        (error as AxiosError)?.message || 'Failed to delete study program'
+      )
     }
   }
   const tableAction: TableAction<ListStudyProgramResponse>[] = [
@@ -173,13 +172,13 @@ const handleDelete = async (row: ListStudyProgramResponse) => {
       icon: <PencilIcon />,
       variant: 'ghost'
     },
-   {
+    {
       label: 'Delete',
       onClick: handleDelete,
       icon: <TrashIcon className="size-4" />,
       variant: 'ghost',
       className: 'text-red-600 hover:text-red-700'
-}
+    }
   ]
 
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import BaseDialog from '@/components/common/dialog/base-dialog'
+import { SearchComboBox } from '@/components/template/modal/search-combobox'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -12,8 +13,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import useFetcher from '@/hooks/use-fetcher'
 import { useSubmit } from '@/hooks/use-submit'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -21,10 +24,9 @@ import {
   CreateStudyProgramPayload,
   createStudyProgramSchema
 } from '@/schema/master/study-program/study-program-schema'
+import { getAllRooms } from '@/service/master/room/room-service'
 
-import {
-  createStudyProgram
-} from '@/service/master/study-program/study-program-service'
+import { createStudyProgram } from '@/service/master/study-program/study-program-service'
 
 interface AddStudyProgramDialogProps {
   open: boolean
@@ -43,26 +45,40 @@ export default function AddStudyProgramDialog({
     defaultValues: {
       name: '',
       code: '',
+      home_room_id: '',
       status: true
     }
   })
 
-  const { onSubmit, isSubmitting } = useSubmit<
-    CreateStudyProgramPayload,
-    null
-  >({
-    mutation: createStudyProgram,
-    form,
-    autoReset: true,
-    notifySuccess: (msg) => toast.success(msg),
-    notifyError: (msg) => toast.error(msg),
-    successMessage: 'Successfully Added Study Program',
-    errorMessage: 'Failed To Add Study Program',
-    onSuccess: () => {
-      onOpenChange(false)
-      onSuccess?.()
-    }
+  const {
+    data: roomsResp,
+    isLoading: isRoomsLoading,
+    run: runRooms
+  } = useFetcher(getAllRooms, {
+    immediate: false
   })
+
+  useEffect(() => {
+    if (open) {
+      runRooms()
+    }
+  }, [open, runRooms])
+
+  const { onSubmit, isSubmitting } = useSubmit<CreateStudyProgramPayload, null>(
+    {
+      mutation: createStudyProgram,
+      form,
+      autoReset: true,
+      notifySuccess: (msg) => toast.success(msg),
+      notifyError: (msg) => toast.error(msg),
+      successMessage: 'Successfully Added Study Program',
+      errorMessage: 'Failed To Add Study Program',
+      onSuccess: () => {
+        onOpenChange(false)
+        onSuccess?.()
+      }
+    }
+  )
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
@@ -79,7 +95,6 @@ export default function AddStudyProgramDialog({
       content={
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-4">
-           
             <FormField
               control={form.control}
               name="name"
@@ -90,10 +105,7 @@ export default function AddStudyProgramDialog({
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter study program name"
-                      {...field}
-                    />
+                    <Input placeholder="Enter study program name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,6 +128,33 @@ export default function AddStudyProgramDialog({
                       onChange={(e) =>
                         field.onChange(e.target.value.toUpperCase())
                       }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="home_room_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Lecturer Room<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl className="w-full">
+                    <SearchComboBox
+                      value={field.value}
+                      onChange={(value) => field.onChange(value ?? '')}
+                      options={
+                        roomsResp?.map((item) => ({
+                          value: item.id,
+                          label: item.name
+                        })) || []
+                      }
+                      placeholder="Select home room"
+                      isLoading={isRoomsLoading}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,10 +193,9 @@ export default function AddStudyProgramDialog({
               </Button>
 
               <Button
-              onClick={onSubmit}
-              disabled={isSubmitting || !form.formState.isValid}
-              type="submit"
-                
+                onClick={onSubmit}
+                disabled={isSubmitting || !form.formState.isValid}
+                type="submit"
               >
                 {isSubmitting ? 'Adding...' : 'Submit'}
               </Button>

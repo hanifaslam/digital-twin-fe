@@ -3,6 +3,7 @@ export interface ListStudyProgramResponse {
   name: string
   code: string
   status: boolean
+  home_room_id: string
   created_at: string
   updated_at: string
 }
@@ -12,6 +13,7 @@ export interface ShowStudyProgramResponse {
   name: string
   code: string
   status: boolean
+  home_room_id: string
   created_at: string
   updated_at: string
 }

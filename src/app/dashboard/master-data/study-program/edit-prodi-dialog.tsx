@@ -1,6 +1,7 @@
 'use client'
 
 import BaseDialog from '@/components/common/dialog/base-dialog'
+import { SearchComboBox } from '@/components/template/modal/search-combobox'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -11,14 +12,15 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
 import useFetcher from '@/hooks/use-fetcher'
 import { useSubmit } from '@/hooks/use-submit'
 import {
   UpdateStudyProgramPayload,
   updateStudyProgramSchema
 } from '@/schema/master/study-program/study-program-schema'
+import { getAllRooms } from '@/service/master/room/room-service'
 import {
   showStudyProgram,
   updateStudyProgram
@@ -59,8 +61,17 @@ export default function EditStudyProgramDialog({
     defaultValues: {
       name: '',
       code: '',
+      home_room_id: '',
       status: true
     }
+  })
+
+  const {
+    data: roomsResp,
+    isLoading: isRoomsLoading,
+    run: runRooms
+  } = useFetcher(getAllRooms, {
+    immediate: false
   })
 
   const { data, isLoading, run, reset } = useFetcher(
@@ -71,13 +82,15 @@ export default function EditStudyProgramDialog({
   useEffect(() => {
     if (!open || !studyProgramId) return
     run()
-  }, [open, studyProgramId, run])
+    runRooms()
+  }, [open, studyProgramId, run, runRooms])
 
   useEffect(() => {
     if (!open) return
     form.reset({
       name: '',
       code: '',
+      home_room_id: '',
       status: true
     })
   }, [open, form])
@@ -87,35 +100,36 @@ export default function EditStudyProgramDialog({
     form.reset({
       name: data?.name ?? '',
       code: data?.code ?? '',
+      home_room_id: data?.home_room_id ?? '',
       status: data?.status ?? true
     })
   }, [data, form])
 
-  const { onSubmit, isSubmitting } = useSubmit<
-    UpdateStudyProgramPayload,
-    null
-  >({
-    mutation: (payload) => {
-      if (!studyProgramId) return Promise.reject()
-      return updateStudyProgram(studyProgramId, payload)
-    },
-    form,
-    autoReset: false,
-    notifySuccess: (msg) => toast.success(msg),
-    notifyError: (msg) => toast.error(msg),
-    successMessage: 'Successfully Updated Study Program',
-    errorMessage: 'Failed To Update Study Program',
-    onSuccess: () => {
-      onOpenChange(false)
-      onSuccess?.()
+  const { onSubmit, isSubmitting } = useSubmit<UpdateStudyProgramPayload, null>(
+    {
+      mutation: (payload) => {
+        if (!studyProgramId) return Promise.reject()
+        return updateStudyProgram(studyProgramId, payload)
+      },
+      form,
+      autoReset: false,
+      notifySuccess: (msg) => toast.success(msg),
+      notifyError: (msg) => toast.error(msg),
+      successMessage: 'Successfully Updated Study Program',
+      errorMessage: 'Failed To Update Study Program',
+      onSuccess: () => {
+        onOpenChange(false)
+        onSuccess?.()
+      }
     }
-  })
+  )
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       form.reset({
         name: '',
         code: '',
+        home_room_id: '',
         status: true
       })
       reset()
@@ -179,6 +193,33 @@ export default function EditStudyProgramDialog({
 
               <FormField
                 control={form.control}
+                name="home_room_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Lecturer Room<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl className="w-full">
+                      <SearchComboBox
+                        value={field.value}
+                        onChange={(value) => field.onChange(value ?? '')}
+                        options={
+                          roomsResp?.map((item) => ({
+                            value: item.id,
+                            label: item.name
+                          })) || []
+                        }
+                        placeholder="Select home room"
+                        isLoading={isRoomsLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -207,10 +248,7 @@ export default function EditStudyProgramDialog({
                   Cancel
                 </Button>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || isLoading}
-                >
+                <Button type="submit" disabled={isSubmitting || isLoading}>
                   {isSubmitting ? 'Updating...' : 'Submit'}
                 </Button>
               </div>
