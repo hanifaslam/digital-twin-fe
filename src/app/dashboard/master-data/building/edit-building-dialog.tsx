@@ -11,8 +11,8 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
 import useFetcher from '@/hooks/use-fetcher'
 import { useSubmit } from '@/hooks/use-submit'
 import {
@@ -59,6 +59,9 @@ export default function EditBuildingDialog({
     defaultValues: {
       name: '',
       code: '',
+      longitude: '',
+      latitude: '',
+      radius: '',
       status: true
     }
   })
@@ -78,6 +81,9 @@ export default function EditBuildingDialog({
     form.reset({
       name: '',
       code: '',
+      longitude: '',
+      latitude: '',
+      radius: '',
       status: true
     })
   }, [open, form])
@@ -87,14 +93,14 @@ export default function EditBuildingDialog({
     form.reset({
       name: data?.name ?? '',
       code: data?.code ?? '',
+      longitude: data?.longitude ? String(data?.longitude) : '',
+      latitude: data?.latitude ? String(data?.latitude) : '',
+      radius: data?.radius ? String(data?.radius) : '',
       status: data?.status ?? true
     })
   }, [data, form])
 
-  const { onSubmit, isSubmitting } = useSubmit<
-    UpdateBuildingPayload,
-    null
-  >({
+  const { onSubmit, isSubmitting } = useSubmit<UpdateBuildingPayload, null>({
     mutation: (payload) => {
       if (!buildingId) return Promise.reject()
       return updateBuilding(buildingId, payload)
@@ -116,6 +122,9 @@ export default function EditBuildingDialog({
       form.reset({
         name: '',
         code: '',
+        longitude: '',
+        latitude: '',
+        radius: '',
         status: true
       })
       reset()
@@ -144,10 +153,7 @@ export default function EditBuildingDialog({
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter building name"
-                        {...field}
-                      />
+                      <Input placeholder="Enter building name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,6 +176,90 @@ export default function EditBuildingDialog({
                         onChange={(e) =>
                           field.onChange(e.target.value.toUpperCase())
                         }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="latitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Latitude
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter latitude"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value
+                            .replace(/[^0-9.-]/g, '')
+                            .replace(/(\..*?)\..*/g, '$1')
+                            .replace(/(?!^)-/g, '')
+                          field.onChange(value)
+                        }}
+                        inputMode="decimal"
+                        autoComplete="off"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="longitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Longitude
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter longitude"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value
+                            .replace(/[^0-9.-]/g, '')
+                            .replace(/(\..*?)\..*/g, '$1')
+                            .replace(/(?!^)-/g, '')
+                          field.onChange(value)
+                        }}
+                        inputMode="decimal"
+                        autoComplete="off"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="radius"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Radius
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter radius"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '')
+                          field.onChange(value)
+                        }}
+                        inputMode="numeric"
+                        autoComplete="off"
                       />
                     </FormControl>
                     <FormMessage />
@@ -207,10 +297,7 @@ export default function EditBuildingDialog({
                   Cancel
                 </Button>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || isLoading}
-                >
+                <Button type="submit" disabled={isSubmitting || isLoading}>
                   {isSubmitting ? 'Updating...' : 'Submit'}
                 </Button>
               </div>

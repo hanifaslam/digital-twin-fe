@@ -9,6 +9,7 @@ const SOCKET_URL = API_URL.endsWith('/api')
 export const socket: Socket = io(SOCKET_URL, {
   autoConnect: false,
   withCredentials: true,
+  transports: ['websocket'],
 });
 
 if (process.env.NODE_ENV === 'development') {
