@@ -7,6 +7,8 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import IconButton from '@/components/template/button/icon-button'
@@ -17,10 +19,10 @@ import {
 import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { useHelper } from '@/hooks/api/master/helper/use-helper'
 import useFetcher from '@/hooks/use-fetcher'
-import { getAllBuildings } from '@/service/master/building/building-service'
+import { me } from '@/service/auth/auth-service'
 import { ListHelperResponse } from '@/types/response/master/helper/helper-response'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import AddHelperDialog from './add-helper-dialog'
 import EditHelperDialog from './edit-helper-dialog'
 
@@ -28,37 +30,34 @@ export default function HelperPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [selectedBuildingId, setSelectedBuildingId] = useState('')
   const [filters, setFilters] = useState({
-    building_id: [] as string[],
     status: [] as string[]
   })
-  const [tempBuildingIds, setTempBuildingIds] = useState<string[]>([])
   const [tempStatuses, setTempStatuses] = useState<string[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingHelperId, setEditingHelperId] = useState<string | null>(null)
 
-  const { data: buildingsResp, run: runBuildings } = useFetcher(
-    getAllBuildings,
-    {
-      immediate: false
-    }
-  )
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
 
-  useEffect(() => {
-    runBuildings()
-  }, [runBuildings])
+  const buildings = useMemo(() => meResp?.buildings || [], [meResp])
+  const activeBuildingId = useMemo(() => {
+    if (buildings.length === 0) return ''
+
+    const hasSelectedBuilding = buildings.some(
+      (building) => building.id === selectedBuildingId
+    )
+
+    return hasSelectedBuilding ? selectedBuildingId : (buildings[0]?.id ?? '')
+  }, [selectedBuildingId, buildings])
 
   const filterGroups: FilterGroup[] = [
-    {
-      label: 'Building',
-      options:
-        buildingsResp?.map((building) => ({
-          label: building.name,
-          value: building.id
-        })) || [],
-      selected: tempBuildingIds,
-      onChange: setTempBuildingIds
-    },
     {
       label: 'Status',
       options: [
@@ -81,10 +80,10 @@ export default function HelperPage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      building_id: filters.building_id.join(','),
+      building_id: activeBuildingId,
       status: filters.status.join(',')
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [currentPage, itemsPerPage, search, activeBuildingId, filters]
   )
 
   const { data, isLoading, refetch } = useHelper(param)
@@ -147,9 +146,34 @@ export default function HelperPage() {
     }
   ]
 
+  if (meError) {
+    return <ErrorPage message="Failed to load buildings from current user." />
+  }
+
+  if (!isMeLoading && buildings.length === 0) {
+    return <ErrorPage message="No building access found for this account." />
+  }
+
   return (
     <ContentLayout
       title="Helper"
+      afterTitle={
+        buildings.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeBuildingId}
+              onValueChange={(buildingId) => {
+                setSelectedBuildingId(buildingId)
+                setCurrentPage(1)
+              }}
+              items={buildings.map((building) => ({
+                id: building.id,
+                label: building.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -166,18 +190,16 @@ export default function HelperPage() {
           <FilterSheet
             onConfirm={() => {
               setFilters({
-                building_id: tempBuildingIds,
                 status: tempStatuses
               })
               setCurrentPage(1)
             }}
             onCancel={() => {
-              setTempBuildingIds([])
               setTempStatuses([])
-              setFilters({ building_id: [], status: [] })
+              setFilters({ status: [] })
               setCurrentPage(1)
             }}
-            badgeCount={filters.building_id.length + filters.status.length}
+            badgeCount={filters.status.length}
           >
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
@@ -199,7 +221,7 @@ export default function HelperPage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
           actions={tableAction}
