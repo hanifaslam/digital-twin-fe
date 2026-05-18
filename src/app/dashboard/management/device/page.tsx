@@ -6,6 +6,8 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
@@ -19,6 +21,7 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import { useDevice } from '@/hooks/api/master/device/use-device'
 import useFetcher from '@/hooks/use-fetcher'
+import { me } from '@/service/auth/auth-service'
 import {
   deleteDevice,
   getTypes,
@@ -40,6 +43,7 @@ export default function DevicePage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [selectedBuildingId, setSelectedBuildingId] = useState('')
   const [filters, setFilters] = useState({
     room_id: [] as string[],
     type: [] as string[]
@@ -50,6 +54,25 @@ export default function DevicePage() {
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null)
   const confirm = useConfirm()
 
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
+
+  const buildings = useMemo(() => meResp?.buildings || [], [meResp])
+  const activeBuildingId = useMemo(() => {
+    if (buildings.length === 0) return ''
+
+    const hasSelectedBuilding = buildings.some(
+      (building) => building.id === selectedBuildingId
+    )
+
+    return hasSelectedBuilding ? selectedBuildingId : (buildings[0]?.id ?? '')
+  }, [selectedBuildingId, buildings])
+
   const { data: roomsResp, run: runRooms } = useFetcher(getAllRooms, {
     immediate: false
   })
@@ -58,9 +81,14 @@ export default function DevicePage() {
   })
 
   useEffect(() => {
-    runRooms()
     runDeviceTypes()
-  }, [runRooms, runDeviceTypes])
+  }, [runDeviceTypes])
+
+  useEffect(() => {
+    if (activeBuildingId) {
+      runRooms({ building_id: activeBuildingId })
+    }
+  }, [activeBuildingId, runRooms])
 
   const filterGroups: FilterGroup[] = [
     {
@@ -100,10 +128,11 @@ export default function DevicePage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
+      building_id: activeBuildingId,
       room_id: filters.room_id.join(','),
       type: filters.type.join(',')
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [currentPage, itemsPerPage, search, activeBuildingId, filters]
   )
 
   const { data, isLoading, refetch } = useDevice(param)
@@ -215,9 +244,36 @@ export default function DevicePage() {
     }
   ]
 
+  if (meError) {
+    return <ErrorPage message="Failed to load buildings from current user." />
+  }
+
+  if (!isMeLoading && buildings.length === 0) {
+    return <ErrorPage message="No building access found for this account." />
+  }
+
   return (
     <ContentLayout
       title="Device"
+      afterTitle={
+        buildings.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeBuildingId}
+              onValueChange={(buildingId) => {
+                setSelectedBuildingId(buildingId)
+                setCurrentPage(1)
+                setFilters((prev) => ({ ...prev, room_id: [] }))
+                setTempRoomIds([])
+              }}
+              items={buildings.map((building) => ({
+                id: building.id,
+                label: building.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -271,7 +327,7 @@ export default function DevicePage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
         />

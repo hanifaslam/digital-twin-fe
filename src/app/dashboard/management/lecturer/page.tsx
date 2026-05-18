@@ -7,20 +7,17 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import IconButton from '@/components/template/button/icon-button'
-import {
-  FilterCheckbox,
-  FilterGroup
-} from '@/components/template/content/filter-check'
-import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { useLecturer } from '@/hooks/api/master/lecturer/use-lecturer'
 import useFetcher from '@/hooks/use-fetcher'
-import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
+import { me } from '@/service/auth/auth-service'
 import { ListLecturerResponse } from '@/types/response/master/lecturer/lecturer-response'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import AddLecturerDialog from './add-lecturer-dialog'
 import EditLecturerDialog from './edit-lecturer-dialog'
 
@@ -28,47 +25,41 @@ export default function LecturerPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [filters, setFilters] = useState({
-    study_program: [] as string[]
-  })
-  const [tempStudyPrograms, setTempStudyPrograms] = useState<string[]>([])
+  const [selectedStudyProgramId, setSelectedStudyProgramId] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingLecturerId, setEditingLecturerId] = useState<string | null>(
     null
   )
 
-  const { data: studyProgramsResp, run: runStudyPrograms } = useFetcher(
-    getAllStudyPrograms,
-    {
-      immediate: false
-    }
-  )
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
 
-  useEffect(() => {
-    runStudyPrograms()
-  }, [runStudyPrograms])
+  const studyPrograms = useMemo(() => meResp?.study_programs || [], [meResp])
+  const activeStudyProgramId = useMemo(() => {
+    if (studyPrograms.length === 0) return ''
 
-  const filterGroups: FilterGroup[] = [
-    {
-      label: 'Study Program',
-      options:
-        studyProgramsResp?.map((studyProgram) => ({
-          label: studyProgram.name,
-          value: studyProgram.id
-        })) || [],
-      selected: tempStudyPrograms,
-      onChange: setTempStudyPrograms
-    }
-  ]
+    const hasSelectedStudyProgram = studyPrograms.some(
+      (studyProgram) => studyProgram.id === selectedStudyProgramId
+    )
+
+    return hasSelectedStudyProgram
+      ? selectedStudyProgramId
+      : (studyPrograms[0]?.id ?? '')
+  }, [selectedStudyProgramId, studyPrograms])
 
   const param = useMemo(
     () => ({
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      study_program: filters.study_program.join(',')
+      study_program: activeStudyProgramId
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [currentPage, itemsPerPage, search, activeStudyProgramId]
   )
 
   const { data, isLoading, mutate } = useLecturer(param)
@@ -131,9 +122,38 @@ export default function LecturerPage() {
     }
   ]
 
+  if (meError) {
+    return (
+      <ErrorPage message="Failed to load study programs from current user." />
+    )
+  }
+
+  if (!isMeLoading && studyPrograms.length === 0) {
+    return (
+      <ErrorPage message="No study program access found for this account." />
+    )
+  }
+
   return (
     <ContentLayout
       title="Lecturer"
+      afterTitle={
+        studyPrograms.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeStudyProgramId}
+              onValueChange={(studyProgramId) => {
+                setSelectedStudyProgramId(studyProgramId)
+                setCurrentPage(1)
+              }}
+              items={studyPrograms.map((studyProgram) => ({
+                id: studyProgram.id,
+                label: studyProgram.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -147,19 +167,6 @@ export default function LecturerPage() {
       }
       trailing={
         <div className="flex space-x-4">
-          <FilterSheet
-            onConfirm={() => {
-              setFilters({ study_program: tempStudyPrograms })
-              setCurrentPage(1)
-            }}
-            onCancel={() => {
-              setTempStudyPrograms([])
-              setFilters({ study_program: [] })
-            }}
-            badgeCount={filters.study_program.length}
-          >
-            <FilterCheckbox filterGroups={filterGroups} />
-          </FilterSheet>
           <IconButton
             icon={<PlusIcon />}
             title="Add"
@@ -178,7 +185,7 @@ export default function LecturerPage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
           actions={tableAction}

@@ -6,6 +6,8 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
@@ -19,12 +21,12 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import { useCourse } from '@/hooks/api/master/course/use-course'
 import useFetcher from '@/hooks/use-fetcher'
+import { me } from '@/service/auth/auth-service'
 import {
   deleteCourse,
   getAllSemesters,
   updateCourseStatus
 } from '@/service/master/course/course-service'
-import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
 import { ListCourseResponse } from '@/types/response/master/course/course-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
@@ -37,24 +39,37 @@ export default function CoursePage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [selectedStudyProgramId, setSelectedStudyProgramId] = useState('')
   const [filters, setFilters] = useState({
-    study_program_id: [] as string[],
     semester: [] as string[],
     status: [] as string[]
   })
-  const [tempStudyProgramIds, setTempStudyProgramIds] = useState<string[]>([])
   const [tempSemesters, setTempSemesters] = useState<string[]>([])
   const [tempStatuses, setTempStatuses] = useState<string[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
   const confirm = useConfirm()
 
-  const { data: studyProgramsResp, run: runStudyPrograms } = useFetcher(
-    getAllStudyPrograms,
-    {
-      immediate: false
-    }
-  )
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
+
+  const studyPrograms = useMemo(() => meResp?.study_programs || [], [meResp])
+  const activeStudyProgramId = useMemo(() => {
+    if (studyPrograms.length === 0) return ''
+
+    const hasSelectedStudyProgram = studyPrograms.some(
+      (studyProgram) => studyProgram.id === selectedStudyProgramId
+    )
+
+    return hasSelectedStudyProgram
+      ? selectedStudyProgramId
+      : (studyPrograms[0]?.id ?? '')
+  }, [selectedStudyProgramId, studyPrograms])
 
   const { data: semestersResp, run: runSemesters } = useFetcher(
     getAllSemesters,
@@ -64,21 +79,10 @@ export default function CoursePage() {
   )
 
   useEffect(() => {
-    runStudyPrograms()
     runSemesters()
-  }, [runSemesters, runStudyPrograms])
+  }, [runSemesters])
 
   const filterGroups: FilterGroup[] = [
-    {
-      label: 'Study Program',
-      options:
-        studyProgramsResp?.map((studyProgram) => ({
-          label: studyProgram.name,
-          value: studyProgram.id
-        })) || [],
-      selected: tempStudyProgramIds,
-      onChange: setTempStudyProgramIds
-    },
     {
       label: 'Semester',
       options:
@@ -105,11 +109,11 @@ export default function CoursePage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      study_program_id: filters.study_program_id.join(','),
+      study_program_id: activeStudyProgramId,
       semester: filters.semester.join(','),
       status: filters.status.join(',')
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [activeStudyProgramId, currentPage, itemsPerPage, search, filters]
   )
 
   const { data, isLoading, refetch } = useCourse(param)
@@ -174,19 +178,9 @@ export default function CoursePage() {
     {
       key: 'name',
       label: 'Name',
-      className: 'min-w-[220px]',
+      className: 'min-w-[120px]',
       render: (value) => (
         <p className="truncate text-sm font-medium">{value.name}</p>
-      )
-    },
-    {
-      key: 'study_program_name',
-      label: 'Study Program',
-      className: 'min-w-[220px]',
-      render: (value) => (
-        <p className="truncate text-sm font-medium">
-          {value.study_program_name || '-'}
-        </p>
       )
     },
     {
@@ -194,7 +188,9 @@ export default function CoursePage() {
       label: 'Semester',
       className: 'min-w-[120px]',
       render: (value) => (
-        <p className="truncate text-sm font-medium">Semester {value.semester}</p>
+        <p className="truncate text-sm font-medium">
+          Semester {value.semester}
+        </p>
       )
     },
     {
@@ -231,9 +227,38 @@ export default function CoursePage() {
     }
   ]
 
+  if (meError) {
+    return (
+      <ErrorPage message="Failed to load study programs from current user." />
+    )
+  }
+
+  if (!isMeLoading && studyPrograms.length === 0) {
+    return (
+      <ErrorPage message="No study program access found for this account." />
+    )
+  }
+
   return (
     <ContentLayout
       title="Course"
+      afterTitle={
+        studyPrograms.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeStudyProgramId}
+              onValueChange={(studyProgramId) => {
+                setSelectedStudyProgramId(studyProgramId)
+                setCurrentPage(1)
+              }}
+              items={studyPrograms.map((studyProgram) => ({
+                id: studyProgram.id,
+                label: studyProgram.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -250,28 +275,21 @@ export default function CoursePage() {
           <FilterSheet
             onConfirm={() => {
               setFilters({
-                study_program_id: tempStudyProgramIds,
                 semester: tempSemesters,
                 status: tempStatuses
               })
               setCurrentPage(1)
             }}
             onCancel={() => {
-              setTempStudyProgramIds([])
               setTempSemesters([])
               setTempStatuses([])
               setFilters({
-                study_program_id: [],
                 semester: [],
                 status: []
               })
               setCurrentPage(1)
             }}
-            badgeCount={
-              filters.study_program_id.length +
-              filters.semester.length +
-              filters.status.length
-            }
+            badgeCount={filters.semester.length + filters.status.length}
           >
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
@@ -294,7 +312,7 @@ export default function CoursePage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
         />
