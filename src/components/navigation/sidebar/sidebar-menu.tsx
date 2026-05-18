@@ -1,3 +1,4 @@
+import { DeviceIcon } from '@/components/icons/device-icon'
 import { FolderIcon } from '@/components/icons/folder-icon'
 import { HomeIcon } from '@/components/icons/home-icon'
 import { RoomIcon } from '@/components/icons/room-icon'
@@ -24,7 +25,7 @@ export function useMenuItems(): MenuItem[] {
     {
       id: 'device-control',
       label: 'Device Control',
-      icon: <HomeIcon className="h-6 w-6" />,
+      icon: <DeviceIcon className="h-6 w-6" />,
       href: '/dashboard/device-control',
       middleware: ['device_control']
     },
@@ -102,13 +103,12 @@ export function useMenuItems(): MenuItem[] {
           href: '/dashboard/master-data/building',
           middleware: ['building']
         },
-          {
-            id: 'floor',
-            label: 'Floor',
-            href: '/dashboard/master-data/floor',
-            middleware: ['floor']
-          },
-          
+        {
+          id: 'floor',
+          label: 'Floor',
+          href: '/dashboard/master-data/floor',
+          middleware: ['floor']
+        }
       ]
     },
     {
