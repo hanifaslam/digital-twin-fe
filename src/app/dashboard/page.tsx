@@ -14,6 +14,8 @@ import RegisterFaceDialog from './_components/register-face-dialog'
 
 import { AttendanceCard } from './_components/attendance-card'
 import { AttendanceTable } from './_components/attendance-table'
+import { GeneralDashboard } from './_components/general-dashboard'
+import { MyScheduleCard, MyStatsCard } from './_components/lecturer-widgets'
 import { RegistrationBanner } from './_components/registration-banner'
 
 export default function DashboardPage() {
@@ -88,25 +90,15 @@ export default function DashboardPage() {
           />
 
           <AttendanceTable status={status} isLoading={statusLoading} />
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <MyScheduleCard />
+            <MyStatsCard />
+          </div>
         </div>
       ) : (
-        <div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga labore
-            dolorum aut illum nisi facere laborum, itaque voluptatem obcaecati
-            repellat iste quos vel possimus quis tempore modi. Vero inventore,
-            et ratione pariatur ut, assumenda vel id debitis eos dignissimos
-            neque consectetur qui aliquid? Voluptates, maxime sapiente debitis
-            iusto quaerat laboriosam nisi blanditiis esse ut dicta non similique
-            ad explicabo cumque ipsam sint beatae excepturi culpa nam
-            accusantium nemo? Neque, totam commodi laboriosam delectus molestias
-            inventore enim? Tenetur minus eius explicabo. Esse ipsa nihil ipsam
-            iste error pariatur, quibusdam et hic repellendus quis veritatis
-            provident rem laboriosam voluptas! Rerum, minus voluptate.
-          </p>
-        </div>
+        <GeneralDashboard roleCode={user?.role_code} roleName={user?.role_name} />
       )}
-
       {isLecturer && (
         <>
           <RegisterFaceDialog

@@ -6,6 +6,8 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
@@ -19,15 +21,15 @@ import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import { useClass } from '@/hooks/api/master/class/use-class'
 import useFetcher from '@/hooks/use-fetcher'
+import { me } from '@/service/auth/auth-service'
 import {
   deleteClass,
   updateClassStatus
 } from '@/service/master/class/class-service'
-import { getAllStudyPrograms } from '@/service/master/study-program/study-program-service'
 import { ListClassResponse } from '@/types/response/master/class/class-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import AddClassDialog from './add-class-dialog'
 import EditClassDialog from './edit-class-dialog'
@@ -36,38 +38,37 @@ export default function ClassPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [selectedStudyProgramId, setSelectedStudyProgramId] = useState('')
   const [filters, setFilters] = useState({
-    study_program_id: [] as string[],
     status: [] as string[]
   })
-  const [tempStudyProgramIds, setTempStudyProgramIds] = useState<string[]>([])
   const [tempStatuses, setTempStatuses] = useState<string[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingClassId, setEditingClassId] = useState<string | null>(null)
   const confirm = useConfirm()
 
-  const { data: studyProgramsResp, run: runStudyPrograms } = useFetcher(
-    getAllStudyPrograms,
-    {
-      immediate: false
-    }
-  )
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
 
-  useEffect(() => {
-    runStudyPrograms()
-  }, [runStudyPrograms])
+  const studyPrograms = useMemo(() => meResp?.study_programs || [], [meResp])
+  const activeStudyProgramId = useMemo(() => {
+    if (studyPrograms.length === 0) return ''
+
+    const hasSelectedStudyProgram = studyPrograms.some(
+      (studyProgram) => studyProgram.id === selectedStudyProgramId
+    )
+
+    return hasSelectedStudyProgram
+      ? selectedStudyProgramId
+      : (studyPrograms[0]?.id ?? '')
+  }, [selectedStudyProgramId, studyPrograms])
 
   const filterGroups: FilterGroup[] = [
-    {
-      label: 'Study Program',
-      options:
-        studyProgramsResp?.map((studyProgram) => ({
-          label: studyProgram.name,
-          value: studyProgram.id
-        })) || [],
-      selected: tempStudyProgramIds,
-      onChange: setTempStudyProgramIds
-    },
     {
       label: 'Status',
       options: [
@@ -84,10 +85,10 @@ export default function ClassPage() {
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      study_program_id: filters.study_program_id.join(','),
+      study_program_id: activeStudyProgramId,
       status: filters.status.join(',')
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [activeStudyProgramId, currentPage, itemsPerPage, search, filters]
   )
 
   const { data, isLoading, refetch } = useClass(param)
@@ -150,16 +151,6 @@ export default function ClassPage() {
       )
     },
     {
-      key: 'study_program_name',
-      label: 'Study Program',
-      className: 'min-w-[220px]',
-      render: (value) => (
-        <p className="truncate text-sm font-medium">
-          {value.study_program_name || '-'}
-        </p>
-      )
-    },
-    {
       key: 'status',
       label: 'Status',
       className: 'min-w-[150px]',
@@ -193,9 +184,38 @@ export default function ClassPage() {
     }
   ]
 
+  if (meError) {
+    return (
+      <ErrorPage message="Failed to load study programs from current user." />
+    )
+  }
+
+  if (!isMeLoading && studyPrograms.length === 0) {
+    return (
+      <ErrorPage message="No study program access found for this account." />
+    )
+  }
+
   return (
     <ContentLayout
       title="Class"
+      afterTitle={
+        studyPrograms.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeStudyProgramId}
+              onValueChange={(studyProgramId) => {
+                setSelectedStudyProgramId(studyProgramId)
+                setCurrentPage(1)
+              }}
+              items={studyPrograms.map((studyProgram) => ({
+                id: studyProgram.id,
+                label: studyProgram.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -212,21 +232,18 @@ export default function ClassPage() {
           <FilterSheet
             onConfirm={() => {
               setFilters({
-                study_program_id: tempStudyProgramIds,
                 status: tempStatuses
               })
               setCurrentPage(1)
             }}
             onCancel={() => {
-              setTempStudyProgramIds([])
               setTempStatuses([])
               setFilters({
-                study_program_id: [],
                 status: []
               })
               setCurrentPage(1)
             }}
-            badgeCount={filters.study_program_id.length + filters.status.length}
+            badgeCount={filters.status.length}
           >
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
@@ -249,7 +266,7 @@ export default function ClassPage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
         />

@@ -6,20 +6,17 @@ import {
   TableColumn,
   TableContainer
 } from '@/components/common/table/table-container'
+import { ErrorPage } from '@/components/common/tabs/error-page'
+import { ScrollableTabs } from '@/components/common/tabs/scrollable-tabs'
 import { PencilIcon } from '@/components/icons/pencil-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
 import IconButton from '@/components/template/button/icon-button'
-import {
-  FilterCheckbox,
-  FilterGroup
-} from '@/components/template/content/filter-check'
-import { FilterSheet } from '@/components/template/modal/filter-sheet'
 import { Switch } from '@/components/ui/switch'
 import { useRoom } from '@/hooks/api/master/room/use-room'
 import useFetcher from '@/hooks/use-fetcher'
-import { getAllBuildings } from '@/service/master/building/building-service'
+import { me } from '@/service/auth/auth-service'
 import {
   deleteRoom,
   updateRoomStatus
@@ -27,7 +24,7 @@ import {
 import { ListRoomResponse } from '@/types/response/master/room/room-response'
 import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import AddRoomDialog from './add-room-dialog'
 import EditRoomDialog from './edit-room-dialog'
@@ -36,46 +33,38 @@ export default function RoomPage() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [filters, setFilters] = useState({
-    building_id: [] as string[]
-  })
-  const [tempBuildingIds, setTempBuildingIds] = useState<string[]>([])
+  const [selectedBuildingId, setSelectedBuildingId] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null)
   const confirm = useConfirm()
 
-  const { data: buildingsResp, run: runBuildings } = useFetcher(
-    getAllBuildings,
-    {
-      immediate: false
-    }
-  )
+  const {
+    data: meResp,
+    isLoading: isMeLoading,
+    error: meError
+  } = useFetcher(me, {
+    immediate: true
+  })
 
-  useEffect(() => {
-    runBuildings()
-  }, [runBuildings])
+  const buildings = useMemo(() => meResp?.buildings || [], [meResp])
+  const activeBuildingId = useMemo(() => {
+    if (buildings.length === 0) return ''
 
-  const filterGroups: FilterGroup[] = [
-    {
-      label: 'Building',
-      options:
-        buildingsResp?.map((building) => ({
-          label: building.name,
-          value: building.id
-        })) || [],
-      selected: tempBuildingIds,
-      onChange: setTempBuildingIds
-    }
-  ]
+    const hasSelectedBuilding = buildings.some(
+      (building) => building.id === selectedBuildingId
+    )
+
+    return hasSelectedBuilding ? selectedBuildingId : (buildings[0]?.id ?? '')
+  }, [selectedBuildingId, buildings])
 
   const param = useMemo(
     () => ({
       page: currentPage,
       per_page: itemsPerPage,
       q: search,
-      building_id: filters.building_id.join(',')
+      building_id: activeBuildingId
     }),
-    [currentPage, itemsPerPage, search, filters]
+    [currentPage, itemsPerPage, search, activeBuildingId]
   )
 
   const { data, isLoading, mutate } = useRoom(param)
@@ -138,16 +127,6 @@ export default function RoomPage() {
       )
     },
     {
-      key: 'building_name',
-      label: 'Building',
-      className: 'min-w-[180px]',
-      render: (value) => (
-        <p className="truncate text-sm font-medium">
-          {value.building_name || '-'}
-        </p>
-      )
-    },
-    {
       key: 'floor',
       label: 'Floor',
       className: 'min-w-[140px]',
@@ -191,9 +170,34 @@ export default function RoomPage() {
     }
   ]
 
+  if (meError) {
+    return <ErrorPage message="Failed to load buildings from current user." />
+  }
+
+  if (!isMeLoading && buildings.length === 0) {
+    return <ErrorPage message="No building access found for this account." />
+  }
+
   return (
     <ContentLayout
       title="Room"
+      afterTitle={
+        buildings.length > 0 ? (
+          <div className="mt-4">
+            <ScrollableTabs
+              value={activeBuildingId}
+              onValueChange={(buildingId) => {
+                setSelectedBuildingId(buildingId)
+                setCurrentPage(1)
+              }}
+              items={buildings.map((building) => ({
+                id: building.id,
+                label: building.name
+              }))}
+            />
+          </div>
+        ) : null
+      }
       leading={
         <SearchInput
           placeholder="Search"
@@ -207,20 +211,6 @@ export default function RoomPage() {
       }
       trailing={
         <div className="flex space-x-4">
-          <FilterSheet
-            onConfirm={() => {
-              setFilters({ building_id: tempBuildingIds })
-              setCurrentPage(1)
-            }}
-            onCancel={() => {
-              setTempBuildingIds([])
-              setFilters({ building_id: [] })
-              setCurrentPage(1)
-            }}
-            badgeCount={filters.building_id.length}
-          >
-            <FilterCheckbox filterGroups={filterGroups} />
-          </FilterSheet>
           <IconButton
             icon={<PlusIcon />}
             title="Add"
@@ -240,7 +230,7 @@ export default function RoomPage() {
           totalPages={data?.metadata?.total_page || 0}
           onPageChange={setCurrentPage}
           onItemsPerPageChange={setItemsPerPage}
-          loading={isLoading}
+          loading={isLoading || isMeLoading}
           showEmptyImage={false}
           showCreatedAt={false}
         />
