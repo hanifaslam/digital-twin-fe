@@ -1,4 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useSemesterSummary } from '@/hooks/api/dashboard/use-semester-summary'
 import { Activity, BookOpen, CalendarCheck, Clock } from 'lucide-react'
 import { upcomingClasses } from './general-dashboard/data'
 
@@ -40,31 +42,34 @@ export function MyScheduleCard() {
 }
 
 export function MyStatsCard() {
+  const { data: summaryDataResponse, isLoading } = useSemesterSummary()
+  const summary = summaryDataResponse?.data
+
   const stats = [
     {
       label: 'Classes Taught',
-      value: '24',
+      value: String(summary?.classes_taught ?? 0),
       icon: BookOpen,
       color: 'text-blue-600',
       bg: 'bg-blue-100'
     },
     {
       label: 'On-Time Rate',
-      value: '95%',
+      value: `${summary?.on_time_rate_percent ?? 0}%`,
       icon: Clock,
       color: 'text-green-600',
       bg: 'bg-green-100'
     },
     {
       label: 'Total Hours',
-      value: '64h',
+      value: `${summary?.total_hours ?? 0}h`,
       icon: Activity,
       color: 'text-purple-600',
       bg: 'bg-purple-100'
     },
     {
       label: 'Absences',
-      value: '0',
+      value: String(summary?.absences ?? 0),
       icon: CalendarCheck,
       color: 'text-orange-600',
       bg: 'bg-orange-100'
@@ -90,7 +95,11 @@ export function MyStatsCard() {
                 <stat.icon className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16 mb-1" />
+                ) : (
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                )}
                 <p className="text-xs font-medium text-muted-foreground">
                   {stat.label}
                 </p>

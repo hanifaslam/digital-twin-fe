@@ -18,11 +18,15 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useDeviceMonitoringStatus } from '@/hooks/api/dashboard/use-device-monitoring-status'
+import { useWeeklyAttendance } from '@/hooks/api/dashboard/use-weekly-attendance'
+import { cn } from '@/lib/utils'
+import useAuthStore from '@/store/auth-store'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { attendanceData, chartConfig, monitoringDevices } from './data'
-import { cn } from '@/lib/utils'
+import { chartConfig } from './data'
 
 type MonitoringDeviceRow = {
   id: string
@@ -39,57 +43,59 @@ export function WeeklyOrMonitoringCard({
   isHelper: boolean
   className?: string
 }) {
-  const devices = useMemo<MonitoringDeviceRow[]>(
-    () =>
-      monitoringDevices.map((device, index) => {
-        const parts = device.title.split('-').map((item) => item.trim())
-        const name = parts[0] || device.title
-        const room = parts[1] || '-'
+  const { data: attendanceDataResponse, isLoading: isAttendanceLoading } =
+    useWeeklyAttendance({
+      enabled: !isHelper
+    })
 
-        return {
-          id: `${device.title}-${index}`,
-          name,
-          building: device.building,
-          room,
-          status: device.status as MonitoringDeviceRow['status']
-        }
-      }),
-    []
-  )
+  const chartData = useMemo(() => {
+    if (!attendanceDataResponse?.data) return []
+    return attendanceDataResponse.data.map((item) => ({
+      day: item.label,
+      present: item.present,
+      absent: item.absent
+    }))
+  }, [attendanceDataResponse])
+  const { user } = useAuthStore()
+  const userBuildings = useMemo(() => user?.buildings || [], [user])
 
-  const buildings = useMemo(
-    () => Array.from(new Set(devices.map((device) => device.building))),
-    [devices]
-  )
+  const [selectedBuilding, setSelectedBuilding] = useState('')
 
-  const [selectedBuilding, setSelectedBuilding] = useState(buildings[0] || '')
+  const activeBuildingId = useMemo(() => {
+    if (userBuildings.length === 0) return ''
+    const exists = userBuildings.some((b) => b.id === selectedBuilding)
+    return exists ? selectedBuilding : userBuildings[0].id
+  }, [userBuildings, selectedBuilding])
 
-  const activeBuilding = useMemo(() => {
-    if (buildings.length === 0) return ''
-    return buildings.includes(selectedBuilding)
-      ? selectedBuilding
-      : buildings[0]
-  }, [buildings, selectedBuilding])
+  const { data: monitoringDataResponse, isLoading: isMonitoringLoading } =
+    useDeviceMonitoringStatus(activeBuildingId, {
+      enabled: isHelper && !!activeBuildingId
+    })
 
-  const filteredDevices = useMemo(
-    () =>
-      devices
-        .filter((device) => device.building === activeBuilding)
-        .slice(0, 5),
-    [activeBuilding, devices]
-  )
+  const monitoringData = monitoringDataResponse?.data
+
+  const normalizedDevices = useMemo<MonitoringDeviceRow[]>(() => {
+    const rawDevices = monitoringData?.devices || []
+    return rawDevices.map((device) => {
+      let status: 'Online' | 'Offline' | 'Warning' = 'Offline'
+      if (device.status === 'ONLINE') status = 'Online'
+      else if (device.status === 'WARNING') status = 'Warning'
+
+      return {
+        id: device.id,
+        name: device.name,
+        building: '',
+        room: device.room_name,
+        status
+      }
+    })
+  }, [monitoringData?.devices])
 
   const statusSummary = useMemo(() => {
-    return filteredDevices.reduce(
-      (acc, device) => {
-        if (device.status === 'Online') acc.online += 1
-        else if (device.status === 'Warning') acc.warning += 1
-        else acc.offline += 1
-        return acc
-      },
-      { online: 0, warning: 0, offline: 0 }
+    return (
+      monitoringData?.health_summary || { online: 0, warning: 0, offline: 0 }
     )
-  }, [filteredDevices])
+  }, [monitoringData])
 
   const columns: TableColumn<MonitoringDeviceRow>[] = [
     {
@@ -161,24 +167,26 @@ export function WeeklyOrMonitoringCard({
         {isHelper ? (
           <div className="space-y-4">
             <ScrollableTabs
-              value={activeBuilding}
+              value={activeBuildingId}
               onValueChange={setSelectedBuilding}
-              items={buildings.map((building) => ({
-                id: building,
-                label: building
+              items={userBuildings.map((building) => ({
+                id: building.id,
+                label: building.name
               }))}
             />
             <TableContainer<MonitoringDeviceRow>
-              data={filteredDevices}
+              data={normalizedDevices}
               columns={columns}
-              loading={false}
+              loading={isMonitoringLoading}
               showNumbering={false}
               showCreatedAt={false}
               showEmptyImage={false}
               enablePagination={false}
               enableShowCount={false}
+              emptyContainerMinHeight="50px"
               className="border-gray-200"
-              emptyMessage="No device data available."
+              showEmptyMessage={false}
+              emptyDescription="No device data available."
               renderMobileItem={(row) => (
                 <div className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
                   <div className="flex items-center justify-between">
@@ -221,9 +229,26 @@ export function WeeklyOrMonitoringCard({
               </div>
             </div>
           </div>
+        ) : isAttendanceLoading ? (
+          <div className="flex flex-col gap-4 w-full h-[300px] justify-between py-2">
+            <div className="flex gap-4 w-full h-full items-end pb-2">
+              <Skeleton className="h-[40%] w-[12%] rounded-t-md mx-auto animate-pulse" />
+              <Skeleton className="h-[60%] w-[12%] rounded-t-md mx-auto animate-pulse" />
+              <Skeleton className="h-[80%] w-[12%] rounded-t-md mx-auto animate-pulse" />
+              <Skeleton className="h-[50%] w-[12%] rounded-t-md mx-auto animate-pulse" />
+              <Skeleton className="h-[70%] w-[12%] rounded-t-md mx-auto animate-pulse" />
+            </div>
+            <div className="flex justify-between w-full px-2">
+              <Skeleton className="h-4 w-8" />
+              <Skeleton className="h-4 w-8" />
+              <Skeleton className="h-4 w-8" />
+              <Skeleton className="h-4 w-8" />
+              <Skeleton className="h-4 w-8" />
+            </div>
+          </div>
         ) : (
           <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-            <BarChart accessibilityLayer data={attendanceData}>
+            <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="day"
