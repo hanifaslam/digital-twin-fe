@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Building2, Users } from 'lucide-react'
 import { liveClasses } from './data'
+import { cn } from '@/lib/utils'
 
 const buildingOccupancy = [
   { name: 'Gedung A', used: 6, total: 8, percentage: 75, color: 'bg-blue-600' },
@@ -8,9 +9,13 @@ const buildingOccupancy = [
   { name: 'Gedung C', used: 9, total: 10, percentage: 90, color: 'bg-red-600' }
 ]
 
-export function LiveOngoingClassesCard() {
+export function LiveOngoingClassesCard({
+  className = 'lg:col-span-4'
+}: {
+  className?: string
+}) {
   return (
-    <Card className="min-w-0 border-gray-200 shadow-sm lg:col-span-4">
+    <Card className={cn('min-w-0 border-gray-200 shadow-sm', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5 text-blue-500" />

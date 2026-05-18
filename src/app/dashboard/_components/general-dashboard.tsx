@@ -23,13 +23,13 @@ export function GeneralDashboard({
         {isHelper ? (
           <>
             <LiveOngoingClassesCard />
-            <OngoingOrUpcomingCard isHelper={isHelper} />
+            <OngoingOrUpcomingCard />
             <WeeklyOrMonitoringCard isHelper={isHelper} className="lg:col-span-7" />
           </>
         ) : (
           <>
             <WeeklyOrMonitoringCard isHelper={isHelper} />
-            <OngoingOrUpcomingCard isHelper={isHelper} />
+            <LiveOngoingClassesCard className="lg:col-span-3" />
           </>
         )}
       </div>

@@ -1,12 +1,4 @@
-import { Activity, Building, CalendarCheck, Users, Video, type LucideIcon } from 'lucide-react'
 
-export const attendanceData = [
-  { day: 'Mon', present: 140, absent: 12 },
-  { day: 'Tue', present: 152, absent: 5 },
-  { day: 'Wed', present: 138, absent: 15 },
-  { day: 'Thu', present: 145, absent: 8 },
-  { day: 'Fri', present: 160, absent: 2 }
-]
 
 export const chartConfig = {
   present: {
@@ -57,38 +49,6 @@ export const liveClasses = [
   }
 ]
 
-export const monitoringDevices = [
-  {
-    title: 'Camera - Room 101',
-    building: 'Gedung A',
-    status: 'Online',
-    color: 'bg-green-500/10 text-green-500'
-  },
-  {
-    title: 'Camera - Room 102',
-    building: 'Gedung A',
-    status: 'Offline',
-    color: 'bg-red-500/10 text-red-500'
-  },
-  {
-    title: 'Camera - Room 201',
-    building: 'Gedung B',
-    status: 'Online',
-    color: 'bg-green-500/10 text-green-500'
-  },
-  {
-    title: 'Camera - Room 205',
-    building: 'Gedung B',
-    status: 'Online',
-    color: 'bg-green-500/10 text-green-500'
-  },
-  {
-    title: 'Camera - Room 301',
-    building: 'Gedung C',
-    status: 'Warning',
-    color: 'bg-yellow-500/10 text-yellow-500'
-  }
-]
 
 export const upcomingClasses = [
   {
@@ -117,65 +77,3 @@ export const upcomingClasses = [
   }
 ]
 
-export type StatCardItem = {
-  title: string
-  value: string
-  description: string
-  icon: LucideIcon
-  valueClassName?: string
-}
-
-export const helperStatCards: StatCardItem[] = [
-  {
-    title: 'Buildings Monitored',
-    value: '4',
-    description: 'Buildings assigned to you',
-    icon: Building
-  },
-  {
-    title: 'Total Devices',
-    value: '24',
-    description: 'Face recognition devices',
-    icon: Activity
-  },
-  {
-    title: 'Offline Devices',
-    value: '2',
-    description: 'Needs attention',
-    icon: CalendarCheck,
-    valueClassName: 'text-red-500'
-  },
-  {
-    title: 'Classes Active',
-    value: '18',
-    description: 'Currently running in your buildings',
-    icon: Users
-  }
-]
-
-export const defaultStatCards: StatCardItem[] = [
-  {
-    title: 'Total Lecturers',
-    value: '164',
-    description: '+4 since last month',
-    icon: Users
-  },
-  {
-    title: 'Total Devices',
-    value: '85',
-    description: 'Active face recognition units',
-    icon: Video
-  },
-  {
-    title: 'Active Rooms',
-    value: '32',
-    description: 'Currently in use',
-    icon: Building
-  },
-  {
-    title: 'System Health',
-    value: '99.9%',
-    description: 'All sensors operational',
-    icon: Activity
-  }
-]
