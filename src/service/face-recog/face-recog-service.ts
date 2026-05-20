@@ -9,9 +9,16 @@ export const FaceService = {
     return api.post<null>(ApiEndpoint.FACE_RECOGNITION.REGISTER, formData)
   },
 
-  verify: async (image: File) => {
+  verify: async (
+    image: File,
+    location?: { latitude: number; longitude: number }
+  ) => {
     const formData = new FormData()
     formData.append('image', image)
+    if (location) {
+      formData.append('latitude', String(location.latitude))
+      formData.append('longitude', String(location.longitude))
+    }
     return api.post<null>(ApiEndpoint.FACE_RECOGNITION.VERIFY, formData)
   },
 
