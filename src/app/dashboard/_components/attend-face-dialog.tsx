@@ -31,6 +31,31 @@ interface AttendFaceDialogProps {
 
 const BLINK_THRESHOLD = 0.6
 
+const getCurrentPosition = (): Promise<{ latitude: number; longitude: number }> =>
+  new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation is not supported by this browser'))
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        })
+      },
+      (error) => {
+        reject(error)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    )
+  })
+
 export default function AttendFaceDialog({
   open,
   onOpenChange,
@@ -120,15 +145,20 @@ export default function AttendFaceDialog({
     if (requestRef.current) cancelAnimationFrame(requestRef.current)
 
     try {
+      const location = await getCurrentPosition()
       const image = await captureImage()
       if (!image) throw new Error('Failed to capture image')
-      await FaceService.verify(image)
+      await FaceService.verify(image, location)
       toast.success('Successfully clock in!')
       stopCamera()
       onOpenChange(false)
       onSuccess?.()
     } catch (err: unknown) {
-      toast.error(handleApiError(err, 'Failed to record attendance'))
+      if (err instanceof GeolocationPositionError) {
+        toast.error('Location permission is required to record attendance')
+      } else {
+        toast.error(handleApiError(err, 'Failed to record attendance'))
+      }
       setHasError(true)
       lastBlinkRef.current = false
       if (videoRef.current && cameraActive) {
