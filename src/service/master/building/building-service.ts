@@ -10,6 +10,19 @@ export interface BuildingListParams extends BaseParams {
 
 }
 
+const normalizeBuildingPayload = <
+  T extends CreateBuildingPayload | UpdateBuildingPayload
+>(
+  data: T
+) => ({
+  ...data,
+  ...(data.longitude !== undefined
+    ? { longitude: Number(data.longitude) }
+    : {}),
+  ...(data.latitude !== undefined ? { latitude: Number(data.latitude) } : {}),
+  ...(data.radius !== undefined ? { radius: Number(data.radius) } : {})
+})
+
 export const BuildingService = {
   list: async (params: BuildingListParams) => {
       return api.get<ListBuildingResponse[]>(ApiEndpoint.MASTER.BUILDING.BASE, {
@@ -26,13 +39,16 @@ export const BuildingService = {
     },
   
     create: async (data: CreateBuildingPayload) => {
-      return api.post<null>(ApiEndpoint.MASTER.BUILDING.BASE, data)
+      return api.post<null>(
+        ApiEndpoint.MASTER.BUILDING.BASE,
+        normalizeBuildingPayload(data)
+      )
     },
   
     update: async (id: string, data: UpdateBuildingPayload) => {
       return api.patch<null>(
         ApiEndpoint.MASTER.BUILDING.UPDATE.replace(':id', id),
-        data
+        normalizeBuildingPayload(data)
       )
     },
   
