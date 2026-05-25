@@ -17,9 +17,12 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Digital Twin',
+  title: 'Digital Twin Management System',
   description: 'Digital Twin - Smart Building Management System',
   manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/logo.png'
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
