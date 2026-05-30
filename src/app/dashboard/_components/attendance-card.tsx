@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 interface AttendanceCardProps {
   name: string
   nip?: string
+  profilePicture?: string
   status: ReturnType<typeof useFaceRecog>['data']
   isLoading: boolean
   onClockIn: () => void
@@ -50,6 +51,7 @@ export const AttendanceCard = React.memo(
   ({
     name,
     nip,
+    profilePicture,
     status,
     isLoading,
     onClockIn,
@@ -74,7 +76,7 @@ export const AttendanceCard = React.memo(
         ) : (
           <>
             <Avatar size="lg" className="ring-2 ring-blue-400">
-              <AvatarImage src="" />
+              <AvatarImage src={profilePicture || ''} />
               <AvatarFallback className="bg-blue-500 text-white">
                 {getInitials(name)}
               </AvatarFallback>

@@ -83,6 +83,7 @@ export default function DashboardPage() {
           <AttendanceCard
             name={user?.name ?? '-'}
             nip={user?.nip}
+            profilePicture={user?.profile_picture}
             status={faceStatus}
             isLoading={statusLoading}
             onClockIn={() => setClockInOpen(true)}
