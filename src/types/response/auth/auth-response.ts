@@ -8,6 +8,7 @@ export interface LoginResponse {
   role_code?: string
   nip?: string
   lecturer_id?: string
+  profile_picture?: string
 }
 
 export interface MeStudyProgramResponse {
@@ -30,6 +31,7 @@ export interface MeResponse {
   role_code?: string
   nip?: string
   lecturer_id?: string
+  profile_picture?: string
   study_programs?: MeStudyProgramResponse[]
   buildings?: MeBuildingResponse[]
   access: Access[]

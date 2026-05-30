@@ -7,7 +7,9 @@ export const ApiEndpoint = {
     FORGOT_PASSWORD: 'auth/forgot-password',
     RESET_PASSWORD: 'auth/reset-password/:token',
     VERIF_TOKEN: 'auth/verify-reset-token',
-    REFRESH: 'auth/refresh'
+    REFRESH: 'auth/refresh',
+    UPDATE_PROFILE: 'auth/profile',
+    UPLOAD_PROFILE_PHOTO: 'auth/profile/photo'
   },
   USER_MANAGEMENT: {
     ROLE: {

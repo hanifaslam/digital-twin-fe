@@ -33,3 +33,18 @@ export async function forgotPassword(payload: ForgotPasswordFormPayload) {
 export async function refreshToken() {
   return api.post(ApiEndpoint.AUTH.REFRESH)
 }
+
+export async function updateProfile(payload: { name?: string; email?: string; phone_number?: string }) {
+  return api.patch(ApiEndpoint.AUTH.UPDATE_PROFILE, payload)
+}
+
+export async function uploadProfilePhoto(file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
+  
+  return api.post<{ profile_picture: string }>(ApiEndpoint.AUTH.UPLOAD_PROFILE_PHOTO, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

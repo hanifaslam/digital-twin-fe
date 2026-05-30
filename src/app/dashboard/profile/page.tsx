@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LecturerService } from '@/service/master/lecturer/lecturer-service'
-import { UserService } from '@/service/user-management/user-service'
+import { updateProfile, uploadProfilePhoto } from '@/service/auth/auth-service'
 import useAuthStore from '@/store/auth-store'
 import { KeyIcon, ScanFace } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
@@ -23,11 +23,15 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const confirm = useConfirm()
 
+  useEffect(() => {
+    if (user?.profile_picture) {
+      setProfilePic(user.profile_picture)
+    }
+  }, [user?.profile_picture])
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const url = URL.createObjectURL(file)
-
       const ok = await confirm({
         title: 'Confirm Photo Change',
         description: 'Are you sure you want to change your profile picture?',
@@ -36,8 +40,17 @@ export default function ProfilePage() {
       })
 
       if (ok) {
-        setProfilePic(url)
-        // TODO: Hit backend API here
+        try {
+          const loadingToast = toast.loading('Uploading photo...')
+          const res = await uploadProfilePhoto(file)
+          if (res.data?.profile_picture) {
+             setProfilePic(res.data.profile_picture)
+             useAuthStore.setState({ user: { ...user!, profile_picture: res.data.profile_picture } })
+          }
+          toast.success('Photo updated successfully', { id: loadingToast })
+        } catch {
+          toast.error('Failed to update photo')
+        }
       }
 
       if (fileInputRef.current) {
@@ -72,14 +85,7 @@ export default function ProfilePage() {
     if (!isChanged) return
     setIsSaving(true)
     try {
-      if (email !== initialEmail && user?.id) {
-        await UserService.update(user.id, { email })
-      }
-
-      if (phone !== initialPhone && user?.lecturer_id) {
-        await LecturerService.update(user.lecturer_id, { phone_number: phone })
-      }
-
+      await updateProfile({ email, phone_number: phone })
       toast.success('Profile updated successfully')
       mutateLecturer()
     } catch {
