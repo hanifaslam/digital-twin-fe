@@ -1,6 +1,6 @@
 import { logout } from '@/service/auth/auth-service'
 import { BreadcrumbItems } from '@/types/layout-types'
-import { ChevronDown, KeyIcon, LogOut, Menu } from 'lucide-react'
+import { ChevronDown, KeyIcon, LogOut, Menu, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -201,6 +201,10 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                   className="w-56"
                   autoFocus={false}
                 >
+                  <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+                    <User className="w-4 h-4 mr-2" />
+                    Profile
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setIsChangePassOpen(true)}>
                     <KeyIcon className="w-4 h-4 mr-2" />
                     Change Password
