@@ -7,10 +7,14 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
-      // {
-      //   protocol: 'https',
-      //   hostname: 'storage-sushitei.rapier.lyr.id'
-      // }
+      {
+        protocol: 'https',
+        hostname: 'api-storage-digital-twin.hanifaslam.dev'
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage-digital-twin.hanifaslam.dev'
+      }
     ]
   },
 

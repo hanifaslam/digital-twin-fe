@@ -179,7 +179,7 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                     className="flex items-center gap-2 h-auto p-2"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={''} className="object-cover" />
+                      <AvatarImage src={user?.profile_picture || ''} className="object-cover" />
                       <AvatarFallback className="bg-primary text-primary-foreground">
                         {user?.username
                           ?.split(' ')

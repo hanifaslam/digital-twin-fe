@@ -113,6 +113,7 @@ export function useAuthGuard(): UseAuthGuardReturn {
             role_code: response.data.role_code,
             nip: response.data.nip,
             lecturer_id: response.data.lecturer_id,
+            profile_picture: response.data.profile_picture,
             study_programs: response.data.study_programs || [],
             buildings: response.data.buildings || [],
             access: response.data.access || null
