@@ -13,6 +13,7 @@ interface StoredUser {
   nip?: string
   lecturer_id?: string
   profile_picture?: string
+  phone_number?: string
   study_programs?: MeStudyProgramResponse[]
   buildings?: MeBuildingResponse[]
   access: Access[] | null
@@ -52,6 +53,7 @@ const useAuthStore = create<AuthState>()(
           nip: user.nip,
           lecturer_id: user.lecturer_id,
           profile_picture: user.profile_picture,
+          phone_number: user.phone_number,
           access: user.access || null
         }
 
