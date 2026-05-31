@@ -30,6 +30,7 @@ jobs:
           docker build \
             --no-cache \
             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+            --build-arg NEXT_PUBLIC_AUTH_APP_ID=${{ vars.NEXT_PUBLIC_AUTH_APP_ID }} \
             --build-arg NEXT_PUBLIC_DISABLE_CSRF=${{ vars.NEXT_PUBLIC_DISABLE_CSRF }} \
             -t ghcr.io/${{ github.repository }}:staging .
           docker push ghcr.io/${{ github.repository }}:staging

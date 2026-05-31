@@ -10,6 +10,9 @@ import axios, {
 import { toast } from 'sonner'
 import { authEvents } from '../auth-event'
 
+const CLIENT_APP_ID =
+  process.env.NEXT_PUBLIC_AUTH_APP_ID || 'digital-twin-fe'
+
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 30000,
@@ -29,6 +32,10 @@ async function fetchCsrfToken() {
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     BProgress.start()
+    const headers = new AxiosHeaders(config.headers)
+    headers.set('X-Client-App', CLIENT_APP_ID)
+    config.headers = headers
+
     if (typeof window !== 'undefined') {
       const pathParts = window.location.pathname.split('/')
       const locale = pathParts[1]
@@ -46,21 +53,7 @@ axiosInstance.interceptors.request.use(
         await fetchCsrfToken()
       }
       if (csrfToken) {
-        const headers = new AxiosHeaders()
-        if (config.headers) {
-          const existing = config.headers as Record<string, unknown>
-          for (const [key, value] of Object.entries(existing)) {
-            if (value === undefined) continue
-            if (Array.isArray(value)) {
-              headers.set(
-                key,
-                value.map((v) => String(v))
-              )
-            } else {
-              headers.set(key, String(value))
-            }
-          }
-        }
+        const headers = new AxiosHeaders(config.headers)
         headers.set('X-CSRF-Token', csrfToken)
         config.headers = headers
       }

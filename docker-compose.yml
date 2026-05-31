@@ -6,12 +6,14 @@ services:
       context: .
       args:
         - NEXT_PUBLIC_API_URL=https://digital-twin.hanifaslam.dev/api
+        - NEXT_PUBLIC_AUTH_APP_ID=digital-twin-fe
         - NEXT_PUBLIC_DISABLE_CSRF=true
     container_name: nextjs_app
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://digital-twin.hanifaslam.dev/api
+      - NEXT_PUBLIC_AUTH_APP_ID=digital-twin-fe
     ports:
       - '3000:3000'
     healthcheck:
