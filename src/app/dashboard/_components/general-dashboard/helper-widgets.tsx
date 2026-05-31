@@ -37,6 +37,8 @@ export function LiveOngoingClassesCard({
                 <div className="flex items-center text-xs text-muted-foreground">
                   <span className="font-medium text-gray-700">{live.lecturer}</span>
                   <span className="mx-2">•</span>
+                  <span>{live.building}</span>
+                  <span className="mx-2">•</span>
                   <span>{live.room}</span>
                 </div>
               </div>

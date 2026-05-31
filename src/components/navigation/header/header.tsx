@@ -7,7 +7,6 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 
 import ChangePasswordDialog from '@/components/common/modal/change-pass'
-import { BellIcon } from '@/components/icons/bell-icon'
 import { PanelLeftIcon } from '@/components/icons/panel-left-icon'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -26,11 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
+import { Popover, PopoverContent } from '@/components/ui/popover'
 import useAuthStore from '@/store/auth-store'
 import { useSidebarStore } from '@/store/use-sidebar-store'
 
@@ -131,20 +126,20 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                 open={isNotificationOpen}
                 onOpenChange={setIsNotificationOpen}
               >
-                <PopoverTrigger asChild>
+                {/* <PopoverTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="relative p-2 hover:border-none"
                   >
-                    <BellIcon className="w-6 h-6 fill-gray-600 dark:fill-primary-foreground" />
-                    {/* {unreadCount > 0 && (
+                    <BellIcon className="w-6 h-6 fill-gray-600 dark:fill-primary-foreground" /> */}
+                {/* {unreadCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
                         {unreadCount > 99 ? "99+" : unreadCount}
                       </span>
                     )} */}
-                  </Button>
-                </PopoverTrigger>
+                {/* </Button>
+                </PopoverTrigger> */}
                 <PopoverContent className="w-96 p-0" align="end">
                   {/* <div className="flex items-center justify-between p-4 border-b border-border">
                     <h4 className="font-semibold text-sm">Notifications</h4>
@@ -179,7 +174,10 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                     className="flex items-center gap-2 h-auto p-2"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.profile_picture || ''} className="object-cover" />
+                      <AvatarImage
+                        src={user?.profile_picture || ''}
+                        className="object-cover"
+                      />
                       <AvatarFallback className="bg-primary text-primary-foreground">
                         {user?.username
                           ?.split(' ')
@@ -201,7 +199,9 @@ export default function Headers({ breadcrumbs }: HeaderLayoutProps) {
                   className="w-56"
                   autoFocus={false}
                 >
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+                  <DropdownMenuItem
+                    onClick={() => router.push('/dashboard/profile')}
+                  >
                     <User className="w-4 h-4 mr-2" />
                     Profile
                   </DropdownMenuItem>
