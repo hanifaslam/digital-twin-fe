@@ -73,11 +73,11 @@ export function LiveOngoingClassesCard({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
                     <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-7 w-20 rounded-md" />
+                    <Skeleton className="h-4 w-24" />
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <Skeleton className="h-4 w-72" />
-                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-7 w-20 rounded-md" />
                   </div>
                 </div>
               </div>
@@ -87,28 +87,33 @@ export function LiveOngoingClassesCard({
             liveClasses.map((live) => (
               <div
                 key={live.scheduleId}
-                className="flex items-center justify-between rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
+                className="rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
               >
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold">{live.courseName}</p>
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <span className="font-medium text-gray-700">
-                      {live.lecturerName}
+                <div className="w-full space-y-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-sm font-semibold">{live.courseName}</p>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {live.timeLabel}
                     </span>
-                    <span className="mx-2">&bull;</span>
-                    <span>{live.classCode}</span>
-                    <span className="mx-2">&bull;</span>
-                    <span>{live.buildingName}</span>
-                    <span className="mx-2">&bull;</span>
-                    <span>{live.roomName}</span>
-                    <span className="mx-2">&bull;</span>
-                    <span>{live.timeLabel}</span>
                   </div>
-                </div>
-                <div
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize ${live.statusColor}`}
-                >
-                  {live.status.toLowerCase()}
+                  <div className="mt-1 flex items-center justify-between gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center">
+                      <span className="font-medium text-gray-700">
+                        {live.lecturerName}
+                      </span>
+                      <span className="mx-2">&bull;</span>
+                      <span>{live.classCode}</span>
+                      <span className="mx-2">&bull;</span>
+                      <span>{live.buildingName}</span>
+                      <span className="mx-2">&bull;</span>
+                      <span>{live.roomName}</span>
+                    </div>
+                    <div
+                      className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize ${live.statusColor}`}
+                    >
+                      {live.status.toLowerCase()}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

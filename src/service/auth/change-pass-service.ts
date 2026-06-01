@@ -9,7 +9,7 @@ import type { BaseResponse } from '@/types/base-response'
 export async function changePassword(
   payload: ChangePasswordFormPayload
 ): Promise<BaseResponse<null>> {
-  const response = await api.put<null>(
+  const response = await api.post<null>(
     ApiEndpoint.AUTH.CHANGE_PASSWORD,
     payload
   )
