@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { useSchedule } from '@/hooks/api/master/schedule/use-schedule'
 import useFetcher from '@/hooks/use-fetcher'
 import { me } from '@/service/auth/auth-service'
+import { getAllClasses } from '@/service/master/class/class-service'
 import { getAllRooms } from '@/service/master/room/room-service'
 import {
   deleteSchedule,
@@ -48,10 +49,12 @@ export default function SchedulePage() {
     null
   )
   const [filters, setFilters] = useState({
+    class: [] as string[],
     day: [] as string[],
     room: [] as string[],
     status: [] as string[]
   })
+  const [tempClass, setTempClass] = useState<string[]>([])
   const [tempDay, setTempDay] = useState<string[]>([])
   const [tempRoom, setTempRoom] = useState<string[]>([])
   const [tempStatus, setTempStatus] = useState<string[]>([])
@@ -81,6 +84,9 @@ export default function SchedulePage() {
   const { data: daysResp, run: runDays } = useFetcher(getAllDays, {
     immediate: false
   })
+  const { data: classesResp, run: runClasses } = useFetcher(getAllClasses, {
+    immediate: false
+  })
   const { data: roomsResp, run: runRooms } = useFetcher(getAllRooms, {
     immediate: false
   })
@@ -90,7 +96,23 @@ export default function SchedulePage() {
     runRooms()
   }, [runDays, runRooms])
 
+  useEffect(() => {
+    if (!activeStudyProgramId) return
+
+    runClasses({
+      study_program_id: activeStudyProgramId
+    })
+  }, [activeStudyProgramId, runClasses])
+
   const filterGroups: FilterGroup[] = [
+    {
+      label: 'Class',
+      options:
+        classesResp?.map((item) => ({ label: item.name, value: item.id })) ||
+        [],
+      selected: tempClass,
+      onChange: setTempClass
+    },
     {
       label: 'Day',
       options:
@@ -122,6 +144,7 @@ export default function SchedulePage() {
       per_page: itemsPerPage,
       q: search,
       study_program_id: activeStudyProgramId,
+      class_id: filters.class.join(','),
       day: filters.day.join(','),
       room: filters.room.join(','),
       status: filters.status.join(',')
@@ -310,6 +333,11 @@ export default function SchedulePage() {
               value={activeStudyProgramId}
               onValueChange={(studyProgramId) => {
                 setSelectedStudyProgramId(studyProgramId)
+                setTempClass([])
+                setFilters((prev) => ({
+                  ...prev,
+                  class: []
+                }))
                 setCurrentPage(1)
               }}
               items={studyPrograms.map((studyProgram) => ({
@@ -336,6 +364,7 @@ export default function SchedulePage() {
           <FilterSheet
             onConfirm={() => {
               setFilters({
+                class: tempClass,
                 day: tempDay,
                 room: tempRoom,
                 status: tempStatus
@@ -343,10 +372,12 @@ export default function SchedulePage() {
               setCurrentPage(1)
             }}
             onCancel={() => {
+              setTempClass([])
               setTempDay([])
               setTempRoom([])
               setTempStatus([])
               setFilters({
+                class: [],
                 day: [],
                 room: [],
                 status: []
@@ -354,7 +385,10 @@ export default function SchedulePage() {
               setCurrentPage(1)
             }}
             badgeCount={
-              filters.day.length + filters.room.length + filters.status.length
+              filters.class.length +
+              filters.day.length +
+              filters.room.length +
+              filters.status.length
             }
           >
             <FilterCheckbox filterGroups={filterGroups} />

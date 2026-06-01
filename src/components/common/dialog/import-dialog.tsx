@@ -163,9 +163,9 @@ export default function ImportDialog<TCreated, TSkipped>({
                   type="button"
                   onClick={handleDownloadTemplate}
                   disabled={isDownloading}
-                  className="text-[#03AC8F] underline underline-offset-2 disabled:opacity-60"
+                  className="text-primary underline underline-offset-2 disabled:opacity-60"
                 >
-                  {isDownloading ? 'downloading...' : 'here'}
+                  {isDownloading ? 'downloading' : 'here'}
                 </button>
                 .
               </p>
@@ -203,7 +203,7 @@ export default function ImportDialog<TCreated, TSkipped>({
               type="button"
               onClick={handleUpload}
               disabled={!selectedFile || isUploading}
-              className="bg-[#A6ABAA] text-white hover:bg-[#8E9492]"
+              className="bg-primary text-white hover:bg-primary/80"
             >
               {isUploading ? (
                 <LoadingSpinner className="size-4" />

@@ -13,6 +13,7 @@ import {
 
 export interface ScheduleListParams extends BaseParams {
   study_program_id?: string
+  class_id?: string
   status?: string
   day?: string
   room?: string
