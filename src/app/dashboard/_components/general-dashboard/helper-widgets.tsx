@@ -1,7 +1,10 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Building2, Users } from 'lucide-react'
-import { liveClasses } from './data'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useLiveOngoingClasses } from '@/hooks/api/dashboard/use-live-ongoing-classes'
 import { cn } from '@/lib/utils'
+import { Building2, Users } from 'lucide-react'
 
 const buildingOccupancy = [
   { name: 'Gedung A', used: 6, total: 8, percentage: 75, color: 'bg-blue-600' },
@@ -9,11 +12,45 @@ const buildingOccupancy = [
   { name: 'Gedung C', used: 9, total: 10, percentage: 90, color: 'bg-red-600' }
 ]
 
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'ONGOING':
+      return 'bg-green-500/10 text-green-600'
+    case 'WAITING':
+      return 'bg-yellow-500/10 text-yellow-600'
+    case 'LATE':
+      return 'bg-red-500/10 text-red-600'
+    case 'DONE':
+      return 'bg-blue-500/10 text-blue-600'
+    case 'CANCELLED':
+      return 'bg-gray-500/10 text-gray-600'
+    default:
+      return 'bg-slate-500/10 text-slate-600'
+  }
+}
+
 export function LiveOngoingClassesCard({
   className = 'lg:col-span-4'
 }: {
   className?: string
 }) {
+  const { data: liveClassesResponse, isLoading } = useLiveOngoingClasses()
+
+  const liveClasses =
+    liveClassesResponse?.data.map((item) => ({
+      scheduleId: item.schedule_id,
+      courseName: item.course_name,
+      classCode: item.class_code,
+      lecturerName: item.lecturer_name,
+      roomName: item.room_name,
+      buildingName: item.building_name,
+      startTime: item.start_time,
+      endTime: item.end_time,
+      status: item.status,
+      statusColor: getStatusColor(item.status),
+      timeLabel: `${item.start_time} - ${item.end_time}`
+    })) ?? []
+
   return (
     <Card className={cn('min-w-0 border-gray-200 shadow-sm', className)}>
       <CardHeader>
@@ -27,28 +64,60 @@ export function LiveOngoingClassesCard({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {liveClasses.map((live) => (
-            <div
-              key={`${live.course}-${live.room}-${live.lecturer}`}
-              className="flex items-center justify-between rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
-            >
-              <div className="space-y-1">
-                <p className="text-sm font-semibold">{live.course}</p>
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <span className="font-medium text-gray-700">{live.lecturer}</span>
-                  <span className="mx-2">•</span>
-                  <span>{live.building}</span>
-                  <span className="mx-2">•</span>
-                  <span>{live.room}</span>
+          {isLoading &&
+            Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="rounded-lg border bg-gray-50/50 p-3"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <Skeleton className="h-5 w-40" />
+                    <Skeleton className="h-7 w-20 rounded-md" />
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <Skeleton className="h-4 w-72" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
                 </div>
               </div>
+            ))}
+
+          {!isLoading &&
+            liveClasses.map((live) => (
               <div
-                className={`rounded-md px-2.5 py-1 text-xs font-semibold ${live.statusColor}`}
+                key={live.scheduleId}
+                className="flex items-center justify-between rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
               >
-                {live.status}
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold">{live.courseName}</p>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <span className="font-medium text-gray-700">
+                      {live.lecturerName}
+                    </span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{live.classCode}</span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{live.buildingName}</span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{live.roomName}</span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{live.timeLabel}</span>
+                  </div>
+                </div>
+                <div
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize ${live.statusColor}`}
+                >
+                  {live.status.toLowerCase()}
+                </div>
               </div>
+            ))}
+
+          {!isLoading && liveClasses.length === 0 && (
+            <div className="rounded-lg border border-dashed bg-gray-50/50 p-6 text-center text-sm text-muted-foreground">
+              No live classes at the moment.
             </div>
-          ))}
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,10 +1,28 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useMyTeachingSchedule } from '@/hooks/api/dashboard/use-my-teaching-schedule'
 import { useSemesterSummary } from '@/hooks/api/dashboard/use-semester-summary'
 import { Activity, BookOpen, CalendarCheck, Clock } from 'lucide-react'
-import { upcomingClasses } from './general-dashboard/data'
 
 export function MyScheduleCard() {
+  const { data: scheduleResponse, isLoading } = useMyTeachingSchedule()
+
+  const scheduleItems =
+    scheduleResponse?.data.map((item) => ({
+      scheduleId: item.schedule_id,
+      startTime: item.start_time,
+      endTime: item.end_time,
+      className: item.class_name,
+      classCode: item.class_code,
+      lecturerName: item.lecturer_name,
+      roomId: item.room_id,
+      roomName: item.room_name,
+      buildingId: item.building_id,
+      buildingName: item.building_name,
+      status: item.status,
+      timeLabel: `${item.start_time} - ${item.end_time}`
+    })) ?? []
+
   return (
     <Card className="min-w-0 border-gray-200 shadow-sm">
       <CardHeader>
@@ -13,28 +31,51 @@ export function MyScheduleCard() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {upcomingClasses.map((schedule) => (
-            <div
-              key={`${schedule.class_name}-${schedule.time_label}`}
-              className="flex items-center gap-4 rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
-            >
-              <div className="flex h-12 w-12 flex-col items-center justify-center rounded-md bg-blue-100 text-blue-700">
-                <span className="text-xs font-bold">
-                  {schedule.time_label.split(' - ')[0]}
-                </span>
-              </div>
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-semibold leading-none">
-                  {schedule.course_name}
-                </p>
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <span>{schedule.class_name}</span>
-                  <span className="mx-2">•</span>
-                  <span>{schedule.room_name}</span>
+          {isLoading &&
+            Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-4 rounded-lg border bg-gray-50/50 p-3"
+              >
+                <Skeleton className="h-12 w-12 rounded-md" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3 w-28" />
                 </div>
               </div>
+            ))}
+
+          {!isLoading &&
+            scheduleItems.map((schedule) => (
+              <div
+                key={schedule.scheduleId}
+                className="flex items-center gap-4 rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
+              >
+                <div className="flex min-h-12 min-w-[112px] items-center justify-center rounded-md bg-blue-100 px-3 py-1 text-blue-700">
+                  <span className="text-xs font-bold">
+                    {schedule.startTime} - {schedule.endTime}
+                  </span>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-semibold leading-none">
+                    {schedule.className}
+                  </p>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <span>{schedule.classCode}</span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{schedule.buildingName}</span>
+                    <span className="mx-2">&bull;</span>
+                    <span>{schedule.roomName}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          {!isLoading && scheduleItems.length === 0 && (
+            <div className="rounded-lg border border-dashed bg-gray-50/50 p-6 text-center text-sm text-muted-foreground">
+              No teaching schedule for today.
             </div>
-          ))}
+          )}
         </div>
       </CardContent>
     </Card>
@@ -96,7 +137,7 @@ export function MyStatsCard() {
               </div>
               <div>
                 {isLoading ? (
-                  <Skeleton className="h-8 w-16 mb-1" />
+                  <Skeleton className="mb-1 h-8 w-16" />
                 ) : (
                   <p className="text-2xl font-bold">{stat.value}</p>
                 )}

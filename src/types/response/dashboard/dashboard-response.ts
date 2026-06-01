@@ -40,3 +40,29 @@ export interface SemesterSummaryResponse {
   total_hours: number
   absences: number
 }
+
+export interface MyTeachingScheduleItem {
+  schedule_id: string
+  start_time: string
+  end_time: string
+  class_name: string
+  class_code: string
+  lecturer_name: string
+  room_id: string
+  room_name: string
+  building_id: string
+  building_name: string
+  status: 'WAITING' | 'ONGOING' | 'DONE' | 'CANCELLED' | 'LATE' | string
+}
+
+export interface LiveOngoingClassItem {
+  schedule_id: string
+  course_name: string
+  class_code: string
+  lecturer_name: string
+  room_name: string
+  building_name: string
+  start_time: string
+  end_time: string
+  status: 'WAITING' | 'ONGOING' | 'DONE' | 'CANCELLED' | 'LATE' | string
+}

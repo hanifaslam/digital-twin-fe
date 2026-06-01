@@ -133,6 +133,8 @@ export const ApiEndpoint = {
     SUMMARY_CARDS: 'dashboard/summary-cards',
     WEEKLY_ATTENDANCE: 'dashboard/weekly-attendance',
     DEVICE_MONITORING: 'dashboard/device-monitoring-status',
-    SEMESTER_SUMMARY: 'dashboard/semester-summary'
+    SEMESTER_SUMMARY: 'dashboard/semester-summary',
+    MY_TEACHING_SCHEDULE: 'dashboard/my-teaching-schedule',
+    LIVE_ONGOING_CLASSES: 'dashboard/live-ongoing-classes'
   }
 } as const

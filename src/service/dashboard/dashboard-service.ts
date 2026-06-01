@@ -2,6 +2,8 @@ import { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
 import {
   DeviceMonitoringResponse,
+  LiveOngoingClassItem,
+  MyTeachingScheduleItem,
   SemesterSummaryResponse,
   SummaryCardsResponse,
   WeeklyAttendanceItem
@@ -21,6 +23,16 @@ export const DashboardService = {
   },
   getSemesterSummary: async () => {
     return api.get<SemesterSummaryResponse>(ApiEndpoint.DASHBOARD.SEMESTER_SUMMARY)
+  },
+  getMyTeachingSchedule: async () => {
+    return api.get<MyTeachingScheduleItem[]>(
+      ApiEndpoint.DASHBOARD.MY_TEACHING_SCHEDULE
+    )
+  },
+  getLiveOngoingClasses: async () => {
+    return api.get<LiveOngoingClassItem[]>(
+      ApiEndpoint.DASHBOARD.LIVE_ONGOING_CLASSES
+    )
   }
 }
 
@@ -28,5 +40,7 @@ export const {
   getSummaryCards,
   getWeeklyAttendance,
   getDeviceMonitoringStatus,
-  getSemesterSummary
+  getSemesterSummary,
+  getMyTeachingSchedule,
+  getLiveOngoingClasses
 } = DashboardService
