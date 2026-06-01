@@ -26,6 +26,7 @@ import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import ImportRoomDialog from './_components/import-room-dialog'
 import AddRoomDialog from './add-room-dialog'
 import EditRoomDialog from './edit-room-dialog'
 
@@ -35,6 +36,7 @@ export default function RoomPage() {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [selectedBuildingId, setSelectedBuildingId] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null)
   const confirm = useConfirm()
 
@@ -212,6 +214,12 @@ export default function RoomPage() {
       trailing={
         <div className="flex space-x-4">
           <IconButton
+            title="Import Room"
+            variant="tertiary"
+            className="text-foreground"
+            onClick={() => setIsImportDialogOpen(true)}
+          />
+          <IconButton
             icon={<PlusIcon />}
             title="Add"
             onClick={() => setIsAddDialogOpen(true)}
@@ -239,6 +247,11 @@ export default function RoomPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => mutate()}
+      />
+      <ImportRoomDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        onSuccess={() => void mutate()}
       />
       <EditRoomDialog
         open={Boolean(editingRoomId)}

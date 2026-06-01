@@ -1,4 +1,4 @@
-import { api } from '@/lib/api/axios'
+import axiosInstance, { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
 import {
   CreateSchedulePayload,
@@ -16,6 +16,37 @@ export interface ScheduleListParams extends BaseParams {
   status?: string
   day?: string
   room?: string
+}
+
+export interface ScheduleImportCreatedRow {
+  day: string
+  course_code: string
+  course_name: string
+  lecturer_name: string
+  room_name: string
+  start_time: string
+  end_time: string
+}
+
+export interface ScheduleImportSkippedRow {
+  row_number: number
+  day: string
+  course_code: string
+  course_name: string
+  lecturer_name: string
+  room_name: string
+  reason: string
+}
+
+export interface ScheduleImportResponse {
+  sheet_name?: string
+  study_program_name?: string
+  class_name?: string
+  semester?: string | number
+  created_count: number
+  skipped_count: number
+  created: ScheduleImportCreatedRow[]
+  skipped: ScheduleImportSkippedRow[]
 }
 
 export const ScheduleService = {
@@ -58,6 +89,32 @@ export const ScheduleService = {
     return api.get<ScheduleDayResponse[]>(
       ApiEndpoint.MASTER.SCHEDULE.GET_ALL_DAYS
     )
+  },
+
+  upload: async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return api.post<ScheduleImportResponse, FormData>(
+      ApiEndpoint.MASTER.SCHEDULE.UPLOAD,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+  },
+
+  downloadTemplate: async () => {
+    const response = await axiosInstance.get(
+      ApiEndpoint.MASTER.SCHEDULE.TEMPLATE,
+      {
+        responseType: 'blob'
+      }
+    )
+
+    return response.data
   }
 }
 
@@ -68,5 +125,7 @@ export const {
   update: updateSchedule,
   delete: deleteSchedule,
   toggleStatus: updateScheduleStatus,
-  getAllDays: getAllDays
+  getAllDays: getAllDays,
+  upload: importSchedule,
+  downloadTemplate: downloadScheduleTemplate
 } = ScheduleService

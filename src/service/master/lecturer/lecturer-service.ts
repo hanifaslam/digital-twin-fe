@@ -1,4 +1,4 @@
-import { api } from '@/lib/api/axios'
+import axiosInstance, { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
 import {
   CreateLecturerPayload,
@@ -15,6 +15,29 @@ import {
 export interface LecturerListParams extends BaseParams {
   study_program?: string
   study_program_id?: string
+}
+
+export interface LecturerImportCreatedRow {
+  nip: string
+  name: string
+  username: string
+  email: string
+  study_program: string[] | string
+}
+
+export interface LecturerImportSkippedRow {
+  row_number: number
+  nip: string
+  name: string
+  reason: string
+}
+
+export interface LecturerImportResponse {
+  created_count: number
+  skipped_count: number
+  created: LecturerImportCreatedRow[]
+  skipped: LecturerImportSkippedRow[]
+  default_password?: string
 }
 
 export const LecturerService = {
@@ -52,6 +75,32 @@ export const LecturerService = {
 
   overrideStatus: async (data: OverrideLecturerStatusPayload) => {
     return api.patch<null>(ApiEndpoint.MASTER.LECTURER.OVERRIDE_STATUS, data)
+  },
+
+  upload: async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return api.post<LecturerImportResponse, FormData>(
+      ApiEndpoint.MASTER.LECTURER.UPLOAD,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+  },
+
+  downloadTemplate: async () => {
+    const response = await axiosInstance.get(
+      ApiEndpoint.MASTER.LECTURER.TEMPLATE,
+      {
+        responseType: 'blob'
+      }
+    )
+
+    return response.data
   }
 }
 
@@ -60,5 +109,7 @@ export const {
   getAllLecturers,
   detail: showLecturer,
   create: createLecturer,
-  update: updateLecturer
+  update: updateLecturer,
+  upload: importLecturer,
+  downloadTemplate: downloadLecturerTemplate
 } = LecturerService

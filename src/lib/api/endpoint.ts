@@ -35,7 +35,9 @@ export const ApiEndpoint = {
       SHOW: 'lecturers/:id',
       UPDATE: 'lecturers/:id',
       GET_ALL: 'lecturers/all',
-      OVERRIDE_STATUS: 'lecturers/status/override'
+      OVERRIDE_STATUS: 'lecturers/status/override',
+      UPLOAD: 'lecturers/upload',
+      TEMPLATE: 'lecturers/template'
     },
     STUDY_PROGRAM: {
       BASE: 'study-programs',
@@ -51,7 +53,9 @@ export const ApiEndpoint = {
       UPDATE: 'rooms/:id',
       GET_ALL: 'rooms/all',
       TOGGLE_STATUS: 'rooms/:id/status',
-      DELETE: 'rooms/:id'
+      DELETE: 'rooms/:id',
+      UPLOAD: 'rooms/upload',
+      TEMPLATE: 'rooms/template'
     },
     FLOOR: {
       BASE: 'floors',
@@ -115,7 +119,9 @@ export const ApiEndpoint = {
       UPDATE: 'schedules/:id',
       TOGGLE_STATUS: 'schedules/:id/status',
       DELETE: 'schedules/:id',
-      GET_ALL_DAYS: 'schedules/days'
+      GET_ALL_DAYS: 'schedules/days',
+      UPLOAD: 'schedules/upload',
+      TEMPLATE: 'schedules/template'
     }
   },
   FACE_RECOGNITION: {

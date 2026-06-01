@@ -1,4 +1,4 @@
-import { api } from '@/lib/api/axios'
+import axiosInstance, { api } from '@/lib/api/axios'
 import { ApiEndpoint } from '@/lib/api/endpoint'
 import {
   CreateRoomPayload,
@@ -17,6 +17,29 @@ export interface RoomListParams extends BaseParams {
 
 export interface RoomGetAllParams extends Partial<BaseParams> {
   building_id?: string
+}
+
+export interface RoomImportCreatedRow {
+  room_name: string
+  building_name: string
+  building_code: string
+  floor_name: string
+  status: string
+}
+
+export interface RoomImportSkippedRow {
+  row_number: number
+  building_name: string
+  floor_name: string
+  room_name: string
+  reason: string
+}
+
+export interface RoomImportResponse {
+  created_count: number
+  skipped_count: number
+  created: RoomImportCreatedRow[]
+  skipped: RoomImportSkippedRow[]
 }
 
 export const RoomService = {
@@ -57,6 +80,29 @@ export const RoomService = {
     return api.patch<null>(
       ApiEndpoint.MASTER.ROOM.TOGGLE_STATUS.replace(':id', id)
     )
+  },
+
+  upload: async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return api.post<RoomImportResponse, FormData>(
+      ApiEndpoint.MASTER.ROOM.UPLOAD,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+  },
+
+  downloadTemplate: async () => {
+    const response = await axiosInstance.get(ApiEndpoint.MASTER.ROOM.TEMPLATE, {
+      responseType: 'blob'
+    })
+
+    return response.data
   }
 }
 
@@ -67,5 +113,7 @@ export const {
   create: createRoom,
   update: updateRoom,
   delete: deleteRoom,
-  toggleStatus: updateRoomStatus
+  toggleStatus: updateRoomStatus,
+  upload: importRoom,
+  downloadTemplate: downloadRoomTemplate
 } = RoomService

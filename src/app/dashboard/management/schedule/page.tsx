@@ -13,12 +13,12 @@ import { TrashIcon } from '@/components/icons/trash-icon'
 import ContentLayout from '@/components/layout/content-layout'
 import { useConfirm } from '@/components/providers/confirm-dialog-provider'
 import IconButton from '@/components/template/button/icon-button'
-import { Switch } from '@/components/ui/switch'
 import {
   FilterCheckbox,
   FilterGroup
 } from '@/components/template/content/filter-check'
 import { FilterSheet } from '@/components/template/modal/filter-sheet'
+import { Switch } from '@/components/ui/switch'
 import { useSchedule } from '@/hooks/api/master/schedule/use-schedule'
 import useFetcher from '@/hooks/use-fetcher'
 import { me } from '@/service/auth/auth-service'
@@ -33,6 +33,7 @@ import { AxiosError } from 'axios'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import ImportScheduleDialog from './_components/import-schedule-dialog'
 import AddScheduleDialog from './add-schedule-dialog'
 import EditScheduleDialog from './edit-schedule-dialog'
 
@@ -42,6 +43,7 @@ export default function SchedulePage() {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [selectedStudyProgramId, setSelectedStudyProgramId] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
     null
   )
@@ -91,13 +93,15 @@ export default function SchedulePage() {
   const filterGroups: FilterGroup[] = [
     {
       label: 'Day',
-      options: daysResp?.map((day) => ({ label: day.label, value: day.value })) || [],
+      options:
+        daysResp?.map((day) => ({ label: day.label, value: day.value })) || [],
       selected: tempDay,
       onChange: setTempDay
     },
     {
       label: 'Room',
-      options: roomsResp?.map((room) => ({ label: room.name, value: room.id })) || [],
+      options:
+        roomsResp?.map((room) => ({ label: room.name, value: room.id })) || [],
       selected: tempRoom,
       onChange: setTempRoom
     },
@@ -356,6 +360,13 @@ export default function SchedulePage() {
             <FilterCheckbox filterGroups={filterGroups} />
           </FilterSheet>
           <IconButton
+            title="Import Schedule"
+            variant="tertiary"
+            className="text-foreground"
+            onClick={() => setIsImportDialogOpen(true)}
+            disabled={!activeStudyProgramId}
+          />
+          <IconButton
             icon={<PlusIcon />}
             title="Add"
             onClick={() => setIsAddDialogOpen(true)}
@@ -385,6 +396,11 @@ export default function SchedulePage() {
         studyPrograms={studyPrograms}
         initialStudyProgramId={activeStudyProgramId}
         onOpenChange={setIsAddDialogOpen}
+        onSuccess={() => void refetch()}
+      />
+      <ImportScheduleDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
         onSuccess={() => void refetch()}
       />
       <EditScheduleDialog

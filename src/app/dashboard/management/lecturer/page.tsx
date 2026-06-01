@@ -18,6 +18,7 @@ import { me } from '@/service/auth/auth-service'
 import { ListLecturerResponse } from '@/types/response/master/lecturer/lecturer-response'
 import { PlusIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import ImportLecturerDialog from './_components/import-lecturer-dialog'
 import AddLecturerDialog from './add-lecturer-dialog'
 import EditLecturerDialog from './edit-lecturer-dialog'
 
@@ -27,6 +28,7 @@ export default function LecturerPage() {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [selectedStudyProgramId, setSelectedStudyProgramId] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [editingLecturerId, setEditingLecturerId] = useState<string | null>(
     null
   )
@@ -69,9 +71,7 @@ export default function LecturerPage() {
       key: 'nip',
       label: 'NIP',
       className: 'min-w-[160px]',
-      render: (value) => (
-        <p className="text-sm font-medium">{value.nip}</p>
-      )
+      render: (value) => <p className="text-sm font-medium">{value.nip}</p>
     },
     {
       key: 'name',
@@ -85,9 +85,7 @@ export default function LecturerPage() {
       key: 'email',
       label: 'Email',
       className: 'min-w-[220px]',
-      render: (value) => (
-        <p className="text-sm font-medium">{value.email}</p>
-      )
+      render: (value) => <p className="text-sm font-medium">{value.email}</p>
     },
     {
       key: 'study_program',
@@ -168,6 +166,12 @@ export default function LecturerPage() {
       trailing={
         <div className="flex space-x-4">
           <IconButton
+            title="Import Lecturer"
+            variant="tertiary"
+            className="text-foreground"
+            onClick={() => setIsImportDialogOpen(true)}
+          />
+          <IconButton
             icon={<PlusIcon />}
             title="Add"
             onClick={() => setIsAddDialogOpen(true)}
@@ -195,6 +199,11 @@ export default function LecturerPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => mutate()}
+      />
+      <ImportLecturerDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        onSuccess={() => void mutate()}
       />
       <EditLecturerDialog
         open={Boolean(editingLecturerId)}
