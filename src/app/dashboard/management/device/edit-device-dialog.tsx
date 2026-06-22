@@ -40,6 +40,7 @@ interface EditDeviceDialogProps {
   deviceId: string | null
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
+  buildingId: string
 }
 
 function EditDeviceDialogSkeleton() {
@@ -73,7 +74,8 @@ export default function EditDeviceDialog({
   open,
   deviceId,
   onOpenChange,
-  onSuccess
+  onSuccess,
+  buildingId
 }: EditDeviceDialogProps) {
   const form = useForm<UpdateDevicePayload>({
     resolver: zodResolver(updateDeviceSchema) as Resolver<UpdateDevicePayload>,
@@ -122,8 +124,10 @@ export default function EditDeviceDialog({
     if (!open || !deviceId) return
     runDevice()
     runDeviceTypes()
-    runRooms()
-  }, [open, deviceId, runDevice, runDeviceTypes, runRooms])
+    if (buildingId) {
+      runRooms({ building_id: buildingId })
+    }
+  }, [open, deviceId, runDevice, runDeviceTypes, runRooms, buildingId])
 
   useEffect(() => {
     resetDevice()

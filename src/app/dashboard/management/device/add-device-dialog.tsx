@@ -31,12 +31,14 @@ interface AddDeviceDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
+  buildingId: string
 }
 
 export default function AddDeviceDialog({
   open,
   onOpenChange,
-  onSuccess
+  onSuccess,
+  buildingId
 }: AddDeviceDialogProps) {
   const form = useForm<CreateDevicePayload>({
     resolver: zodResolver(createDeviceSchema) as Resolver<CreateDevicePayload>,
@@ -75,8 +77,10 @@ export default function AddDeviceDialog({
   useEffect(() => {
     if (!open) return
     runDeviceTypes()
-    runRooms()
-  }, [open, runDeviceTypes, runRooms])
+    if (buildingId) {
+      runRooms({ building_id: buildingId })
+    }
+  }, [open, runDeviceTypes, runRooms, buildingId])
 
   useEffect(() => {
     if (!selectedType) return

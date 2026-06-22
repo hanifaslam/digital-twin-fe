@@ -336,6 +336,7 @@ export default function DevicePage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => void refetch()}
+        buildingId={activeBuildingId}
       />
       <EditDeviceDialog
         open={Boolean(editingDeviceId)}
@@ -346,6 +347,7 @@ export default function DevicePage() {
           }
         }}
         onSuccess={() => void refetch()}
+        buildingId={activeBuildingId}
       />
     </ContentLayout>
   )
