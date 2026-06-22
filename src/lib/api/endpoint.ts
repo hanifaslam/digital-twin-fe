@@ -127,7 +127,9 @@ export const ApiEndpoint = {
   HISTORY: {
     LECTURER: 'history/lecturer',
     LECTURER_ACTIVITY_LOG: 'history/lecturer/:id/activity-log',
-    LECTURER_EXPORT: 'history/lecturer/export'
+    LECTURER_EXPORT: 'history/lecturer/export',
+    DEVICE: 'history/device',
+    DEVICE_EXPORT: 'history/device/export'
   },
   FACE_RECOGNITION: {
     REGISTER: 'face-recognition/register',
