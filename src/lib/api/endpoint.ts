@@ -124,6 +124,11 @@ export const ApiEndpoint = {
       TEMPLATE: 'schedules/template'
     }
   },
+  HISTORY: {
+    LECTURER: 'history/lecturer',
+    LECTURER_ACTIVITY_LOG: 'history/lecturer/:id/activity-log',
+    LECTURER_EXPORT: 'history/lecturer/export'
+  },
   FACE_RECOGNITION: {
     REGISTER: 'face-recognition/register',
     VERIFY: 'face-recognition/verify',

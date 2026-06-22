@@ -1,5 +1,6 @@
 import { DeviceIcon } from '@/components/icons/device-icon'
 import { FolderIcon } from '@/components/icons/folder-icon'
+import { HistoryIcon } from '@/components/icons/history-icon'
 import { HomeIcon } from '@/components/icons/home-icon'
 import { RoomIcon } from '@/components/icons/room-icon'
 import { UserIcon } from '@/components/icons/user-icon'
@@ -128,6 +129,26 @@ export function useMenuItems(): MenuItem[] {
           label: 'User',
           href: '/dashboard/user-management/user',
           middleware: ['user']
+        }
+      ]
+    },
+    {
+      id: 'history',
+      label: 'History',
+      icon: <HistoryIcon className="h-6 w-6" />,
+      middleware: ['history'],
+      children: [
+        {
+          id: 'device-history',
+          label: 'Device History',
+          href: '/dashboard/history/device',
+          middleware: ['history_device']
+        },
+        {
+          id: 'lecturer-history',
+          label: 'Lecturer History',
+          href: '/dashboard/history/lecturer',
+          middleware: ['history_lecturer']
         }
       ]
     }
