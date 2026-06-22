@@ -31,7 +31,10 @@ interface AttendFaceDialogProps {
 
 const BLINK_THRESHOLD = 0.6
 
-const getCurrentPosition = (): Promise<{ latitude: number; longitude: number }> =>
+const getCurrentPosition = (): Promise<{
+  latitude: number
+  longitude: number
+}> =>
   new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported by this browser'))
@@ -68,6 +71,8 @@ export default function AttendFaceDialog({
   const [isBlinking, setIsBlinking] = useState(false)
   const [modelLoaded, setModelLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [hasErroredOnce, setErroredOnce] = useState(false)
+  const [isManualSubmitting, setIsManualSubmitting] = useState(false)
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -140,6 +145,9 @@ export default function AttendFaceDialog({
   const handleAutoCapture = useCallback(async () => {
     if (isSubmitting) return
     setIsSubmitting(true)
+
+    await new Promise((resolve) => setTimeout(resolve, 300))
+
     // Freeze video
     if (videoRef.current) videoRef.current.pause()
     if (requestRef.current) cancelAnimationFrame(requestRef.current)
@@ -160,6 +168,7 @@ export default function AttendFaceDialog({
         toast.error(handleApiError(err, 'Failed to record attendance'))
       }
       setHasError(true)
+      setErroredOnce(true)
       lastBlinkRef.current = false
       if (videoRef.current && cameraActive) {
         videoRef.current.play().catch(() => {})
@@ -180,6 +189,24 @@ export default function AttendFaceDialog({
   ])
 
   handleAutoCaptureRef.current = handleAutoCapture
+
+  const handleManualVerify = async () => {
+    setIsManualSubmitting(true)
+    try {
+      await FaceService.manualVerify({
+        latitude: -6.914744,
+        longitude: 107.60981
+      })
+      toast.success('Successfully clock in manually!')
+      stopCamera()
+      onOpenChange(false)
+      onSuccess?.()
+    } catch (err: unknown) {
+      toast.error(handleApiError(err, 'Failed to manual clock in'))
+    } finally {
+      setIsManualSubmitting(false)
+    }
+  }
 
   const startCamera = useCallback(async () => {
     setHasError(false)
@@ -260,6 +287,9 @@ export default function AttendFaceDialog({
       stopCamera()
       setTimeout(() => {
         setIsSubmitting(false)
+        setIsManualSubmitting(false)
+        setHasError(false)
+        setErroredOnce(false)
       }, 200)
     }
   }, [open, stopCamera])
@@ -381,7 +411,7 @@ export default function AttendFaceDialog({
           </div>
 
           {/* Status and Action Section */}
-          {!cameraActive && (
+          {!cameraActive ? (
             <div className="space-y-4">
               <p className="text-center text-sm text-muted-foreground px-4">
                 Click below to activate camera for face recognition attendance
@@ -412,20 +442,46 @@ export default function AttendFaceDialog({
                 >
                   Cancel
                 </Button>
+                {hasErroredOnce && (
+                  <Button
+                    variant="secondary"
+                    className="w-full h-11 bg-orange-100 text-orange-700 hover:bg-orange-200"
+                    onClick={handleManualVerify}
+                    disabled={isSubmitting || isManualSubmitting}
+                  >
+                    {isManualSubmitting ? (
+                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    ) : null}
+                    Manual Attendance
+                  </Button>
+                )}
               </div>
             </div>
-          )}
-
-          {cameraActive && (
-            <div className="rounded-lg bg-blue-50 p-3 flex items-center gap-3 border border-blue-100">
-              <div className="h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
-                <div className="h-1 w-1 rounded-full bg-white animate-ping" />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="rounded-lg bg-blue-50 p-3 flex items-center gap-3 border border-blue-100">
+                <div className="h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                  <div className="h-1 w-1 rounded-full bg-white animate-ping" />
+                </div>
+                <p className="text-xs text-blue-700 leading-relaxed">
+                  Position your face in the center and{' '}
+                  <span className="font-bold">blink your eyes</span> to record
+                  attendance automatically.
+                </p>
               </div>
-              <p className="text-xs text-blue-700 leading-relaxed">
-                Position your face in the center and{' '}
-                <span className="font-bold">blink your eyes</span> to record
-                attendance automatically.
-              </p>
+              {hasErroredOnce && (
+                <Button
+                  variant="secondary"
+                  className="w-full h-11 bg-orange-100 text-orange-700 hover:bg-orange-200 font-semibold"
+                  onClick={handleManualVerify}
+                  disabled={isSubmitting || isManualSubmitting}
+                >
+                  {isManualSubmitting ? (
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  Manual Attendance
+                </Button>
+              )}
             </div>
           )}
         </div>

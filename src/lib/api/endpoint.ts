@@ -134,6 +134,7 @@ export const ApiEndpoint = {
   FACE_RECOGNITION: {
     REGISTER: 'face-recognition/register',
     VERIFY: 'face-recognition/verify',
+    MANUAL_VERIFY: 'face-recognition/verify/manual',
     CHECK_STATUS: 'face-recognition/status'
   },
   DASHBOARD: {

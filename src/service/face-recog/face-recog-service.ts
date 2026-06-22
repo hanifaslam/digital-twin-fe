@@ -22,6 +22,10 @@ export const FaceService = {
     return api.post<null>(ApiEndpoint.FACE_RECOGNITION.VERIFY, formData)
   },
 
+  manualVerify: async (location: { latitude: number; longitude: number }) => {
+    return api.post<null>(ApiEndpoint.FACE_RECOGNITION.MANUAL_VERIFY, location)
+  },
+
   checkStatus: async () => {
     return api.get<StatusFaceResponse>(
       ApiEndpoint.FACE_RECOGNITION.CHECK_STATUS
@@ -32,5 +36,6 @@ export const FaceService = {
 export const {
   register: registerFace,
   verify: verifyFace,
+  manualVerify,
   checkStatus: checkFaceStatus
 } = FaceService
