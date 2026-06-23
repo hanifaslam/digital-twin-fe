@@ -38,6 +38,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import AddDeviceDialog from './add-device-dialog'
 import EditDeviceDialog from './edit-device-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function DevicePage() {
   const [search, setSearch] = useState('')
@@ -155,9 +156,7 @@ export default function DevicePage() {
         `Device ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update device status'
-      )
+      toast.error(handleApiError(error, 'Failed to update device status'))
     }
   }
 
@@ -177,7 +176,7 @@ export default function DevicePage() {
       void refetch()
       toast.success('Device deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete device')
+      toast.error(handleApiError(error, 'Failed to delete device'))
     }
   }
 

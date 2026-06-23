@@ -33,6 +33,7 @@ import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import AddClassDialog from './add-class-dialog'
 import EditClassDialog from './edit-class-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function ClassPage() {
   const [search, setSearch] = useState('')
@@ -111,9 +112,7 @@ export default function ClassPage() {
         `Class ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update class status'
-      )
+      toast.error(handleApiError(error, 'Failed to update class status'))
     }
   }
 
@@ -133,7 +132,7 @@ export default function ClassPage() {
       void refetch()
       toast.success('Class deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete class')
+      toast.error(handleApiError(error, 'Failed to delete class'))
     }
   }
 

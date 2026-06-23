@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import AddBuildingDialog from './add-building-dialog'
 import EditBuildingDialog from './edit-building-dialog'
 import { useBuilding } from '@/hooks/api/master/building/use-building'
+import { handleApiError } from '@/lib/utils'
 
 export default function BuildingPage() {
   const [search, setSearch] = useState('')
@@ -106,10 +107,7 @@ export default function BuildingPage() {
         } successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message ||
-          'Failed to update building status'
-      )
+      toast.error(handleApiError(error, 'Failed to update building status'))
     }
   }
 
@@ -166,10 +164,7 @@ export default function BuildingPage() {
       void mutate()
       toast.success('Building deleted successfully')
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message ||
-          'Failed to delete building'
-      )
+      toast.error(handleApiError(error, 'Failed to delete building'))
     }
   }
 

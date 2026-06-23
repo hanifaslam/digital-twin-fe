@@ -34,6 +34,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import AddCourseDialog from './add-course-dialog'
 import EditCourseDialog from './edit-course-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function CoursePage() {
   const [search, setSearch] = useState('')
@@ -136,9 +137,7 @@ export default function CoursePage() {
         `Course ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update course status'
-      )
+      toast.error(handleApiError(error, 'Failed to update course status'))
     }
   }
 
@@ -158,7 +157,7 @@ export default function CoursePage() {
       void refetch()
       toast.success('Course deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete course')
+      toast.error(handleApiError(error, 'Failed to delete course'))
     }
   }
 

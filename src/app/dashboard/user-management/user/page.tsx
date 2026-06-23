@@ -30,6 +30,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { handleApiError } from '@/lib/utils'
 
 export default function UserPage() {
   const [search, setSearch] = useState('')
@@ -109,9 +110,7 @@ export default function UserPage() {
         `User ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update user status'
-      )
+      toast.error(handleApiError(error, 'Failed to update user status'))
     }
   }
 

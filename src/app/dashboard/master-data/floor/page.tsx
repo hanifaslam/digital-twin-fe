@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import AddFloorDialog from './add-floor-dialog'
 import EditFloorDialog from './edit-floor-dialog'
 import { useFloor } from '@/hooks/api/master/floor/use-floor'
+import { handleApiError } from '@/lib/utils'
 
 export default function FloorPage() {
   const [search, setSearch] = useState('')
@@ -103,10 +104,7 @@ export default function FloorPage() {
         } successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message ||
-          'Failed to update floor status'
-      )
+      toast.error(handleApiError(error, 'Failed to update floor status'))
     }
   }
 
@@ -154,7 +152,7 @@ const handleDelete = async (row: ListFloorResponse) => {
       void mutate()
       toast.success('Floor deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete floor')
+      toast.error(handleApiError(error, 'Failed to delete floor'))
     }
   }
   const tableAction: TableAction<ListFloorResponse>[] = [

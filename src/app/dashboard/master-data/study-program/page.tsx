@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import { useStudyProgram } from '@/hooks/api/master/study-program/use-study-program'
 import AddStudyProgramDialog from './add-prodi-dialog'
 import EditStudyProgramDialog from './edit-prodi-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function StudyProgramPage() {
   const [search, setSearch] = useState('')
@@ -101,10 +102,7 @@ export default function StudyProgramPage() {
         `Study Program ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message ||
-          'Failed to update study program status'
-      )
+      toast.error(handleApiError(error, 'Failed to update study program status'))
     }
   }
 
@@ -160,9 +158,7 @@ export default function StudyProgramPage() {
       void mutate()
       toast.success('Study Program deleted successfully')
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to delete study program'
-      )
+      toast.error(handleApiError(error, 'Failed to delete study program'))
     }
   }
   const tableAction: TableAction<ListStudyProgramResponse>[] = [

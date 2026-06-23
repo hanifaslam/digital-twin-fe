@@ -15,6 +15,7 @@ import { KeyIcon } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
+import { handleApiError } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { user } = useAuthStore()
@@ -50,8 +51,8 @@ export default function ProfilePage() {
             })
           }
           toast.success('Photo updated successfully', { id: loadingToast })
-        } catch {
-          toast.error('Failed to update photo')
+        } catch (error) {
+          toast.error(handleApiError(error, 'Failed to update photo'))
         }
       }
 
@@ -91,8 +92,8 @@ export default function ProfilePage() {
       await updateProfile({ email, phone_number: phone })
       toast.success('Profile updated successfully')
       mutateLecturer()
-    } catch {
-      toast.error('Failed to update profile')
+    } catch (error) {
+      toast.error(handleApiError(error, 'Failed to update profile'))
     } finally {
       setIsSaving(false)
     }

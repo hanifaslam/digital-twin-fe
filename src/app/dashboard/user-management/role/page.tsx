@@ -26,6 +26,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { handleApiError } from '@/lib/utils'
 
 export default function RolePage() {
   const [search, setSearch] = useState('')
@@ -82,9 +83,7 @@ export default function RolePage() {
         `Role ${row.is_active ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update role status'
-      )
+      toast.error(handleApiError(error, 'Failed to update role status'))
     }
   }
 

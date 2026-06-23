@@ -37,6 +37,7 @@ import { toast } from 'sonner'
 import ImportScheduleDialog from './_components/import-schedule-dialog'
 import AddScheduleDialog from './add-schedule-dialog'
 import EditScheduleDialog from './edit-schedule-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function SchedulePage() {
   const [search, setSearch] = useState('')
@@ -172,9 +173,7 @@ export default function SchedulePage() {
         `Schedule ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update schedule status'
-      )
+      toast.error(handleApiError(error, 'Failed to update schedule status'))
     }
   }
 
@@ -194,7 +193,7 @@ export default function SchedulePage() {
       void refetch()
       toast.success('Schedule deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete schedule')
+      toast.error(handleApiError(error, 'Failed to delete schedule'))
     }
   }
 

@@ -29,6 +29,7 @@ import { toast } from 'sonner'
 import ImportRoomDialog from './_components/import-room-dialog'
 import AddRoomDialog from './add-room-dialog'
 import EditRoomDialog from './edit-room-dialog'
+import { handleApiError } from '@/lib/utils'
 
 export default function RoomPage() {
   const [search, setSearch] = useState('')
@@ -89,9 +90,7 @@ export default function RoomPage() {
         `Room ${row.status ? 'deactivated' : 'activated'} successfully`
       )
     } catch (error) {
-      toast.error(
-        (error as AxiosError)?.message || 'Failed to update room status'
-      )
+      toast.error(handleApiError(error, 'Failed to update room status'))
     }
   }
 
@@ -115,7 +114,7 @@ export default function RoomPage() {
       void mutate()
       toast.success('Room deleted successfully')
     } catch (error) {
-      toast.error((error as AxiosError)?.message || 'Failed to delete room')
+      toast.error(handleApiError(error, 'Failed to delete room'))
     }
   }
 
