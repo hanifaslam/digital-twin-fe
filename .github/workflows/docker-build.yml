@@ -35,9 +35,8 @@ jobs:
             -t ghcr.io/${{ github.repository }}:staging .
           docker push ghcr.io/${{ github.repository }}:staging
 
-      - name: Trigger Coolify Deploy
+      - name: Trigger Dokploy Deploy
+        if: github.ref == 'refs/heads/staging' # Sesuaikan jika pakai main
         run: |
-          curl -X POST "https://coolify.hanifaslam.dev/api/v1/deploy" \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"uuid":"xg9tal49ob4ekinanmssa9iq","force":true}'
+          # Webhook URL ini bisa didapatkan di Dokploy -> Deployments -> Copy Webhook
+          curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL }}"

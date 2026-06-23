@@ -1,9 +1,8 @@
 # -------------------------
 # 1. Install dependencies
 # -------------------------
-FROM node:20-slim AS deps
+FROM node:22-slim AS deps
 WORKDIR /app
-
 
 COPY package.json package-lock.json* ./
 
@@ -18,13 +17,13 @@ RUN npm config set registry https://registry.npmmirror.com \
 # -------------------------
 # 2. Build app
 # -------------------------
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build args (dari GitHub Actions nanti)
+# Build args
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
@@ -38,26 +37,33 @@ RUN npm run build
 
 
 # -------------------------
-# 3. Production image
+# 3. Production image (Optimized Standalone)
 # -------------------------
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y wget
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
-# Copy hasil build (Next.js standalone)
-COPY --from=builder /app ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Security (recommended)
-RUN groupadd -r nodejs && useradd -r -g nodejs nextjs \
- && chown -R nextjs:nodejs /app
+ARG NEXT_PUBLIC_AUTH_APP_ID
+ENV NEXT_PUBLIC_AUTH_APP_ID=$NEXT_PUBLIC_AUTH_APP_ID
+
+ARG NEXT_PUBLIC_DISABLE_CSRF
+ENV NEXT_PUBLIC_DISABLE_CSRF=$NEXT_PUBLIC_DISABLE_CSRF
+
+# Security
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs
+
+# Copy hasil build standalone
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
@@ -66,4 +72,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
-CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]
+# Tetap jalankan server.js bawaan standalone
+CMD ["node", "server.js"]
