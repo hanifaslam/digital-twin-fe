@@ -21,7 +21,6 @@ import { login } from '@/service/auth/auth-service'
 import useAuthStore from '@/store/auth-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -149,7 +148,8 @@ export default function LoginPage() {
                   )}
                 />
               </div>
-              <div className="flex justify-end mb-4">
+
+              {/* <div className="flex justify-end mb-4">
                 <Link
                   type="button"
                   className="p-0 h-auto text-sm text-primary hover:text-primary/80"
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 >
                   Forgot Password
                 </Link>
-              </div>
+              </div> */}
 
               <Button
                 type="submit"
