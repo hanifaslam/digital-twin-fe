@@ -25,3 +25,8 @@ if (process.env.NODE_ENV === 'development') {
     console.error('[Socket] Connection error:', error);
   });
 }
+
+// Add system delay listener as per documentation
+socket.on('system-delay', (data) => {
+  console.log(`⏱️ [Delay ${data.source}] ${data.delay_ms} ms`, data.details ? data.details : '');
+});
