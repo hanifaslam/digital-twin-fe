@@ -75,7 +75,7 @@ export const AttendanceCard = React.memo(
             </>
           ) : (
             <>
-              <Avatar size="lg" className="ring-2 ring-primary/50">
+              <Avatar size="lg" className="ring-2 ring-white/10">
                 <AvatarImage src={profilePicture || ''} />
                 <AvatarFallback className="bg-primary text-white">
                   {getInitials(name)}
@@ -83,7 +83,7 @@ export const AttendanceCard = React.memo(
               </Avatar>
               <div>
                 <p className="font-semibold text-base leading-tight">{name}</p>
-                {nip && <p className="text-sm text-primary/70">NIP. {nip}</p>}
+                {nip && <p className="text-sm text-white/70">NIP. {nip}</p>}
               </div>
             </>
           )}
