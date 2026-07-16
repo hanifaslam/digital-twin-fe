@@ -64,7 +64,7 @@ export function TodayScheduleCard({
     <Card className={cn('min-w-0 border-gray-200 shadow-sm', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CalendarClock className="h-5 w-5 text-primary-500" />
+          <CalendarClock className="h-5 w-5 text-primary" />
           Today Schedule
         </CardTitle>
         <CardDescription>
