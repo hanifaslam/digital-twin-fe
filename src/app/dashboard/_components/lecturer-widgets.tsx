@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMyTeachingSchedule } from '@/hooks/api/dashboard/use-my-teaching-schedule'
 import { useSemesterSummary } from '@/hooks/api/dashboard/use-semester-summary'
@@ -51,7 +57,7 @@ export function MyScheduleCard() {
                 key={schedule.scheduleId}
                 className="flex items-center gap-4 rounded-lg border bg-gray-50/50 p-3 transition-colors hover:bg-gray-100/50"
               >
-                <div className="flex min-h-12 min-w-[112px] items-center justify-center rounded-md bg-blue-100 px-3 py-1 text-blue-700">
+                <div className="flex min-h-12 min-w-[112px] items-center justify-center rounded-md bg-primary/10 px-3 py-1 text-primary/70">
                   <span className="text-xs font-bold">
                     {schedule.startTime} - {schedule.endTime}
                   </span>
@@ -91,8 +97,8 @@ export function MyStatsCard() {
       label: 'Classes Taught',
       value: String(summary?.classes_taught ?? 0),
       icon: BookOpen,
-      color: 'text-blue-600',
-      bg: 'bg-blue-100'
+      color: 'text-primary/60',
+      bg: 'bg-primary/10'
     },
     {
       label: 'On-Time Rate',

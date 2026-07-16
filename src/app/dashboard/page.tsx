@@ -54,7 +54,7 @@ export default function DashboardPage() {
       confirmText: 'Yes',
       cancelText: 'Cancel',
       confirmButtonClassName: isBusy
-        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+        ? 'bg-primary hover:bg-primary/90 text-white'
         : 'bg-red-600 hover:bg-red-700 text-white'
     })
 
@@ -98,7 +98,10 @@ export default function DashboardPage() {
           </div>
         </div>
       ) : (
-        <GeneralDashboard roleCode={user?.role_code} roleName={user?.role_name} />
+        <GeneralDashboard
+          roleCode={user?.role_code}
+          roleName={user?.role_name}
+        />
       )}
       {isLecturer && (
         <>

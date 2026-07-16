@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { handleApiError } from '@/lib/utils'
 import { updateProfile, uploadProfilePhoto } from '@/service/auth/auth-service'
 import { LecturerService } from '@/service/master/lecturer/lecturer-service'
 import useAuthStore from '@/store/auth-store'
@@ -15,7 +16,6 @@ import { KeyIcon } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
-import { handleApiError } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { user } = useAuthStore()
@@ -118,7 +118,7 @@ export default function ProfilePage() {
               />
               <Avatar className="h-full w-full rounded-xl">
                 <AvatarImage src={profilePic || ''} className="object-cover" />
-                <AvatarFallback className="bg-blue-600 text-white text-5xl rounded-xl font-medium">
+                <AvatarFallback className="bg-primary text-white text-5xl rounded-xl font-medium">
                   {user?.name
                     ?.split(' ')
                     .map((n) => n[0])

@@ -312,7 +312,7 @@ export default function RegisterFaceDialog({
           {step === 'scan' && (
             <div className="space-y-4">
               {/* Camera view */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black border-2 border-blue-400">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black border-2 border-primary/20">
                 <video
                   ref={videoRef}
                   className="h-full w-full object-cover -scale-x-100"
@@ -411,7 +411,7 @@ export default function RegisterFaceDialog({
                   </p>
                   <div className="flex flex-col gap-2">
                     <Button
-                      className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                      className="w-full h-11 bg-primary text-white font-semibold hover:bg-primary/90"
                       onClick={startCamera}
                       disabled={isSubmitting || !modelLoaded}
                     >
@@ -440,11 +440,11 @@ export default function RegisterFaceDialog({
               )}
 
               {cameraActive && (
-                <div className="rounded-lg bg-blue-50 p-3 flex items-center gap-3 border border-blue-100">
-                  <div className="h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                <div className="rounded-lg bg-primary/10 p-3 flex items-center gap-3 border border-primary/20">
+                  <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center shrink-0">
                     <div className="h-1 w-1 rounded-full bg-white animate-ping" />
                   </div>
-                  <p className="text-xs text-blue-700 leading-relaxed">
+                  <p className="text-xs text-primary/70 leading-relaxed">
                     Position your face in the center and{' '}
                     <span className="font-bold">blink your eyes</span> to take a
                     photo automatically.

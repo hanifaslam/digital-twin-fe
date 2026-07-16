@@ -73,11 +73,11 @@ export function ActivityLogDialog({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-blue-500">
+                        <span className="text-sm font-medium text-primary">
                           {log.time}
                         </span>
                         {log.title === 'Clock In' && (
-                          <span className="text-sm text-blue-500 font-medium">
+                          <span className="text-sm text-primary font-medium">
                             {log.title}
                           </span>
                         )}

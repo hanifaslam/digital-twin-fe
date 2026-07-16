@@ -1,14 +1,32 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLiveOngoingClasses } from '@/hooks/api/dashboard/use-live-ongoing-classes'
 import { cn } from '@/lib/utils'
 import { Building2, Users } from 'lucide-react'
 
 const buildingOccupancy = [
-  { name: 'Gedung A', used: 6, total: 8, percentage: 75, color: 'bg-blue-600' },
-  { name: 'Gedung B', used: 4, total: 10, percentage: 40, color: 'bg-green-600' },
+  {
+    name: 'Gedung A',
+    used: 6,
+    total: 8,
+    percentage: 75,
+    color: 'bg-primary'
+  },
+  {
+    name: 'Gedung B',
+    used: 4,
+    total: 10,
+    percentage: 40,
+    color: 'bg-green-600'
+  },
   { name: 'Gedung C', used: 9, total: 10, percentage: 90, color: 'bg-red-600' }
 ]
 
@@ -21,7 +39,7 @@ function getStatusColor(status: string) {
     case 'LATE':
       return 'bg-red-500/10 text-red-600'
     case 'DONE':
-      return 'bg-blue-500/10 text-blue-600'
+      return 'bg-primary/10 text-primary'
     case 'CANCELLED':
       return 'bg-gray-500/10 text-gray-600'
     default:
@@ -55,7 +73,7 @@ export function LiveOngoingClassesCard({
     <Card className={cn('min-w-0 border-gray-200 shadow-sm', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5 text-blue-500" />
+          <Users className="h-5 w-5 text-primary" />
           Live Ongoing Classes
         </CardTitle>
         <CardDescription>
@@ -66,10 +84,7 @@ export function LiveOngoingClassesCard({
         <div className="space-y-4">
           {isLoading &&
             Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="rounded-lg border bg-gray-50/50 p-3"
-              >
+              <div key={index} className="rounded-lg border bg-gray-50/50 p-3">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
                     <Skeleton className="h-5 w-40" />
@@ -146,7 +161,9 @@ export function BuildingOccupancyCard() {
           {buildingOccupancy.map((building) => (
             <div key={building.name} className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-gray-700">{building.name}</span>
+                <span className="font-semibold text-gray-700">
+                  {building.name}
+                </span>
                 <span className="font-medium text-muted-foreground">
                   {building.used} / {building.total} Rooms
                 </span>

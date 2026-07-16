@@ -1,12 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMyTeachingSchedule } from '@/hooks/api/dashboard/use-my-teaching-schedule'
 import { cn } from '@/lib/utils'
 import { CalendarClock } from 'lucide-react'
+import { useState } from 'react'
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -17,7 +23,7 @@ function getStatusColor(status: string) {
     case 'LATE':
       return 'bg-red-500/10 text-red-600'
     case 'DONE':
-      return 'bg-blue-500/10 text-blue-600'
+      return 'bg-primary/10 text-primary'
     case 'CANCELLED':
       return 'bg-gray-500/10 text-gray-600'
     default:
@@ -58,7 +64,7 @@ export function TodayScheduleCard({
     <Card className={cn('min-w-0 border-gray-200 shadow-sm', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CalendarClock className="h-5 w-5 text-blue-500" />
+          <CalendarClock className="h-5 w-5 text-primary-500" />
           Today Schedule
         </CardTitle>
         <CardDescription>
@@ -69,10 +75,7 @@ export function TodayScheduleCard({
         <div className="space-y-4">
           {isLoading &&
             Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="rounded-lg border bg-gray-50/50 p-3"
-              >
+              <div key={index} className="rounded-lg border bg-gray-50/50 p-3">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
                     <Skeleton className="h-5 w-40" />
@@ -94,7 +97,9 @@ export function TodayScheduleCard({
               >
                 <div className="w-full space-y-1">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">{schedule.className}</p>
+                    <p className="text-sm font-semibold">
+                      {schedule.className}
+                    </p>
                     <span className="text-xs font-medium text-muted-foreground">
                       {schedule.timeLabel}
                     </span>
