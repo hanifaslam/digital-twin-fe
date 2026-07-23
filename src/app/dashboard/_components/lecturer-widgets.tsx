@@ -5,13 +5,24 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMyTeachingSchedule } from '@/hooks/api/dashboard/use-my-teaching-schedule'
 import { useSemesterSummary } from '@/hooks/api/dashboard/use-semester-summary'
+import { useScheduleDay } from '@/hooks/api/master/schedule/use-schedule'
 import { Activity, BookOpen, CalendarCheck, Clock } from 'lucide-react'
+import { useState } from 'react'
 
 export function MyScheduleCard() {
-  const { data: scheduleResponse, isLoading } = useMyTeachingSchedule()
+  const [selectedDay, setSelectedDay] = useState<string>('TODAY')
+  const { data: scheduleResponse, isLoading } = useMyTeachingSchedule(selectedDay)
+  const { data: daysResponse } = useScheduleDay()
 
   const scheduleItems =
     scheduleResponse?.data.map((item) => ({
@@ -31,9 +42,27 @@ export function MyScheduleCard() {
 
   return (
     <Card className="min-w-0 border-gray-200 shadow-sm">
-      <CardHeader>
-        <CardTitle>My Teaching Schedule</CardTitle>
-        <CardDescription>Your upcoming classes for today.</CardDescription>
+      <CardHeader className="flex flex-row items-start sm:items-center justify-between pb-2">
+        <div className="space-y-1.5">
+          <CardTitle>My Teaching Schedule</CardTitle>
+          <CardDescription>Your upcoming classes.</CardDescription>
+        </div>
+        <div className="flex items-center gap-2">
+          <Select value={selectedDay} onValueChange={setSelectedDay}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Select Day" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="TODAY">Today</SelectItem>
+              <SelectItem value="ALL">All Days</SelectItem>
+              {daysResponse?.data?.map((day) => (
+                <SelectItem key={day.value} value={day.value}>
+                  {day.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -79,7 +108,7 @@ export function MyScheduleCard() {
 
           {!isLoading && scheduleItems.length === 0 && (
             <div className="rounded-lg border border-dashed bg-gray-50/50 p-6 text-center text-sm text-muted-foreground">
-              No teaching schedule for today.
+              No teaching schedule found.
             </div>
           )}
         </div>

@@ -225,8 +225,11 @@ export default function RegisterFaceDialog({
         if (isCurrentlyBlinking && !lastBlinkRef.current) {
           setIsBlinking(true)
         } else if (!isCurrentlyBlinking && lastBlinkRef.current) {
-          setIsBlinking(false)
-          handleAutoCaptureRef.current()
+          lastBlinkRef.current = false
+          setTimeout(() => {
+            setIsBlinking(false)
+            handleAutoCaptureRef.current()
+          }, 600)
           return
         }
         lastBlinkRef.current = isCurrentlyBlinking

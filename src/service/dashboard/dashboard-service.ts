@@ -24,9 +24,25 @@ export const DashboardService = {
   getSemesterSummary: async () => {
     return api.get<SemesterSummaryResponse>(ApiEndpoint.DASHBOARD.SEMESTER_SUMMARY)
   },
-  getMyTeachingSchedule: async () => {
+  getMyTeachingSchedule: async (day?: string) => {
+    let queryDay = day
+
+    if (!queryDay || queryDay === 'TODAY') {
+      const days = [
+        'SUNDAY',
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY'
+      ]
+      queryDay = days[new Date().getDay()]
+    }
+
     return api.get<MyTeachingScheduleItem[]>(
-      ApiEndpoint.DASHBOARD.MY_TEACHING_SCHEDULE
+      ApiEndpoint.DASHBOARD.MY_TEACHING_SCHEDULE,
+      { params: queryDay !== 'ALL' ? { day: queryDay } : undefined }
     )
   },
   getLiveOngoingClasses: async () => {

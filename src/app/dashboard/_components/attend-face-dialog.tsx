@@ -193,16 +193,18 @@ export default function AttendFaceDialog({
   const handleManualVerify = async () => {
     setIsManualSubmitting(true)
     try {
-      await FaceService.manualVerify({
-        latitude: -6.914744,
-        longitude: 107.60981
-      })
+      const location = await getCurrentPosition()
+      await FaceService.manualVerify(location)
       toast.success('Successfully clock in manually!')
       stopCamera()
       onOpenChange(false)
       onSuccess?.()
     } catch (err: unknown) {
-      toast.error(handleApiError(err, 'Failed to manual clock in'))
+      if (err instanceof GeolocationPositionError) {
+        toast.error('Location permission is required to record attendance')
+      } else {
+        toast.error(handleApiError(err, 'Failed to manual clock in'))
+      }
     } finally {
       setIsManualSubmitting(false)
     }
@@ -257,8 +259,11 @@ export default function AttendFaceDialog({
         if (isCurrentlyBlinking && !lastBlinkRef.current) {
           setIsBlinking(true)
         } else if (!isCurrentlyBlinking && lastBlinkRef.current) {
-          setIsBlinking(false)
-          handleAutoCaptureRef.current()
+          lastBlinkRef.current = false
+          setTimeout(() => {
+            setIsBlinking(false)
+            handleAutoCaptureRef.current()
+          }, 600)
           return
         }
         lastBlinkRef.current = isCurrentlyBlinking

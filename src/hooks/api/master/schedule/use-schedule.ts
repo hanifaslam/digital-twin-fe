@@ -10,3 +10,10 @@ export function useSchedule(params: Partial<ScheduleListParams>) {
     queryFn: () => ScheduleService.list(params as ScheduleListParams)
   })
 }
+
+export function useScheduleDay() {
+  return useQuery({
+    queryKey: ['schedule-day'],
+    queryFn: () => ScheduleService.getAllDays()
+  })
+}
