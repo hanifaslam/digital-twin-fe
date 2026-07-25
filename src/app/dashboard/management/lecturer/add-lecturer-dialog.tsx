@@ -195,7 +195,7 @@ export default function AddLecturerDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Phone Number<span className="text-red-500">*</span>
+                    Phone Number
                   </FormLabel>
                   <FormControl>
                     <Input

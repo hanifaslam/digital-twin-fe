@@ -37,10 +37,10 @@ export function useMenuItems(): MenuItem[] {
       middleware: ['management'],
       children: [
         {
-          id: 'Schedule',
-          label: 'Schedule',
-          href: '/dashboard/management/schedule',
-          middleware: ['schedule']
+          id: 'Lecturer',
+          label: 'Lecturer',
+          href: '/dashboard/management/lecturer',
+          middleware: ['lecturer']
         },
         {
           id: 'Class',
@@ -49,22 +49,22 @@ export function useMenuItems(): MenuItem[] {
           middleware: ['class']
         },
         {
-          id: 'Lecturer',
-          label: 'Lecturer',
-          href: '/dashboard/management/lecturer',
-          middleware: ['lecturer']
-        },
-        {
-          id: 'Device',
-          label: 'Device',
-          href: '/dashboard/management/device',
-          middleware: ['device']
+          id: 'Schedule',
+          label: 'Schedule',
+          href: '/dashboard/management/schedule',
+          middleware: ['schedule']
         },
         {
           id: 'Helper',
           label: 'Helper',
           href: '/dashboard/management/helper',
           middleware: ['helper']
+        },
+        {
+          id: 'Device',
+          label: 'Device',
+          href: '/dashboard/management/device',
+          middleware: ['device']
         }
       ]
     },
@@ -74,6 +74,18 @@ export function useMenuItems(): MenuItem[] {
       icon: <FolderIcon className="h-6 w-6" />,
       middleware: ['master'],
       children: [
+        {
+          id: 'building',
+          label: 'Building',
+          href: '/dashboard/master-data/building',
+          middleware: ['building']
+        },
+        {
+          id: 'floor',
+          label: 'Floor',
+          href: '/dashboard/master-data/floor',
+          middleware: ['floor']
+        },
         {
           id: 'Room',
           label: 'Room',
@@ -97,18 +109,6 @@ export function useMenuItems(): MenuItem[] {
           label: 'Time Slot',
           href: '/dashboard/master-data/time-slot',
           middleware: ['time_slot']
-        },
-        {
-          id: 'building',
-          label: 'Building',
-          href: '/dashboard/master-data/building',
-          middleware: ['building']
-        },
-        {
-          id: 'floor',
-          label: 'Floor',
-          href: '/dashboard/master-data/floor',
-          middleware: ['floor']
         }
       ]
     },
