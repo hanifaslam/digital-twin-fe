@@ -110,7 +110,9 @@ export default function HelperPage() {
       label: 'Phone Number',
       className: 'min-w-[180px]',
       render: (value) => (
-        <p className="truncate text-sm font-medium">{value.phone_number}</p>
+        <p className="truncate text-sm font-medium">
+          {value.phone_number || '-'}
+        </p>
       )
     },
     {
