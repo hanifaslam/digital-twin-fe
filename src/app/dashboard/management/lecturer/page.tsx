@@ -71,7 +71,9 @@ export default function LecturerPage() {
       key: 'nip',
       label: 'NIP',
       className: 'min-w-[160px]',
-      render: (value) => <p className="text-sm font-medium">{value.nip}</p>
+      render: (value) => (
+        value.nip?.trim() ? <p className="text-sm font-medium">{value.nip}</p> : '-'
+      )
     },
     {
       key: 'name',
